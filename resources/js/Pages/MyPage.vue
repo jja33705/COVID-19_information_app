@@ -10,7 +10,6 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                     <button @click="onClickPlaceButton">접종처</button>
-                    <button @click="onClickCountButton">확진자수</button>
                     <div v-if="data">{{ data }}</div>
                     <div id="map" style="width:100%; height:400px;"></div>
                 </div>
@@ -34,27 +33,42 @@ export default defineComponent({
     },
     methods: {
         onClickPlaceButton() {
-            axios
-                .get(
-                    "https://cors.bridged.cc/https://api.odcloud.kr/api/15077586/v1/centers?page=1&perPage=10&serviceKey=wZXfBdmDrek55joz9YP0lhLRj5Do59jCcELbR0NGdpZzCFpnufcYpFMgike1cU3tpG1MDQpS6NcbibCFr1S58A%3D%3D"
-                )
-                .then((res) => {
-                    console.log(res);
-                    this.data = res.data;
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        },
-        onClickCountButton() {
-            axios.get(`https://cors.bridged.cc/http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19InfStateJson?${encodeURIComponent('ServiceKey')}=${encodeURIComponent('4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62+ZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ==')}&pageNo=1&numOfRows=10&startCreateDt=20200310&endCreateDt=20200315`)
+            axios.get(
+                    "https://cors.bridged.cc/https://api.odcloud.kr/api/15077586/v1/centers?page=1&perPage=10&serviceKey=wZXfBdmDrek55joz9YP0lhLRj5Do59jCcELbR0NGdpZzCFpnufcYpFMgike1cU3tpG1MDQpS6NcbibCFr1S58A%3D%3D")
             .then((res) => {
                 console.log(res);
+                this.data = res.data;
+                new naver.maps.Marker({
+                    position: new naver.maps.LatLng(35.869985, 128.583716),
+                    map: this.map
+                });
             })
             .catch((err) => {
                 console.log(err);
             });
-        }
+        },
+        getCurrentLocationSuccess(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            const LatLng = new naver.maps.LatLng(lat, lng);
+            new naver.maps.Marker({
+                map: this.map,
+                position: LatLng,
+                icon: {
+                    path: naver.maps.SymbolPath.CIRCLE,
+                    style: naver.maps.SymbolStyle.CIRCLE,
+                    fillColor: '#FF0000',
+                    fillOpacity: 1,
+                    strokeColor: '#000000',
+                    strokeStyle: 'solid',
+                    strokeWeight: 1,
+                    radius: 10,
+                },
+            });
+        },
+        getCurrentLocationError() {
+            console.log('cant get current location');
+        },
     },
     mounted() {
         var mapOptions = {
@@ -67,6 +81,11 @@ export default defineComponent({
             zoom: 1
         };
         this.map = new naver.maps.Map('map', mapOptions);
+        if(!navigator.geolocation) {
+            console.log('cant get location in this browser');
+        } else {
+            navigator.geolocation.getCurrentPosition(this.getCurrentLocationSuccess, this.getCurrentLocationError);
+        }
     },
 });
 </script>

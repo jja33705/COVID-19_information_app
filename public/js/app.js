@@ -20616,16 +20616,35 @@ __webpack_require__.r(__webpack_exports__);
       axios.get("https://cors.bridged.cc/https://api.odcloud.kr/api/15077586/v1/centers?page=1&perPage=10&serviceKey=wZXfBdmDrek55joz9YP0lhLRj5Do59jCcELbR0NGdpZzCFpnufcYpFMgike1cU3tpG1MDQpS6NcbibCFr1S58A%3D%3D").then(function (res) {
         console.log(res);
         _this.data = res.data;
+        new naver.maps.Marker({
+          position: new naver.maps.LatLng(35.869985, 128.583716),
+          map: _this.map
+        });
       })["catch"](function (err) {
         console.log(err);
       });
     },
-    onClickCountButton: function onClickCountButton() {
-      axios.get("https://cors.bridged.cc/http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19InfStateJson?".concat(encodeURIComponent('ServiceKey'), "=").concat(encodeURIComponent('4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62+ZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ=='), "&pageNo=1&numOfRows=10&startCreateDt=20200310&endCreateDt=20200315")).then(function (res) {
-        console.log(res);
-      })["catch"](function (err) {
-        console.log(err);
+    getCurrentLocationSuccess: function getCurrentLocationSuccess(position) {
+      var lat = position.coords.latitude;
+      var lng = position.coords.longitude;
+      var LatLng = new naver.maps.LatLng(lat, lng);
+      new naver.maps.Marker({
+        map: this.map,
+        position: LatLng,
+        icon: {
+          path: naver.maps.SymbolPath.CIRCLE,
+          style: naver.maps.SymbolStyle.CIRCLE,
+          fillColor: '#FF0000',
+          fillOpacity: 1,
+          strokeColor: '#000000',
+          strokeStyle: 'solid',
+          strokeWeight: 1,
+          radius: 10
+        }
       });
+    },
+    getCurrentLocationError: function getCurrentLocationError() {
+      console.log('cant get current location');
     }
   },
   mounted: function mounted() {
@@ -20639,6 +20658,12 @@ __webpack_require__.r(__webpack_exports__);
       zoom: 1
     };
     this.map = new naver.maps.Map('map', mapOptions);
+
+    if (!navigator.geolocation) {
+      console.log('cant get location in this browser');
+    } else {
+      navigator.geolocation.getCurrentPosition(this.getCurrentLocationSuccess, this.getCurrentLocationError);
+    }
   }
 }));
 
@@ -21185,6 +21210,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @inertiajs/inertia-vue3 */ "./node_modules/@inertiajs/inertia-vue3/dist/index.js");
 
 
+
+var makeDateString = function makeDateString(date) {
+  var year = date.getFullYear();
+  var month = ("0" + (date.getMonth() + 1)).slice(-2);
+  var day = ("0" + date.getDate()).slice(-2);
+  return year + month + day;
+};
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,vue__WEBPACK_IMPORTED_MODULE_0__.defineComponent)({
   components: {
     Head: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__.Head,
@@ -21192,9 +21225,37 @@ __webpack_require__.r(__webpack_exports__);
   },
   props: {
     canLogin: Boolean,
-    canRegister: Boolean,
-    laravelVersion: String,
-    phpVersion: String
+    canRegister: Boolean
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    var today = new Date();
+    var todayDateString = makeDateString(today);
+    console.log(todayDateString);
+    var previousDay = new Date(today.setDate(today.getDate() - 8));
+    var previousDateString = makeDateString(previousDay);
+    console.log(previousDateString);
+    axios.get("https://cors.bridged.cc/http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19InfStateJson?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&pageNo=1&numOfRows=10&startCreateDt=".concat(previousDateString, "&endCreateDt=").concat(todayDateString)).then(function (res) {
+      console.log(res);
+      _this.covidData = res.data.response.body.items.item.slice(0, 7); //가장 최근부터 7일간의 데이터를 가져옴옴
+    })["catch"](function (err) {
+      console.log(err);
+    });
+  },
+  data: function data() {
+    return {
+      covidData: []
+    };
+  },
+  methods: {},
+  computed: {
+    getRecentDate: function getRecentDate() {
+      // const date = new Date(this.covidData[0].stateDt);
+      if (this.covidData[0]) {
+        return this.covidData[0].stateDt;
+      }
+    }
   }
 }));
 
@@ -24503,11 +24564,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         onClick: _cache[0] || (_cache[0] = function () {
           return _ctx.onClickPlaceButton && _ctx.onClickPlaceButton.apply(_ctx, arguments);
         })
-      }, "접종처"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-        onClick: _cache[1] || (_cache[1] = function () {
-          return _ctx.onClickCountButton && _ctx.onClickCountButton.apply(_ctx, arguments);
-        })
-      }, "확진자수"), _ctx.data ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.data), 1
+      }, "접종처"), _ctx.data ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.data), 1
       /* TEXT */
       )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _hoisted_6])])])];
     }),
@@ -25686,9 +25743,16 @@ var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNod
 
 var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Register ");
 
-var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_6 = {
   "class": "max-w-6xl mx-auto sm:px-6 lg:px-8"
-}, null, -1
+};
+var _hoisted_7 = {
+  key: 0
+};
+
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "flex justify-around"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, "123"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, "456"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, "789")], -1
 /* HOISTED */
 );
 
@@ -25741,7 +25805,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* PROPS */
   , ["href"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 64
   /* STABLE_FRAGMENT */
-  ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _hoisted_6])], 64
+  ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [_ctx.covidData ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.covidData), 1
+  /* TEXT */
+  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, "기준날짜: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.getRecentDate), 1
+  /* TEXT */
+  ), _hoisted_8])])], 64
   /* STABLE_FRAGMENT */
   );
 }
