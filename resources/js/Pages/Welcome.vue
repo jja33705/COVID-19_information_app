@@ -1,6 +1,5 @@
 <template>
     <Head title="home" />
-
     <div
         class="
             relative
@@ -44,8 +43,16 @@
         </div>
 
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-            <div v-if="covidData">{{ covidData }}</div>
-            <div>기준날짜: {{ getRecentDate }}</div>
+            <div>{{ localData }}</div>
+            <div v-if="totalData[0]">
+                <div>기준날짜: {{ getStdDay }}</div>
+                <div>신규 확진자: {{ getNewDefCnt }}</div>
+                <div>확진자 수: {{ getDefCnt }}</div>
+                <div>사망자 수: {{ getDeathCnt }}</div>
+                <div>격리해제 수: {{ getIsolClearCnt }}</div>
+            </div>
+            <canvas id="newDefCntChart" width="200" height="200"></canvas>
+
             <div class="flex justify-around">
                 <div>123</div>
                 <div>456</div>
@@ -58,6 +65,9 @@
 <script>
 import { defineComponent } from "vue";
 import { Head, Link } from "@inertiajs/inertia-vue3";
+import Chart from 'chart.js/auto';
+
+const TOTAL_INDEX=18;
 
 const makeDateString = (date) => {
     const year = date.getFullYear();
@@ -78,37 +88,84 @@ export default defineComponent({
     mounted() {
         const today = new Date();
         const todayDateString = makeDateString(today);
-        console.log(todayDateString);
 
-        const previousDay = new Date(today.setDate(today.getDate() - 8));
+        const previousDay = new Date(today.setDate(today.getDate() - 7));
         const previousDateString = makeDateString(previousDay);
-        console.log(previousDateString);
 
-        axios
-            .get(
-                `https://cors.bridged.cc/http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19InfStateJson?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&pageNo=1&numOfRows=10&startCreateDt=${previousDateString}&endCreateDt=${todayDateString}`
-            )
-            .then((res) => {
-                console.log(res);
-                this.covidData = res.data.response.body.items.item.slice(0, 7);
-                //가장 최근부터 7일간의 데이터를 가져옴옴
-            })
-            .catch((err) => {
-                console.log(err);
+        axios.get(`https://cors.bridged.cc/http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&pageNo=1&numOfRows=10&startCreateDt=${previousDateString}&endCreateDt=${todayDateString}`)
+        .then((res) => {
+            console.log(res);
+            const covidItems = res.data.response.body.items.item.slice(0, (TOTAL_INDEX + 1) * 7);
+            for (let i = 0; i < covidItems.length; i += (TOTAL_INDEX + 1)){
+                this.localData.push(covidItems.slice(i, i + TOTAL_INDEX));
+                this.totalData.push(covidItems[i + TOTAL_INDEX]);
+            }
+            //가장 최근부터 7일간의 데이터를 가져와서 지역별, 합계데이터를 나눠서 저장함.
+            console.log(this.localData);
+            console.log(this.totalData);
+
+            // 최근 신규 확진자 차트를 그린다.
+            const ctx = 'newDefCntChart';
+            const newDefCntChartData = [];
+            const newDefCntChartLabels = [];
+            this.totalData.reverse().map((value) => {
+                newDefCntChartData.push(value.localOccCnt + value.overFlowCnt);
+                newDefCntChartLabels.push(value.stdDay);
             });
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: newDefCntChartLabels,
+                    datasets: [{
+                        label: '신규 확진자',
+                        data: newDefCntChartData,
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(54, 162, 235, 1)',
+                        ],
+                    }],
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        },
+                    },
+                },
+            });
+
+
+        })
+        .catch((err) => {
+            console.log(err);
+        });
     },
     data() {
         return {
-            covidData: [],
+            localData: [],
+            totalData: [],
         };
     },
     methods: {},
     computed: {
-        getRecentDate() {
-            // const date = new Date(this.covidData[0].stateDt);
-            if(this.covidData[0]) {
-                return this.covidData[0].stateDt;
-            }
+        getStdDay() { //기준시간
+            return this.totalData[0].stdDay;
+        },
+        getNewDefCnt() { //신규확진자
+            return this.totalData[0].localOccCnt + this.totalData[0].overFlowCnt;
+        },
+        getDefCnt() { //확진자
+            return this.totalData[0].defCnt;
+        },
+        getDeathCnt() { //사망자
+            return this.totalData[0].deathCnt;
+        },
+        getIsolClearCnt() { //격리해제 환자
+            return this.totalData[0].isolClearCnt;
         },
     },
 });
