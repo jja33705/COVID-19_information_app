@@ -1,4 +1,4 @@
-<template>
+d<template>
     <app-layout title="myPage">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -9,8 +9,7 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                    <button @click="onClickPlaceButton">접종처</button>
-                    <div v-if="data">{{ data }}</div>
+
                     <div id="map" style="width:100%; height:400px;"></div>
                 </div>
             </div>
@@ -27,30 +26,17 @@ export default defineComponent({
     },
     data() {
         return {
-            data: null,
             map: null,
+            lat: 0, //자기 위도
+            lng: 0,  //자기 경도
+            tourSpots: [],
         };
     },
     methods: {
-        onClickPlaceButton() {
-            axios.get(
-                    "https://cors.bridged.cc/https://api.odcloud.kr/api/15077586/v1/centers?page=1&perPage=10&serviceKey=wZXfBdmDrek55joz9YP0lhLRj5Do59jCcELbR0NGdpZzCFpnufcYpFMgike1cU3tpG1MDQpS6NcbibCFr1S58A%3D%3D")
-            .then((res) => {
-                console.log(res);
-                this.data = res.data;
-                new naver.maps.Marker({
-                    position: new naver.maps.LatLng(35.869985, 128.583716),
-                    map: this.map
-                });
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-        },
-        getCurrentLocationSuccess(position) {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            const LatLng = new naver.maps.LatLng(lat, lng);
+        getCurrentLocationSuccess(position) { //자기위치 가져오기(성공)
+            this.lat = position.coords.latitude;
+            this.lng = position.coords.longitude;
+            const LatLng = new naver.maps.LatLng(this.lat, this.lng);
             new naver.maps.Marker({
                 map: this.map,
                 position: LatLng,
@@ -65,13 +51,53 @@ export default defineComponent({
                     radius: 10,
                 },
             });
+
+            //주변 관광지 데이터 가져오기(2km)
+            axios.get(`https://cors.bridged.cc/http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&numOfRows=100&pageNo=1&MobileOS=ETC&MobileApp=AppTest&arrange=B&contentTypeId=12&mapX=${this.lng}&mapY=${this.lat}&radius=3000&listYN=Y`)
+            .then((res) => {
+                this.tourSpots = res.data.response.body.items.item;
+                //가져온 장소들 지도에 표시
+                this.tourSpots.map((v) => {
+                    const spot = new naver.maps.LatLng(v.mapy, v.mapx);
+                    const marker = new naver.maps.Marker({
+                        map: this.map,
+                        position: spot,
+                    });
+                    var contentString = [
+                        '<div class="iw_inner">',
+                        `   <h3>${v.title}</h3>`,
+                        `   <p>${v.addr1}<br />`,+
+                        `       <img src="${v.firstimage2}" width="55" height="55" alt="${v.title}" class="thumb" /><br />`,
+                        `       ${v.dist}m`,
+                        '   </p>',
+                        '</div>',
+                    ].join('');
+                    const infoWindow = new naver.maps.InfoWindow({
+                        content: contentString,
+                    });
+
+                    naver.maps.Event.addListener(marker, 'click', (e) => {
+                        if (infoWindow.getMap()) {
+                            infoWindow.close();
+                        } else {
+                            console.log(this);
+                            infoWindow.open(this.map, marker);
+                        }
+                    });
+                    // infoWindow.open(this.map, marker);
+                });
+            })
+            .catch((err) => {
+                console.log(err);
+            });
         },
-        getCurrentLocationError() {
+        getCurrentLocationError() { //자기위치 가져오기(실패)
             console.log('cant get current location');
         },
     },
     mounted() {
-        var mapOptions = {
+        //맵 생성
+        const mapOptions = {
             center: new naver.maps.LatLng(37.3595704, 127.105399),
             scaleControl: true,
             logoControl: true,
@@ -81,6 +107,8 @@ export default defineComponent({
             zoom: 1
         };
         this.map = new naver.maps.Map('map', mapOptions);
+        
+        //자기위치 가져오기
         if(!navigator.geolocation) {
             console.log('cant get location in this browser');
         } else {

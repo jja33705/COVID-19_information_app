@@ -98,6 +98,7 @@ export default defineComponent({
     mounted() {
         console.log(this.localData);
         console.log(this.totalData);
+        console.log(AREA_CODE['Jeju']);
 
         // 최근 신규 확진자 차트를 그린다.
         const ctx = 'newDefCntChart';

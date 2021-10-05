@@ -20605,29 +20605,22 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      data: null,
-      map: null
+      map: null,
+      lat: 0,
+      //자기 위도
+      lng: 0,
+      //자기 경도
+      tourSpots: []
     };
   },
   methods: {
-    onClickPlaceButton: function onClickPlaceButton() {
+    getCurrentLocationSuccess: function getCurrentLocationSuccess(position) {
       var _this = this;
 
-      axios.get("https://cors.bridged.cc/https://api.odcloud.kr/api/15077586/v1/centers?page=1&perPage=10&serviceKey=wZXfBdmDrek55joz9YP0lhLRj5Do59jCcELbR0NGdpZzCFpnufcYpFMgike1cU3tpG1MDQpS6NcbibCFr1S58A%3D%3D").then(function (res) {
-        console.log(res);
-        _this.data = res.data;
-        new naver.maps.Marker({
-          position: new naver.maps.LatLng(35.869985, 128.583716),
-          map: _this.map
-        });
-      })["catch"](function (err) {
-        console.log(err);
-      });
-    },
-    getCurrentLocationSuccess: function getCurrentLocationSuccess(position) {
-      var lat = position.coords.latitude;
-      var lng = position.coords.longitude;
-      var LatLng = new naver.maps.LatLng(lat, lng);
+      //자기위치 가져오기(성공)
+      this.lat = position.coords.latitude;
+      this.lng = position.coords.longitude;
+      var LatLng = new naver.maps.LatLng(this.lat, this.lng);
       new naver.maps.Marker({
         map: this.map,
         position: LatLng,
@@ -20641,13 +20634,41 @@ __webpack_require__.r(__webpack_exports__);
           strokeWeight: 1,
           radius: 10
         }
+      }); //주변 관광지 데이터 가져오기(2km)
+
+      axios.get("https://cors.bridged.cc/http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&numOfRows=100&pageNo=1&MobileOS=ETC&MobileApp=AppTest&arrange=B&contentTypeId=12&mapX=".concat(this.lng, "&mapY=").concat(this.lat, "&radius=3000&listYN=Y")).then(function (res) {
+        _this.tourSpots = res.data.response.body.items.item; //가져온 장소들 지도에 표시
+
+        _this.tourSpots.map(function (v) {
+          var spot = new naver.maps.LatLng(v.mapy, v.mapx);
+          var marker = new naver.maps.Marker({
+            map: _this.map,
+            position: spot
+          });
+          var contentString = ['<div class="iw_inner">', "   <h3>".concat(v.title, "</h3>"), "   <p>".concat(v.addr1, "<br />"), +"       <img src=\"".concat(v.firstimage2, "\" width=\"55\" height=\"55\" alt=\"").concat(v.title, "\" class=\"thumb\" /><br />"), "       ".concat(v.dist, "m"), '   </p>', '</div>'].join('');
+          var infoWindow = new naver.maps.InfoWindow({
+            content: contentString
+          });
+          naver.maps.Event.addListener(marker, 'click', function (e) {
+            if (infoWindow.getMap()) {
+              infoWindow.close();
+            } else {
+              console.log(_this);
+              infoWindow.open(_this.map, marker);
+            }
+          }); // infoWindow.open(this.map, marker);
+        });
+      })["catch"](function (err) {
+        console.log(err);
       });
     },
     getCurrentLocationError: function getCurrentLocationError() {
+      //자기위치 가져오기(실패)
       console.log('cant get current location');
     }
   },
   mounted: function mounted() {
+    //맵 생성
     var mapOptions = {
       center: new naver.maps.LatLng(37.3595704, 127.105399),
       scaleControl: true,
@@ -20657,7 +20678,7 @@ __webpack_require__.r(__webpack_exports__);
       zoomControl: true,
       zoom: 1
     };
-    this.map = new naver.maps.Map('map', mapOptions);
+    this.map = new naver.maps.Map('map', mapOptions); //자기위치 가져오기
 
     if (!navigator.geolocation) {
       console.log('cant get location in this browser');
@@ -21256,7 +21277,8 @@ var AREA_CODE = (_AREA_CODE = {
   },
   mounted: function mounted() {
     console.log(this.localData);
-    console.log(this.totalData); // 최근 신규 확진자 차트를 그린다.
+    console.log(this.totalData);
+    console.log(AREA_CODE['Jeju']); // 최근 신규 확진자 차트를 그린다.
 
     var ctx = 'newDefCntChart';
     var newDefCntChartData = [];
@@ -24582,26 +24604,19 @@ var _hoisted_1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 /* HOISTED */
 );
 
-var _hoisted_2 = {
+var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "py-12"
-};
-var _hoisted_3 = {
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "max-w-7xl mx-auto sm:px-6 lg:px-8"
-};
-var _hoisted_4 = {
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "bg-white overflow-hidden shadow-xl sm:rounded-lg"
-};
-var _hoisted_5 = {
-  key: 0
-};
-
-var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   id: "map",
   style: {
     "width": "100%",
     "height": "400px"
   }
-}, null, -1
+})])])], -1
 /* HOISTED */
 );
 
@@ -24615,13 +24630,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return [_hoisted_1];
     }),
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-        onClick: _cache[0] || (_cache[0] = function () {
-          return _ctx.onClickPlaceButton && _ctx.onClickPlaceButton.apply(_ctx, arguments);
-        })
-      }, "접종처"), _ctx.data ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.data), 1
-      /* TEXT */
-      )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _hoisted_6])])])];
+      return [_hoisted_2];
     }),
     _: 1
     /* STABLE */
