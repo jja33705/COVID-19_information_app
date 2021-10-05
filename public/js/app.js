@@ -21209,18 +21209,40 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 /* harmony import */ var _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @inertiajs/inertia-vue3 */ "./node_modules/@inertiajs/inertia-vue3/dist/index.js");
 /* harmony import */ var chart_js_auto__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! chart.js/auto */ "./node_modules/chart.js/auto/auto.esm.js");
+var _AREA_CODE;
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 
 
-var TOTAL_INDEX = 18;
 
-var makeDateString = function makeDateString(date) {
-  var year = date.getFullYear();
-  var month = ("0" + (date.getMonth() + 1)).slice(-2);
-  var day = ("0" + date.getDate()).slice(-2);
-  return year + month + day;
-};
-
+var AREA_CODE = (_AREA_CODE = {
+  'Seoul': 1,
+  'Incheon': 2,
+  'Daejeon': 3,
+  'Daegu': 4,
+  'Gwangju': 5,
+  'Busan': 6,
+  'Ulsan': 7,
+  'Sejong': 8,
+  'Gyeonggi-do': 31,
+  'Gangwon-do': 32,
+  'Chungcheongbuk-do': 33,
+  'Chungcheongnam-do': 34,
+  'Gyeongsangbuk-do': 35
+}, _defineProperty(_AREA_CODE, "Chungcheongnam-do", 36), _defineProperty(_AREA_CODE, 'Jeollabuk-do', 37), _defineProperty(_AREA_CODE, 'Jeollanam-do', 38), _defineProperty(_AREA_CODE, 'Jeju', 39), _AREA_CODE);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,vue__WEBPACK_IMPORTED_MODULE_0__.defineComponent)({
   components: {
     Head: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__.Head,
@@ -21228,65 +21250,44 @@ var makeDateString = function makeDateString(date) {
   },
   props: {
     canLogin: Boolean,
-    canRegister: Boolean
+    canRegister: Boolean,
+    localData: Array,
+    totalData: Array
   },
   mounted: function mounted() {
-    var _this = this;
+    console.log(this.localData);
+    console.log(this.totalData); // 최근 신규 확진자 차트를 그린다.
 
-    var today = new Date();
-    var todayDateString = makeDateString(today);
-    var previousDay = new Date(today.setDate(today.getDate() - 7));
-    var previousDateString = makeDateString(previousDay);
-    axios.get("https://cors.bridged.cc/http://openapi.data.go.kr/openapi/service/rest/Covid19/getCovid19SidoInfStateJson?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&pageNo=1&numOfRows=10&startCreateDt=".concat(previousDateString, "&endCreateDt=").concat(todayDateString)).then(function (res) {
-      console.log(res);
-      var covidItems = res.data.response.body.items.item.slice(0, (TOTAL_INDEX + 1) * 7);
+    var ctx = 'newDefCntChart';
+    var newDefCntChartData = [];
+    var newDefCntChartLabels = [];
 
-      for (var i = 0; i < covidItems.length; i += TOTAL_INDEX + 1) {
-        _this.localData.push(covidItems.slice(i, i + TOTAL_INDEX));
+    _toConsumableArray(this.totalData).reverse().map(function (value) {
+      newDefCntChartData.push(value.localOccCnt + value.overFlowCnt);
+      newDefCntChartLabels.push(value.stdDay);
+    });
 
-        _this.totalData.push(covidItems[i + TOTAL_INDEX]);
-      } //가장 최근부터 7일간의 데이터를 가져와서 지역별, 합계데이터를 나눠서 저장함.
-
-
-      console.log(_this.localData);
-      console.log(_this.totalData); // 최근 신규 확진자 차트를 그린다.
-
-      var ctx = 'newDefCntChart';
-      var newDefCntChartData = [];
-      var newDefCntChartLabels = [];
-
-      _this.totalData.reverse().map(function (value) {
-        newDefCntChartData.push(value.localOccCnt + value.overFlowCnt);
-        newDefCntChartLabels.push(value.stdDay);
-      });
-
-      var myChart = new chart_js_auto__WEBPACK_IMPORTED_MODULE_2__["default"](ctx, {
-        type: 'bar',
-        data: {
-          labels: newDefCntChartLabels,
-          datasets: [{
-            label: '신규 확진자',
-            data: newDefCntChartData,
-            backgroundColor: ['rgba(54, 162, 235, 1)', 'rgba(54, 162, 235, 1)', 'rgba(54, 162, 235, 1)', 'rgba(54, 162, 235, 1)', 'rgba(54, 162, 235, 1)', 'rgba(54, 162, 235, 1)']
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
+    var myChart = new chart_js_auto__WEBPACK_IMPORTED_MODULE_2__["default"](ctx, {
+      type: 'bar',
+      data: {
+        labels: newDefCntChartLabels,
+        datasets: [{
+          label: '신규 확진자',
+          data: newDefCntChartData,
+          backgroundColor: ['rgba(54, 162, 235, 1)', 'rgba(54, 162, 235, 1)', 'rgba(54, 162, 235, 1)', 'rgba(54, 162, 235, 1)', 'rgba(54, 162, 235, 1)', 'rgba(54, 162, 235, 1)']
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
           }
         }
-      });
-    })["catch"](function (err) {
-      console.log(err);
+      }
     });
   },
   data: function data() {
-    return {
-      localData: [],
-      totalData: []
-    };
+    return {};
   },
   methods: {},
   computed: {
@@ -25800,19 +25801,16 @@ var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNod
 var _hoisted_6 = {
   "class": "max-w-6xl mx-auto sm:px-6 lg:px-8"
 };
-var _hoisted_7 = {
-  key: 0
-};
 
-var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("canvas", {
+var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("canvas", {
   id: "newDefCntChart",
-  width: "200",
-  height: "200"
+  width: "400",
+  height: "400"
 }, null, -1
 /* HOISTED */
 );
 
-var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "flex justify-around"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, "123"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, "456"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, "789")], -1
 /* HOISTED */
@@ -25867,9 +25865,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* PROPS */
   , ["href"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 64
   /* STABLE_FRAGMENT */
-  ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.localData), 1
-  /* TEXT */
-  ), _ctx.totalData[0] ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, "기준날짜: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.getStdDay), 1
+  ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, "기준날짜: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.getStdDay), 1
   /* TEXT */
   ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, "신규 확진자: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.getNewDefCnt), 1
   /* TEXT */
@@ -25879,7 +25875,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* TEXT */
   ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, "격리해제 수: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.getIsolClearCnt), 1
   /* TEXT */
-  )])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _hoisted_8, _hoisted_9])])], 64
+  ), _hoisted_7, _hoisted_8])])], 64
   /* STABLE_FRAGMENT */
   );
 }
