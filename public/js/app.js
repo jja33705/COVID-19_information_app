@@ -20611,12 +20611,48 @@ __webpack_require__.r(__webpack_exports__);
       lng: 0,
       //자기 경도
       tourSpots: [],
-      searchString: ''
+      searchString: '',
+      markers: []
     };
   },
   methods: {
-    getCurrentLocationSuccess: function getCurrentLocationSuccess(position) {
+    clearMarkers: function clearMarkers() {
+      this.markers.map(function (v) {
+        v.setMap(null);
+      });
+      this.markers = [];
+    },
+    setMarkers: function setMarkers() {
       var _this = this;
+
+      //현재 가지고 있는 데이터들로 마커 표시
+      this.clearMarkers();
+      this.tourSpots.map(function (v) {
+        var spot = new naver.maps.LatLng(v.mapy, v.mapx);
+        var marker = new naver.maps.Marker({
+          map: _this.map,
+          position: spot
+        });
+
+        _this.markers.push(marker);
+
+        var contentString = ['<div class="iw_inner">', "   <h3>".concat(v.title, "</h3>"), "   <p>".concat(v.addr1, "<br />"), +"       <img src=\"".concat(v.firstimage, "\" width=\"55\" height=\"55\" alt=\"").concat(v.title, "\" class=\"thumb\" /><br />"), '   </p>', '</div>'].join('');
+        var infoWindow = new naver.maps.InfoWindow({
+          content: contentString
+        }); //마커 클릭시 정보창 보여줌
+
+        naver.maps.Event.addListener(marker, 'click', function (e) {
+          if (infoWindow.getMap()) {
+            infoWindow.close();
+          } else {
+            console.log(_this);
+            infoWindow.open(_this.map, marker);
+          }
+        });
+      });
+    },
+    getCurrentLocationSuccess: function getCurrentLocationSuccess(position) {
+      var _this2 = this;
 
       //자기위치 가져오기(성공)
       this.lat = position.coords.latitude;
@@ -20638,27 +20674,9 @@ __webpack_require__.r(__webpack_exports__);
       }); //주변 관광지 데이터 가져오기(2km)
 
       axios.get("https://cors.bridged.cc/http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&numOfRows=100&pageNo=1&MobileOS=ETC&MobileApp=AppTest&arrange=B&contentTypeId=12&mapX=".concat(this.lng, "&mapY=").concat(this.lat, "&radius=3000&listYN=Y")).then(function (res) {
-        _this.tourSpots = res.data.response.body.items.item; //가져온 장소들 지도에 표시
+        _this2.tourSpots = res.data.response.body.items.item;
 
-        _this.tourSpots.map(function (v) {
-          var spot = new naver.maps.LatLng(v.mapy, v.mapx);
-          var marker = new naver.maps.Marker({
-            map: _this.map,
-            position: spot
-          });
-          var contentString = ['<div class="iw_inner">', "   <h3>".concat(v.title, "</h3>"), "   <p>".concat(v.addr1, "<br />"), +"       <img src=\"".concat(v.firstimage, "\" width=\"55\" height=\"55\" alt=\"").concat(v.title, "\" class=\"thumb\" /><br />"), '   </p>', '</div>'].join('');
-          var infoWindow = new naver.maps.InfoWindow({
-            content: contentString
-          });
-          naver.maps.Event.addListener(marker, 'click', function (e) {
-            if (infoWindow.getMap()) {
-              infoWindow.close();
-            } else {
-              console.log(_this);
-              infoWindow.open(_this.map, marker);
-            }
-          }); // infoWindow.open(this.map, marker);
-        });
+        _this2.setMarkers();
       })["catch"](function (err) {
         console.log(err);
       });
@@ -20668,11 +20686,14 @@ __webpack_require__.r(__webpack_exports__);
       console.log('cant get current location');
     },
     search: function search() {
-      var _this2 = this;
+      var _this3 = this;
 
+      //검색
       axios.get("https://cors.bridged.cc/http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&MobileApp=AppTest&MobileOS=ETC&pageNo=1&numOfRows=10&listYN=Y&arrange=B&contentTypeId=12&keyword=".concat(encodeURIComponent(this.searchString))).then(function (res) {
         console.log(res);
-        _this2.tourSpots = res.data.response.body.items.item;
+        _this3.tourSpots = res.data.response.body.items.item;
+
+        _this3.setMarkers();
       })["catch"](function (err) {
         console.log(err);
       });

@@ -34,9 +34,48 @@ export default defineComponent({
             lng: 0,  //자기 경도
             tourSpots: [],
             searchString: '',
+            markers: [],
         };
     },
     methods: {
+        clearMarkers() {
+            this.markers.map((v) => {
+                v.setMap(null);
+            });
+            this.markers = [];
+        },
+        setMarkers() { //현재 가지고 있는 데이터들로 마커 표시
+            this.clearMarkers();
+            this.tourSpots.map((v) => {
+                const spot = new naver.maps.LatLng(v.mapy, v.mapx);
+                const marker = new naver.maps.Marker({
+                    map: this.map,
+                    position: spot,
+                });
+                this.markers.push(marker);
+                var contentString = [
+                    '<div class="iw_inner">',
+                    `   <h3>${v.title}</h3>`,
+                    `   <p>${v.addr1}<br />`,+
+                    `       <img src="${v.firstimage}" width="55" height="55" alt="${v.title}" class="thumb" /><br />`,
+                    '   </p>',
+                    '</div>',
+                ].join('');
+                const infoWindow = new naver.maps.InfoWindow({
+                    content: contentString,
+                });
+
+                //마커 클릭시 정보창 보여줌
+                naver.maps.Event.addListener(marker, 'click', (e) => {
+                    if (infoWindow.getMap()) {
+                        infoWindow.close();
+                    } else {
+                        console.log(this);
+                        infoWindow.open(this.map, marker);
+                    }
+                });
+            });
+        },
         getCurrentLocationSuccess(position) { //자기위치 가져오기(성공)
             this.lat = position.coords.latitude;
             this.lng = position.coords.longitude;
@@ -60,35 +99,7 @@ export default defineComponent({
             axios.get(`https://cors.bridged.cc/http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&numOfRows=100&pageNo=1&MobileOS=ETC&MobileApp=AppTest&arrange=B&contentTypeId=12&mapX=${this.lng}&mapY=${this.lat}&radius=3000&listYN=Y`)
             .then((res) => {
                 this.tourSpots = res.data.response.body.items.item;
-                //가져온 장소들 지도에 표시
-                this.tourSpots.map((v) => {
-                    const spot = new naver.maps.LatLng(v.mapy, v.mapx);
-                    const marker = new naver.maps.Marker({
-                        map: this.map,
-                        position: spot,
-                    });
-                    var contentString = [
-                        '<div class="iw_inner">',
-                        `   <h3>${v.title}</h3>`,
-                        `   <p>${v.addr1}<br />`,+
-                        `       <img src="${v.firstimage}" width="55" height="55" alt="${v.title}" class="thumb" /><br />`,
-                        '   </p>',
-                        '</div>',
-                    ].join('');
-                    const infoWindow = new naver.maps.InfoWindow({
-                        content: contentString,
-                    });
-
-                    naver.maps.Event.addListener(marker, 'click', (e) => {
-                        if (infoWindow.getMap()) {
-                            infoWindow.close();
-                        } else {
-                            console.log(this);
-                            infoWindow.open(this.map, marker);
-                        }
-                    });
-                    // infoWindow.open(this.map, marker);
-                });
+                this.setMarkers();
             })
             .catch((err) => {
                 console.log(err);
@@ -97,16 +108,17 @@ export default defineComponent({
         getCurrentLocationError() { //자기위치 가져오기(실패)
             console.log('cant get current location');
         },
-        search() {
+        search() { //검색
             axios.get(`https://cors.bridged.cc/http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&MobileApp=AppTest&MobileOS=ETC&pageNo=1&numOfRows=10&listYN=Y&arrange=B&contentTypeId=12&keyword=${encodeURIComponent(this.searchString)}`)
             .then((res) => {
                 console.log(res);
                 this.tourSpots = res.data.response.body.items.item;
+                this.setMarkers();
             })
             .catch((err) => {
                 console.log(err);
             });
-        }
+        },
     },
     mounted() {
         //맵 생성
