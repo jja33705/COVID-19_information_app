@@ -20610,7 +20610,8 @@ __webpack_require__.r(__webpack_exports__);
       //자기 위도
       lng: 0,
       //자기 경도
-      tourSpots: []
+      tourSpots: [],
+      searchString: ''
     };
   },
   methods: {
@@ -20645,7 +20646,7 @@ __webpack_require__.r(__webpack_exports__);
             map: _this.map,
             position: spot
           });
-          var contentString = ['<div class="iw_inner">', "   <h3>".concat(v.title, "</h3>"), "   <p>".concat(v.addr1, "<br />"), +"       <img src=\"".concat(v.firstimage2, "\" width=\"55\" height=\"55\" alt=\"").concat(v.title, "\" class=\"thumb\" /><br />"), "       ".concat(v.dist, "m"), '   </p>', '</div>'].join('');
+          var contentString = ['<div class="iw_inner">', "   <h3>".concat(v.title, "</h3>"), "   <p>".concat(v.addr1, "<br />"), +"       <img src=\"".concat(v.firstimage, "\" width=\"55\" height=\"55\" alt=\"").concat(v.title, "\" class=\"thumb\" /><br />"), '   </p>', '</div>'].join('');
           var infoWindow = new naver.maps.InfoWindow({
             content: contentString
           });
@@ -20665,6 +20666,16 @@ __webpack_require__.r(__webpack_exports__);
     getCurrentLocationError: function getCurrentLocationError() {
       //자기위치 가져오기(실패)
       console.log('cant get current location');
+    },
+    search: function search() {
+      var _this2 = this;
+
+      axios.get("https://cors.bridged.cc/http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&MobileApp=AppTest&MobileOS=ETC&pageNo=1&numOfRows=10&listYN=Y&arrange=B&contentTypeId=12&keyword=".concat(encodeURIComponent(this.searchString))).then(function (res) {
+        console.log(res);
+        _this2.tourSpots = res.data.response.body.items.item;
+      })["catch"](function (err) {
+        console.log(err);
+      });
     }
   },
   mounted: function mounted() {
@@ -24604,19 +24615,29 @@ var _hoisted_1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 /* HOISTED */
 );
 
-var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_2 = {
   "class": "py-12"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+};
+var _hoisted_3 = {
   "class": "max-w-7xl mx-auto sm:px-6 lg:px-8"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+};
+var _hoisted_4 = {
   "class": "bg-white overflow-hidden shadow-xl sm:rounded-lg"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+};
+
+var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  type: "submit"
+}, "검색", -1
+/* HOISTED */
+);
+
+var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   id: "map",
   style: {
     "width": "100%",
     "height": "400px"
   }
-})])])], -1
+}, null, -1
 /* HOISTED */
 );
 
@@ -24630,7 +24651,20 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return [_hoisted_1];
     }),
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_2];
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
+        onSubmit: _cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
+          return _ctx.search && _ctx.search.apply(_ctx, arguments);
+        }, ["prevent"]))
+      }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        type: "text",
+        "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
+          return _ctx.searchString = $event;
+        })
+      }, null, 512
+      /* NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.searchString]]), _hoisted_5], 32
+      /* HYDRATE_EVENTS */
+      ), _hoisted_6])])])];
     }),
     _: 1
     /* STABLE */

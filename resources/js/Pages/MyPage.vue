@@ -9,7 +9,10 @@ d<template>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-
+                    <form @submit.prevent="search">
+                        <input type="text" v-model="searchString">
+                        <button type="submit">검색</button>
+                    </form>
                     <div id="map" style="width:100%; height:400px;"></div>
                 </div>
             </div>
@@ -30,6 +33,7 @@ export default defineComponent({
             lat: 0, //자기 위도
             lng: 0,  //자기 경도
             tourSpots: [],
+            searchString: '',
         };
     },
     methods: {
@@ -67,8 +71,7 @@ export default defineComponent({
                         '<div class="iw_inner">',
                         `   <h3>${v.title}</h3>`,
                         `   <p>${v.addr1}<br />`,+
-                        `       <img src="${v.firstimage2}" width="55" height="55" alt="${v.title}" class="thumb" /><br />`,
-                        `       ${v.dist}m`,
+                        `       <img src="${v.firstimage}" width="55" height="55" alt="${v.title}" class="thumb" /><br />`,
                         '   </p>',
                         '</div>',
                     ].join('');
@@ -94,6 +97,16 @@ export default defineComponent({
         getCurrentLocationError() { //자기위치 가져오기(실패)
             console.log('cant get current location');
         },
+        search() {
+            axios.get(`https://cors.bridged.cc/http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&MobileApp=AppTest&MobileOS=ETC&pageNo=1&numOfRows=10&listYN=Y&arrange=B&contentTypeId=12&keyword=${encodeURIComponent(this.searchString)}`)
+            .then((res) => {
+                console.log(res);
+                this.tourSpots = res.data.response.body.items.item;
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        }
     },
     mounted() {
         //맵 생성
