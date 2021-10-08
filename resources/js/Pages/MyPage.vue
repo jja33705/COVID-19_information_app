@@ -56,7 +56,7 @@ export default defineComponent({
                 var contentString = [
                     '<div class="iw_inner">',
                     `   <h3>${v.title}</h3>`,
-                    `   <p>${v.addr1}<br />`,+
+                    `   <p>${v.addr1}<br />`,
                     `       <img src="${v.firstimage}" width="55" height="55" alt="${v.title}" class="thumb" /><br />`,
                     '   </p>',
                     '</div>',
@@ -96,7 +96,7 @@ export default defineComponent({
             });
 
             //주변 관광지 데이터 가져오기(2km)
-            axios.get(`https://cors.bridged.cc/http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&numOfRows=100&pageNo=1&MobileOS=ETC&MobileApp=AppTest&arrange=B&contentTypeId=12&mapX=${this.lng}&mapY=${this.lat}&radius=3000&listYN=Y`)
+            axios.get(`https://cors.bridged.cc/http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&numOfRows=10&pageNo=1&MobileOS=ETC&MobileApp=AppTest&arrange=B&contentTypeId=12&mapX=${this.lng}&mapY=${this.lat}&radius=3000&listYN=Y`)
             .then((res) => {
                 this.tourSpots = res.data.response.body.items.item;
                 this.setMarkers();

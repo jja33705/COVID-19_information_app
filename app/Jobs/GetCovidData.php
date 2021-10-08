@@ -58,7 +58,7 @@ class GetCovidData implements ShouldQueue
                     $covidData->stdDay = $stdDay;
                     $covidData->localOccCnt = $data['localOccCnt'];
                     $covidData->overFlowCnt = $data['overFlowCnt'];
-                    $covidData->gubun = $data['gubunEn'];
+                    $covidData->gubun = $data['gubun'];
                     $covidData->defCnt = $data['defCnt'];
                     $covidData->isolClearCnt = $data['isolClearCnt'];
                     $covidData->deathCnt = $data['deathCnt'];

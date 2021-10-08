@@ -20636,7 +20636,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this.markers.push(marker);
 
-        var contentString = ['<div class="iw_inner">', "   <h3>".concat(v.title, "</h3>"), "   <p>".concat(v.addr1, "<br />"), +"       <img src=\"".concat(v.firstimage, "\" width=\"55\" height=\"55\" alt=\"").concat(v.title, "\" class=\"thumb\" /><br />"), '   </p>', '</div>'].join('');
+        var contentString = ['<div class="iw_inner">', "   <h3>".concat(v.title, "</h3>"), "   <p>".concat(v.addr1, "<br />"), "       <img src=\"".concat(v.firstimage, "\" width=\"55\" height=\"55\" alt=\"").concat(v.title, "\" class=\"thumb\" /><br />"), '   </p>', '</div>'].join('');
         var infoWindow = new naver.maps.InfoWindow({
           content: contentString
         }); //마커 클릭시 정보창 보여줌
@@ -20673,7 +20673,7 @@ __webpack_require__.r(__webpack_exports__);
         }
       }); //주변 관광지 데이터 가져오기(2km)
 
-      axios.get("https://cors.bridged.cc/http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&numOfRows=100&pageNo=1&MobileOS=ETC&MobileApp=AppTest&arrange=B&contentTypeId=12&mapX=".concat(this.lng, "&mapY=").concat(this.lat, "&radius=3000&listYN=Y")).then(function (res) {
+      axios.get("https://cors.bridged.cc/http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&numOfRows=10&pageNo=1&MobileOS=ETC&MobileApp=AppTest&arrange=B&contentTypeId=12&mapX=".concat(this.lng, "&mapY=").concat(this.lat, "&radius=3000&listYN=Y")).then(function (res) {
         _this2.tourSpots = res.data.response.body.items.item;
 
         _this2.setMarkers();
@@ -21309,8 +21309,7 @@ var AREA_CODE = (_AREA_CODE = {
   },
   mounted: function mounted() {
     console.log(this.localData);
-    console.log(this.totalData);
-    console.log(AREA_CODE['Jeju']); // 최근 신규 확진자 차트를 그린다.
+    console.log(this.totalData); // 최근 신규 확진자 차트를 그린다.
 
     var ctx = 'newDefCntChart';
     var newDefCntChartData = [];
@@ -25863,18 +25862,37 @@ var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNod
 var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Register ");
 
 var _hoisted_6 = {
-  "class": "max-w-6xl mx-auto sm:px-6 lg:px-8"
+  "class": "max-w-7xl mx-auto sm:px-6 lg:px-8"
 };
 
 var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("canvas", {
   id: "newDefCntChart",
-  width: "400",
+  width: "600",
   height: "400"
 }, null, -1
 /* HOISTED */
 );
 
-var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_8 = {
+  "class": "w-1/2 border-collapse border border-blue-400"
+};
+
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
+  "class": "border border-blue-400"
+}, "지역"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
+  "class": "border border-blue-400"
+}, "신규 확진자")])], -1
+/* HOISTED */
+);
+
+var _hoisted_10 = {
+  "class": "border border-blue-400"
+};
+var _hoisted_11 = {
+  "class": "border border-blue-400"
+};
+
+var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "flex justify-around"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, "123"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, "456"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, "789")], -1
 /* HOISTED */
@@ -25939,7 +25957,17 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* TEXT */
   ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, "격리해제 수: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.getIsolClearCnt), 1
   /* TEXT */
-  ), _hoisted_7, _hoisted_8])])], 64
+  ), _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_8, [_hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.localData, function (data) {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
+      key: data.id
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(data.gubun), 1
+    /* TEXT */
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(data.localOccCnt + data.overFlowCnt), 1
+    /* TEXT */
+    )]);
+  }), 128
+  /* KEYED_FRAGMENT */
+  ))])]), _hoisted_12])])], 64
   /* STABLE_FRAGMENT */
   );
 }

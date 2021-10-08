@@ -20,8 +20,8 @@ Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'localData' => Covid::where('stdDay', Covid::max('stdDay'))->where('gubun', 'not like', 'Total')->get(),
-        'totalData' => Covid::where('gubun', 'Total')->orderByDesc('stdDay')->get(),
+        'localData' => Covid::where('stdDay', Covid::max('stdDay'))->where('gubun', 'not like', '합계')->orderByRaw('localOccCnt + overFlowCnt DESC')->get(),
+        'totalData' => Covid::where('gubun', '합계')->orderByDesc('stdDay')->get(),
         // 'localData' => DB::table('covids')->selectRaw('gubun', 'localOccCnt + overFlowCnt as newPatiant')
     ]);
 });

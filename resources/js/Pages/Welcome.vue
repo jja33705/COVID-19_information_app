@@ -42,13 +42,27 @@
             </template>
         </div>
 
-        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div>기준날짜: {{ getStdDay }}</div>
             <div>신규 확진자: {{ getNewDefCnt }}</div>
             <div>확진자 수: {{ getDefCnt }}</div>
             <div>사망자 수: {{ getDeathCnt }}</div>
             <div>격리해제 수: {{ getIsolClearCnt }}</div>
-            <canvas id="newDefCntChart" width="400" height="400"></canvas>
+            <canvas id="newDefCntChart" width="600" height="400"></canvas>
+            <table class="w-1/2 border-collapse border border-blue-400">
+                <thead>
+                    <tr>
+                        <th class="border border-blue-400">지역</th>
+                        <th class="border border-blue-400">신규 확진자</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="data in localData" :key="data.id">
+                        <td class="border border-blue-400">{{ data.gubun }}</td>
+                        <td class="border border-blue-400">{{ data.localOccCnt + data.overFlowCnt }}</td>
+                    </tr>
+                </tbody>
+            </table>
 
             <div class="flex justify-around">
                 <div>123</div>
@@ -98,7 +112,6 @@ export default defineComponent({
     mounted() {
         console.log(this.localData);
         console.log(this.totalData);
-        console.log(AREA_CODE['Jeju']);
 
         // 최근 신규 확진자 차트를 그린다.
         const ctx = 'newDefCntChart';
