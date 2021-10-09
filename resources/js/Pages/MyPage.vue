@@ -1,5 +1,5 @@
-d<template>
-    <app-layout title="myPage">
+<template>
+    <app-layout :title="myPage">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 MyPage
@@ -9,7 +9,7 @@ d<template>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                    <form @submit.prevent="search">
+                    <form @submit.prevent="searchTourSpots">
                         <input type="text" v-model="searchString">
                         <button type="submit">검색</button>
                     </form>
@@ -44,7 +44,7 @@ export default defineComponent({
             });
             this.markers = [];
         },
-        setMarkers() { //현재 가지고 있는 데이터들로 마커 표시
+        setMarkers() { //현재 가지고 있는 데이터들로 지도에 마커 표시
             this.clearMarkers();
             this.tourSpots.map((v) => {
                 const spot = new naver.maps.LatLng(v.mapy, v.mapx);
@@ -79,10 +79,12 @@ export default defineComponent({
         getCurrentLocationSuccess(position) { //자기위치 가져오기(성공)
             this.lat = position.coords.latitude;
             this.lng = position.coords.longitude;
-            const LatLng = new naver.maps.LatLng(this.lat, this.lng);
+            const currentLocation = new naver.maps.LatLng(this.lat, this.lng);
+            this.map.setCenter(currentLocation);
+            this.map.setOptions('zoom',10);
             new naver.maps.Marker({
                 map: this.map,
-                position: LatLng,
+                position: currentLocation,
                 icon: {
                     path: naver.maps.SymbolPath.CIRCLE,
                     style: naver.maps.SymbolStyle.CIRCLE,
@@ -94,9 +96,13 @@ export default defineComponent({
                     radius: 10,
                 },
             });
-
-            //주변 관광지 데이터 가져오기(2km)
-            axios.get(`https://cors.bridged.cc/http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&numOfRows=10&pageNo=1&MobileOS=ETC&MobileApp=AppTest&arrange=B&contentTypeId=12&mapX=${this.lng}&mapY=${this.lat}&radius=3000&listYN=Y`)
+            this.getNearTourSpots();
+        },
+        getCurrentLocationError() { //자기위치 가져오기(실패)
+            console.log('cant get current location');
+        },
+        getNearTourSpots() { //주변 관광지 데이터 가져오기(10km)
+            axios.get(`https://cors.bridged.cc/http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&numOfRows=10&pageNo=1&MobileOS=ETC&MobileApp=AppTest&arrange=B&contentTypeId=12&mapX=${this.lng}&mapY=${this.lat}&radius=10000&listYN=Y`)
             .then((res) => {
                 this.tourSpots = res.data.response.body.items.item;
                 this.setMarkers();
@@ -105,10 +111,7 @@ export default defineComponent({
                 console.log(err);
             });
         },
-        getCurrentLocationError() { //자기위치 가져오기(실패)
-            console.log('cant get current location');
-        },
-        search() { //검색
+        searchTourSpots() { //검색
             axios.get(`https://cors.bridged.cc/http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword?serviceKey=4lyV1AhLwS2E8AbWo7qJKIsGqL8UPCTIqKP7LkFo62%2BZbmluePY8GC9jW7J0d5IlpfRGcRPk5e3er8Nvg08YIQ%3D%3D&MobileApp=AppTest&MobileOS=ETC&pageNo=1&numOfRows=10&listYN=Y&arrange=B&contentTypeId=12&keyword=${encodeURIComponent(this.searchString)}`)
             .then((res) => {
                 console.log(res);

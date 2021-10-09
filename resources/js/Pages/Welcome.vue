@@ -1,79 +1,52 @@
 <template>
-    <Head title="home" />
-    <div
-        class="
-            relative
-            flex
-            items-top
-            justify-center
-            min-h-screen
-            bg-gray-100
-            dark:bg-gray-900
-            sm:items-center sm:pt-0
-        "
-    >
-        <div
-            v-if="canLogin"
-            class="hidden fixed top-0 right-0 px-6 py-4 sm:block"
-        >
-            <Link
-                v-if="$page.props.user"
-                :href="route('dashboard')"
-                class="text-sm text-gray-700 underline"
-            >
-                Dashboard
-            </Link>
+    <app-layout :title="covid19_TRAVEL">
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                covid19_TRAVEL
+            </h2>
+        </template>
 
-            <template v-else>
-                <Link
-                    :href="route('login')"
-                    class="text-sm text-gray-700 underline"
-                >
-                    Log in
-                </Link>
+        <div class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                        <div>기준날짜: {{ getStdDay }}</div>
+                        <div>신규 확진자: {{ getNewDefCnt }}</div>
+                        <div>확진자 수: {{ getDefCnt }}</div>
+                        <div>사망자 수: {{ getDeathCnt }}</div>
+                        <div>격리해제 수: {{ getIsolClearCnt }}</div>
+                        <canvas id="newDefCntChart" width="600" height="400"></canvas>
+                        <table class="w-1/2 border-collapse border border-blue-400">
+                            <thead>
+                                <tr>
+                                    <th class="border border-blue-400">지역</th>
+                                    <th class="border border-blue-400">신규 확진자</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="data in localData" :key="data.id">
+                                    <td class="border border-blue-400">{{ data.gubun }}</td>
+                                    <td class="border border-blue-400">{{ data.localOccCnt + data.overFlowCnt }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-                <Link
-                    v-if="canRegister"
-                    :href="route('register')"
-                    class="ml-4 text-sm text-gray-700 underline"
-                >
-                    Register
-                </Link>
-            </template>
-        </div>
-
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div>기준날짜: {{ getStdDay }}</div>
-            <div>신규 확진자: {{ getNewDefCnt }}</div>
-            <div>확진자 수: {{ getDefCnt }}</div>
-            <div>사망자 수: {{ getDeathCnt }}</div>
-            <div>격리해제 수: {{ getIsolClearCnt }}</div>
-            <canvas id="newDefCntChart" width="600" height="400"></canvas>
-            <table class="w-1/2 border-collapse border border-blue-400">
-                <thead>
-                    <tr>
-                        <th class="border border-blue-400">지역</th>
-                        <th class="border border-blue-400">신규 확진자</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="data in localData" :key="data.id">
-                        <td class="border border-blue-400">{{ data.gubun }}</td>
-                        <td class="border border-blue-400">{{ data.localOccCnt + data.overFlowCnt }}</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="flex justify-around">
-                <div>123</div>
-                <div>456</div>
-                <div>789</div>
+                        <div class="flex justify-around">
+                            <div>123</div>
+                            <div>456</div>
+                            <div>789</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </app-layout>
+
+
 </template>
 
 <script>
+import AppLayout from "@/Layouts/AppLayout.vue";
 import { defineComponent } from "vue";
 import { Head, Link } from "@inertiajs/inertia-vue3";
 import Chart from 'chart.js/auto';
@@ -100,6 +73,7 @@ const AREA_CODE = {
 
 export default defineComponent({
     components: {
+        AppLayout,
         Head,
         Link,
     },

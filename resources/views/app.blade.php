@@ -15,7 +15,8 @@
         <!-- Scripts -->
         @routes
         <script src="{{ mix('js/app.js') }}" defer></script>
-        <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=woznu34ra1"></script>
+        {{-- 네이버맵 --}}
+        <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId={{ env('NAVER_MAP_CLIENT_ID') }}"></script>
     </head>
     <body class="font-sans antialiased">
         @inertia
