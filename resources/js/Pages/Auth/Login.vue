@@ -40,8 +40,8 @@
                 </jet-button>
             </div>
             <div class="flex items-center justify-end mt-4">
-                <a href="http://localhost:8000/auth/google">
-                    <img src="..\..\..\images\btn_google_signin_dark_normal_web.png" alt="구글 로그인" >
+                <a @mousedown="onMouseDownGoogleOAuthImage" @mouseup="onMouseUpGoogleOAuthImage" @mouseover="onMouseOverGoogleOAuthImage" @mouseout="onMouseOutGoogleOAuthImage" href="http://localhost:8000/auth/google">
+                    <img :src="googleOAuthImage" alt="구글 로그인" >
                 </a>
             </div>
         </form>
@@ -83,7 +83,8 @@
                     email: '',
                     password: '',
                     remember: false
-                })
+                }),
+                googleOAuthImage: "http://localhost:8000/images/btn_google_signin_dark_normal_web.png",
             }
         },
 
@@ -98,6 +99,18 @@
                         onFinish: () => this.form.reset('password'),
                     })
             },
+            onMouseDownGoogleOAuthImage() {
+                this.googleOAuthImage = "http://localhost:8000/images/btn_google_signin_dark_pressed_web.png";
+            },
+            onMouseUpGoogleOAuthImage() {
+                this.googleOAuthImage = "http://localhost:8000/images/btn_google_signin_dark_normal_web.png";
+            },
+            onMouseOverGoogleOAuthImage() {
+                this.googleOAuthImage = "http://localhost:8000/images/btn_google_signin_dark_focus_web.png";
+            },
+            onMouseOutGoogleOAuthImage() {
+                this.googleOAuthImage = "http://localhost:8000/images/btn_google_signin_dark_normal_web.png";
+            }
         }
     })
 </script>

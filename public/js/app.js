@@ -20243,7 +20243,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         email: '',
         password: '',
         remember: false
-      })
+      }),
+      googleOAuthImage: "http://localhost:8000/images/btn_google_signin_dark_normal_web.png"
     };
   },
   methods: {
@@ -20259,6 +20260,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           return _this.form.reset('password');
         }
       });
+    },
+    onMouseDownGoogleOAuthImage: function onMouseDownGoogleOAuthImage() {
+      this.googleOAuthImage = "http://localhost:8000/images/btn_google_signin_dark_pressed_web.png";
+    },
+    onMouseUpGoogleOAuthImage: function onMouseUpGoogleOAuthImage() {
+      this.googleOAuthImage = "http://localhost:8000/images/btn_google_signin_dark_normal_web.png";
+    },
+    onMouseOverGoogleOAuthImage: function onMouseOverGoogleOAuthImage() {
+      this.googleOAuthImage = "http://localhost:8000/images/btn_google_signin_dark_focus_web.png";
+    },
+    onMouseOutGoogleOAuthImage: function onMouseOutGoogleOAuthImage() {
+      this.googleOAuthImage = "http://localhost:8000/images/btn_google_signin_dark_normal_web.png";
     }
   }
 }));
@@ -23362,8 +23375,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* binding */ render)
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
-/* harmony import */ var _images_btn_google_signin_dark_normal_web_png__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../images/btn_google_signin_dark_normal_web.png */ "./resources/images/btn_google_signin_dark_normal_web.png");
-
 
 var _hoisted_1 = {
   key: 0,
@@ -23393,17 +23404,10 @@ var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNod
 
 var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Log in ");
 
-var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_9 = {
   "class": "flex items-center justify-end mt-4"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
-  href: "http://localhost:8000/auth/google"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
-  src: _images_btn_google_signin_dark_normal_web_png__WEBPACK_IMPORTED_MODULE_1__["default"],
-  alt: "구글 로그인"
-})])], -1
-/* HOISTED */
-);
-
+};
+var _hoisted_10 = ["src"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Head = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Head");
 
@@ -23435,7 +23439,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       }), _ctx.status ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.status), 1
       /* TEXT */
       )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
-        onSubmit: _cache[3] || (_cache[3] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
+        onSubmit: _cache[7] || (_cache[7] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
           return _ctx.submit && _ctx.submit.apply(_ctx, arguments);
         }, ["prevent"]))
       }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_label, {
@@ -23503,7 +23507,28 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
       }, 8
       /* PROPS */
-      , ["class", "disabled"])]), _hoisted_9], 32
+      , ["class", "disabled"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+        onMousedown: _cache[3] || (_cache[3] = function () {
+          return _ctx.onMouseDownGoogleOAuthImage && _ctx.onMouseDownGoogleOAuthImage.apply(_ctx, arguments);
+        }),
+        onMouseup: _cache[4] || (_cache[4] = function () {
+          return _ctx.onMouseUpGoogleOAuthImage && _ctx.onMouseUpGoogleOAuthImage.apply(_ctx, arguments);
+        }),
+        onMouseover: _cache[5] || (_cache[5] = function () {
+          return _ctx.onMouseOverGoogleOAuthImage && _ctx.onMouseOverGoogleOAuthImage.apply(_ctx, arguments);
+        }),
+        onMouseout: _cache[6] || (_cache[6] = function () {
+          return _ctx.onMouseOutGoogleOAuthImage && _ctx.onMouseOutGoogleOAuthImage.apply(_ctx, arguments);
+        }),
+        href: "http://localhost:8000/auth/google"
+      }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+        src: _ctx.googleOAuthImage,
+        alt: "구글 로그인"
+      }, null, 8
+      /* PROPS */
+      , _hoisted_10)], 32
+      /* HYDRATE_EVENTS */
+      )])], 32
       /* HYDRATE_EVENTS */
       )];
     }),
@@ -39111,21 +39136,6 @@ var deepmerge_1 = deepmerge;
 
 module.exports = deepmerge_1;
 
-
-/***/ }),
-
-/***/ "./resources/images/btn_google_signin_dark_normal_web.png":
-/*!****************************************************************!*\
-  !*** ./resources/images/btn_google_signin_dark_normal_web.png ***!
-  \****************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ("/images/btn_google_signin_dark_normal_web.png?8bce00b9320bf6d28eb16e1dd2ebbb55");
 
 /***/ }),
 
