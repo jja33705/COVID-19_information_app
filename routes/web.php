@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GoogleOAuthController;
 use App\Models\Covid;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -16,19 +17,23 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return Inertia::render('Covid', [
         'localData' => Covid::where('stdDay', Covid::max('stdDay'))->where('gubun', 'not like', '합계')->orderByRaw('localOccCnt + overFlowCnt DESC')->get(),
         'totalData' => Covid::where('gubun', '합계')->orderByDesc('stdDay')->get(),
     ]);
-});
+})->name('covid');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->name('dashboard');
 
-Route::get('/myPage', function () {
-    return Inertia::render('MyPage');
-});
+Route::get('/tour', function () {
+    return Inertia::render('Tour');
+})->name('tour');
+
+Route::get('auth/google', [GoogleOAuthController::class, 'redirectToGoogle'])->name('googleLogin');
+
+Route::get('/google/callback', [GoogleOAuthController::class, 'handleGoogleCallback']);
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 });

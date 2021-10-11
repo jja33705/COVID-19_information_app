@@ -2,28 +2,11 @@
     <div>
         <Head :title="title" />
 
-        <jet-banner />
-
-        <div class="min-h-screen bg-gray-100">
-            <nav class="bg-white border-b border-gray-100">
+        <div class="min-h-screen bg-blueGray-50">
+            <nav class="bg-blueGray-50">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
-                        <div class="flex">
-                            <!-- Logo -->
-                            <div class="flex-shrink-0 flex items-center">
-                                <Link :href="route('dashboard')">
-                                    <jet-application-mark class="block h-9 w-auto" />
-                                </Link>
-                            </div>
-
-                            <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <jet-nav-link :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
-                                </jet-nav-link>
-                            </div>
-                        </div>
+                    <div class="flex flex-row-reverse h-10">
 
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
 
@@ -90,13 +73,22 @@
                     </div>
                 </div>
             </nav>
-
-            <!-- Page Heading -->
-            <header class="bg-white shadow" v-if="$slots.header">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <slot name="header"></slot>
+            <div class="my-5">
+                <p class="text-6xl font-bold text-center">covid-19 travel</p>
+            </div>
+            <nav class="bg-white px-8 pt-2 shadow-md">
+                <div class="-mb-px flex justify-around">
+                    <Link class="no-underline text-teal-dark border-b-2 border-teal-dark tracking-wide font-bold text-xs py-3 mr-8 text-xl" :href="route('covid')">
+                        COVID-19
+                    </Link>
+                    <Link class="no-underline text-grey-dark border-b-2 border-transparent tracking-wide font-bold text-xs py-3 mr-8 text-xl" :href="route('tour')">
+                        여행지 검색
+                    </Link>
+                    <a class="no-underline text-grey-dark border-b-2 border-transparent tracking-wide font-bold text-xs py-3 mr-8 text-xl" href="#">
+                        후기
+                    </a>
                 </div>
-            </header>
+            </nav>
 
             <!-- Page Content -->
             <main>
@@ -109,7 +101,6 @@
 <script>
     import { defineComponent } from 'vue'
     import JetApplicationMark from '@/Jetstream/ApplicationMark.vue'
-    import JetBanner from '@/Jetstream/Banner.vue'
     import JetDropdown from '@/Jetstream/Dropdown.vue'
     import JetDropdownLink from '@/Jetstream/DropdownLink.vue'
     import JetNavLink from '@/Jetstream/NavLink.vue'
@@ -124,7 +115,6 @@
         components: {
             Head,
             JetApplicationMark,
-            JetBanner,
             JetDropdown,
             JetDropdownLink,
             JetNavLink,

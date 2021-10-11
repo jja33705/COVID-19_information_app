@@ -39,6 +39,11 @@
                     Log in
                 </jet-button>
             </div>
+            <div class="flex items-center justify-end mt-4">
+                <a href="http://localhost:8000/auth/google">
+                    <img src="..\..\..\images\btn_google_signin_dark_normal_web.png" alt="구글 로그인" >
+                </a>
+            </div>
         </form>
     </jet-authentication-card>
 </template>
@@ -92,7 +97,7 @@
                     .post(this.route('login'), {
                         onFinish: () => this.form.reset('password'),
                     })
-            }
+            },
         }
     })
 </script>
