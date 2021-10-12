@@ -78,14 +78,14 @@
             </div>
             <nav class="bg-white px-8 pt-2 shadow-md">
                 <div class="-mb-px flex justify-around">
-                    <Link class="no-underline text-teal-dark border-b-2 border-teal-dark tracking-wide font-bold text-xs py-3 mr-8 text-xl" :href="route('covid')">
-                        COVID-19
+                    <Link class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" :href="route('covid')" :class="{ 'border-b-4' : $page.url === '/' }">
+                        코로나 정보
                     </Link>
-                    <Link class="no-underline text-grey-dark border-b-2 border-transparent tracking-wide font-bold text-xs py-3 mr-8 text-xl" :href="route('tour')">
+                    <Link class="text-gray-600  tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" :href="route('tour')" :class="{ 'border-b-4' : $page.url.startsWith('/tour') }">
                         여행지 검색
                     </Link>
-                    <a class="no-underline text-grey-dark border-b-2 border-transparent tracking-wide font-bold text-xs py-3 mr-8 text-xl" href="#">
-                        후기
+                    <a class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" href="#">
+                        여행 후기
                     </a>
                 </div>
             </nav>
@@ -123,9 +123,6 @@
         },
 
         data() {
-            return {
-                showingNavigationDropdown: false,
-            }
         },
 
         methods: {
@@ -140,6 +137,6 @@
             logout() {
                 this.$inertia.post(route('logout'));
             },
-        }
+        },
     })
 </script>
