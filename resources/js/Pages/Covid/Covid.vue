@@ -71,26 +71,6 @@ import { defineComponent } from "vue";
 import { Head, Link } from "@inertiajs/inertia-vue3";
 import Chart from 'chart.js/auto';
 
-const AREA_CODE = {
-    'Seoul': 1,
-    'Incheon': 2,
-    'Daejeon': 3,
-    'Daegu': 4,
-    'Gwangju': 5,
-    'Busan': 6,
-    'Ulsan': 7,
-    'Sejong': 8,
-    'Gyeonggi-do': 31,
-    'Gangwon-do': 32,
-    'Chungcheongbuk-do': 33,
-    'Chungcheongnam-do': 34,
-    'Gyeongsangbuk-do': 35,
-    'Chungcheongnam-do': 36,
-    'Jeollabuk-do': 37,
-    'Jeollanam-do': 38,
-    'Jeju': 39,
-};
-
 export default defineComponent({
     components: {
         AppLayout,

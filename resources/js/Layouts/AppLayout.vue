@@ -81,7 +81,7 @@
                     <Link class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" :href="route('covid')" :class="{ 'border-b-4' : $page.url === '/' }">
                         코로나 정보
                     </Link>
-                    <Link class="text-gray-600  tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" :href="route('tour')" :class="{ 'border-b-4' : $page.url.startsWith('/tour') }">
+                    <Link class="text-gray-600  tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" :href="route('travel.index')" :class="{ 'border-b-4' : $page.url.startsWith('/travel') }">
                         여행지 검색
                     </Link>
                     <a class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" href="#">
