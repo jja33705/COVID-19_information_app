@@ -21252,8 +21252,11 @@ var AREA_CODE = {
       lng: 0,
       //자기 경도
       travelSpots: [],
-      searchString: '',
-      markers: []
+      searchInput: '',
+      searched: '',
+      markers: [],
+      page: 1,
+      totalCount: 0
     };
   },
   methods: {
@@ -21325,9 +21328,15 @@ var AREA_CODE = {
 
       //주변 관광지 데이터 가져오기(10km)
       // cors때문에 라라벨백엔드로 우회해서 받음...
-      axios.get("/api/nearTravelSpots?lat=".concat(this.lat, "&lng=").concat(this.lng)).then(function (res) {
+      if (this.searched) {
+        this.page = 1;
+        this.searched = '';
+      }
+
+      axios.get("/api/nearTravelSpots?lat=".concat(this.lat, "&lng=").concat(this.lng, "&page=").concat(this.page)).then(function (res) {
         console.log(res);
         _this2.travelSpots = res.data.body.items.item;
+        _this2.totalCount = res.data.body.totalCount;
 
         _this2.setMarkers();
       })["catch"](function (err) {
@@ -21339,8 +21348,16 @@ var AREA_CODE = {
 
       //검색
       // cors때문에 라라벨백엔드로 우회해서 받음...
-      axios.get("/api/searchTravelSpots?search=".concat(encodeURIComponent(this.searchString))).then(function (res) {
+      if (!this.searched) {
+        this.page = 1;
+      } else {
+        this.searchInput = this.searched;
+      }
+
+      axios.get("/api/searchTravelSpots?search=".concat(encodeURIComponent(this.searchInput), "&page=").concat(this.page)).then(function (res) {
         _this3.travelSpots = res.data.body.items.item;
+        _this3.totalCount = res.data.body.totalCount;
+        _this3.searched = searchInput;
 
         _this3.setMarkers();
 
@@ -21355,6 +21372,34 @@ var AREA_CODE = {
       var spot = new naver.maps.LatLng(tourSpot.mapy, tourSpot.mapx);
       this.map.setCenter(spot);
       this.map.setOptions('zoom', 10);
+    },
+    onClickNextPage: function onClickNextPage() {
+      //다음페이지
+      if (this.page * 12 >= this.totalCount) {
+        return;
+      }
+
+      this.page += 1;
+
+      if (!this.searched) {
+        this.getNeartravelSpots();
+      } else {
+        this.searchTravelSpots();
+      }
+    },
+    onClickPreviousPage: function onClickPreviousPage() {
+      //이전 페이지
+      if (this.page === 1) {
+        return;
+      }
+
+      this.page -= 1;
+
+      if (!this.searched) {
+        this.getNeartravelSpots();
+      } else {
+        this.searchTravelSpots();
+      }
     }
   },
   mounted: function mounted() {
@@ -25564,7 +25609,7 @@ var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 );
 
 var _hoisted_7 = {
-  "class": "flex flex-wrap my-4"
+  "class": "flex flex-wrap mt-4"
 };
 var _hoisted_8 = ["onClick"];
 var _hoisted_9 = {
@@ -25577,7 +25622,60 @@ var _hoisted_11 = {
 var _hoisted_12 = {
   "class": "text-lg text-gray-900 font-medium title-font mb-4"
 };
+var _hoisted_13 = {
+  "class": "flex justify-center py-8"
+};
+
+var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+  "class": "h-5 w-5 mr-2 fill-current",
+  version: "1.1",
+  id: "Layer_1",
+  xmlns: "http://www.w3.org/2000/svg",
+  "xmlns:xlink": "http://www.w3.org/1999/xlink",
+  x: "0px",
+  y: "0px",
+  viewBox: "-49 141 512 512",
+  style: {
+    "enable-background": "new -49 141 512 512"
+  },
+  "xml:space": "preserve"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  id: "XMLID_10_",
+  d: "M438,372H36.355l72.822-72.822c9.763-9.763,9.763-25.592,0-35.355c-9.763-9.764-25.593-9.762-35.355,0 l-115.5,115.5C-46.366,384.01-49,390.369-49,397s2.634,12.989,7.322,17.678l115.5,115.5c9.763,9.762,25.593,9.763,35.355,0 c9.763-9.763,9.763-25.592,0-35.355L36.355,422H438c13.808,0,25-11.193,25-25S451.808,372,438,372z"
+})], -1
+/* HOISTED */
+);
+
+var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Previous page ");
+
+var _hoisted_16 = [_hoisted_14, _hoisted_15];
+
+var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Next page ");
+
+var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+  "class": "h-5 w-5 ml-2 fill-current",
+  clasversion: "1.1",
+  id: "Layer_1",
+  xmlns: "http://www.w3.org/2000/svg",
+  "xmlns:xlink": "http://www.w3.org/1999/xlink",
+  x: "0px",
+  y: "0px",
+  viewBox: "-49 141 512 512",
+  style: {
+    "enable-background": "new -49 141 512 512"
+  },
+  "xml:space": "preserve"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  id: "XMLID_11_",
+  d: "M-24,422h401.645l-72.822,72.822c-9.763,9.763-9.763,25.592,0,35.355c9.763,9.764,25.593,9.762,35.355,0\n                                l115.5-115.5C460.366,409.989,463,403.63,463,397s-2.634-12.989-7.322-17.678l-115.5-115.5c-9.763-9.762-25.593-9.763-35.355,0\n                                c-9.763,9.763-9.763,25.592,0,35.355l72.822,72.822H-24c-13.808,0-25,11.193-25,25S-37.808,422-24,422z"
+})], -1
+/* HOISTED */
+);
+
+var _hoisted_19 = [_hoisted_17, _hoisted_18];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _this = this;
+
   var _component_Link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Link");
 
   var _component_app_layout = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("app-layout");
@@ -25596,11 +25694,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         name: "search",
         placeholder: "Search",
         "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
-          return _ctx.searchString = $event;
+          return _ctx.searchInput = $event;
         })
       }, null, 512
       /* NEED_PATCH */
-      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.searchString]]), _hoisted_5])], 32
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.searchInput]]), _hoisted_5])], 32
       /* HYDRATE_EVENTS */
       ), _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.travelSpots, function (spot) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
@@ -25637,7 +25735,19 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         , _hoisted_8);
       }), 128
       /* KEYED_FRAGMENT */
-      ))])])])])];
+      ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [_this.page !== 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
+        key: 0,
+        onClick: _cache[2] || (_cache[2] = function () {
+          return _ctx.onClickPreviousPage && _ctx.onClickPreviousPage.apply(_ctx, arguments);
+        }),
+        "class": "border border-black text-black block rounded-sm font-bold py-4 px-6 mr-2 flex items-center hover:bg-black hover:text-white"
+      }, _hoisted_16)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _this.page * 12 < _this.totalCount ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
+        key: 1,
+        onClick: _cache[3] || (_cache[3] = function () {
+          return _ctx.onClickNextPage && _ctx.onClickNextPage.apply(_ctx, arguments);
+        }),
+        "class": "border border-black text-black block rounded-sm font-bold py-4 px-6 ml-2 flex items-center hover:bg-black hover:text-white"
+      }, _hoisted_19)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])])])];
     }),
     _: 1
     /* STABLE */

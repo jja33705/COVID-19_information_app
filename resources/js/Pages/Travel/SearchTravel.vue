@@ -6,7 +6,7 @@
                 <div class="shadow-xl">
                     <form @submit.prevent="searchTravelSpots">
                     <div class="pt-2 relative mx-auto text-gray-600">
-                        <input class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none w-full" type="search" name="search" placeholder="Search" v-model="searchString">
+                        <input class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none w-full" type="search" name="search" placeholder="Search" v-model="searchInput">
                         <button type="submit" class="absolute right-0 top-0 mt-5 mr-4">
                         <svg class="text-gray-600 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg"
                             xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px"
@@ -19,7 +19,7 @@
                     </div>
                     </form>
                     <div id="map" style="width:100%; height:400px;"></div>
-                    <div class="flex flex-wrap my-4">
+                    <div class="flex flex-wrap mt-4">
                         <div class="hover:bg-gray-100 xl:w-1/3 md:w-1/2 p-4 border-solid border-2" v-for="spot in travelSpots" :key="spot.contentid" @click="onClickTravel(spot)">
                             <div class="p-6 rounded-lg">
                                 <img class="lg:h-60 xl:h-56 md:h-64 sm:h-72 xs:h-72 h-72  rounded w-full object-cover object-center mb-6" :src="spot.firstimage" :alt="spot.title">
@@ -31,6 +31,23 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="flex justify-center py-8">
+                        <button @click="onClickPreviousPage" v-if="this.page !== 1" class="border border-black text-black block rounded-sm font-bold py-4 px-6 mr-2 flex items-center hover:bg-black hover:text-white">
+                            <svg class="h-5 w-5 mr-2 fill-current" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-49 141 512 512" style="enable-background:new -49 141 512 512;" xml:space="preserve">
+                                <path id="XMLID_10_" d="M438,372H36.355l72.822-72.822c9.763-9.763,9.763-25.592,0-35.355c-9.763-9.764-25.593-9.762-35.355,0 l-115.5,115.5C-46.366,384.01-49,390.369-49,397s2.634,12.989,7.322,17.678l115.5,115.5c9.763,9.762,25.593,9.763,35.355,0 c9.763-9.763,9.763-25.592,0-35.355L36.355,422H438c13.808,0,25-11.193,25-25S451.808,372,438,372z"></path>
+                            </svg>
+                            Previous page
+                        </button>
+                        <button @click="onClickNextPage" v-if="this.page * 12 < this.totalCount" class="border border-black text-black block rounded-sm font-bold py-4 px-6 ml-2 flex items-center hover:bg-black hover:text-white">
+                            Next page
+                            <svg class="h-5 w-5 ml-2 fill-current" clasversion="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                viewBox="-49 141 512 512" style="enable-background:new -49 141 512 512;" xml:space="preserve">
+                            <path id="XMLID_11_" d="M-24,422h401.645l-72.822,72.822c-9.763,9.763-9.763,25.592,0,35.355c9.763,9.764,25.593,9.762,35.355,0
+                                l115.5-115.5C460.366,409.989,463,403.63,463,397s-2.634-12.989-7.322-17.678l-115.5-115.5c-9.763-9.762-25.593-9.763-35.355,0
+                                c-9.763,9.763-9.763,25.592,0,35.355l72.822,72.822H-24c-13.808,0-25,11.193-25,25S-37.808,422-24,422z"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -73,8 +90,11 @@ export default defineComponent({
             lat: 0, //자기 위도
             lng: 0,  //자기 경도
             travelSpots: [],
-            searchString: '',
+            searchInput: '',
+            searched: '',
             markers: [],
+            page: 1,
+            totalCount: 0,
         };
     },
     methods: {
@@ -143,10 +163,15 @@ export default defineComponent({
         },
         getNeartravelSpots() { //주변 관광지 데이터 가져오기(10km)
             // cors때문에 라라벨백엔드로 우회해서 받음...
-            axios.get(`/api/nearTravelSpots?lat=${this.lat}&lng=${this.lng}`)
+            if (this.searched) {
+                this.page = 1;
+                this.searched = '';
+            }
+            axios.get(`/api/nearTravelSpots?lat=${this.lat}&lng=${this.lng}&page=${this.page}`)
             .then((res) => {
                 console.log(res);
                 this.travelSpots = res.data.body.items.item;
+                this.totalCount = res.data.body.totalCount;
                 this.setMarkers();
             })
             .catch((err) => {
@@ -155,9 +180,16 @@ export default defineComponent({
         },
         searchTravelSpots() { //검색
             // cors때문에 라라벨백엔드로 우회해서 받음...
-            axios.get(`/api/searchTravelSpots?search=${encodeURIComponent(this.searchString)}`)
+            if (!this.searched) {
+                this.page = 1;
+            } else {
+                this.searchInput = this.searched;
+            }
+            axios.get(`/api/searchTravelSpots?search=${encodeURIComponent(this.searchInput)}&page=${this.page}`)
             .then((res) => {
                 this.travelSpots = res.data.body.items.item;
+                this.totalCount = res.data.body.totalCount;
+                this.searched = searchInput;
                 this.setMarkers();
                 this.map.setOptions('zoom', 1);
             })
@@ -171,6 +203,28 @@ export default defineComponent({
             this.map.setCenter(spot);
             this.map.setOptions('zoom', 10);
         },
+        onClickNextPage() { //다음페이지
+            if (this.page * 12 >= this.totalCount) {
+                return;
+            }
+            this.page += 1;
+            if (!this.searched) {
+                this.getNeartravelSpots();
+            } else {
+                this.searchTravelSpots();
+            }
+        },
+        onClickPreviousPage() { //이전 페이지
+            if (this.page === 1) {
+                return;
+            }
+            this.page -= 1;
+            if (!this.searched) {
+                this.getNeartravelSpots();
+            } else {
+                this.searchTravelSpots();
+            }
+        }
     },
     mounted() {
         //맵 생성
