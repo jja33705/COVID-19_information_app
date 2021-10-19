@@ -189,7 +189,7 @@ export default defineComponent({
             .then((res) => {
                 this.travelSpots = res.data.body.items.item;
                 this.totalCount = res.data.body.totalCount;
-                this.searched = searchInput;
+                this.searched = this.searchInput;
                 this.setMarkers();
                 this.map.setOptions('zoom', 1);
             })

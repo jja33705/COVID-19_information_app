@@ -21357,7 +21357,7 @@ var AREA_CODE = {
       axios.get("/api/searchTravelSpots?search=".concat(encodeURIComponent(this.searchInput), "&page=").concat(this.page)).then(function (res) {
         _this3.travelSpots = res.data.body.items.item;
         _this3.totalCount = res.data.body.totalCount;
-        _this3.searched = searchInput;
+        _this3.searched = _this3.searchInput;
 
         _this3.setMarkers();
 
