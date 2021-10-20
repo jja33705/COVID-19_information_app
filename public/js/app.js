@@ -21247,6 +21247,9 @@ var AREA_CODE = {
     Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_2__.Link,
     PulseLoader: vue_spinner_src_PulseLoader_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
+  props: {
+    localData: Array
+  },
   data: function data() {
     return {
       map: null,
@@ -21256,11 +21259,14 @@ var AREA_CODE = {
       //자기 경도
       travelSpots: [],
       searchInput: '',
+      searched: '',
       markers: [],
       page: 1,
       totalCount: 0,
       loading: true,
-      loadingColor: '#000000'
+      loadingColor: '#000000',
+      newDefCnts: {} //신규 확진자
+
     };
   },
   methods: {
@@ -21350,7 +21356,7 @@ var AREA_CODE = {
       //검색
       // cors때문에 라라벨백엔드로 우회해서 받음...
       this.loading = true;
-      axios.get("/api/searchTravelSpots?search=".concat(encodeURIComponent(this.searchInput), "&page=").concat(this.page)).then(function (res) {
+      axios.get("/api/searchTravelSpots?search=".concat(encodeURIComponent(this.searched), "&page=").concat(this.page)).then(function (res) {
         _this3.travelSpots = res.data.body.items.item;
         _this3.loading = false;
         _this3.totalCount = res.data.body.totalCount;
@@ -21364,6 +21370,7 @@ var AREA_CODE = {
     },
     onClickSearchButton: function onClickSearchButton() {
       this.page = 1;
+      this.searched = this.searchInput;
       this.searchTravelSpots();
     },
     onClickTravel: function onClickTravel(tourSpot) {
@@ -21380,12 +21387,7 @@ var AREA_CODE = {
       }
 
       this.page += 1;
-
-      if (!this.searched) {
-        this.getNeartravelSpots();
-      } else {
-        this.searchTravelSpots();
-      }
+      this.searchTravelSpots();
     },
     onClickPreviousPage: function onClickPreviousPage() {
       //이전 페이지
@@ -21394,16 +21396,23 @@ var AREA_CODE = {
       }
 
       this.page -= 1;
-
-      if (!this.searched) {
-        this.getNeartravelSpots();
-      } else {
-        this.searchTravelSpots();
-      }
+      this.searchTravelSpots();
+    },
+    getNewDefCntOfSpot: function getNewDefCntOfSpot(areaCode) {
+      //해당 지역 확진자수
+      console.log(areaCode);
+      console.log(AREA_CODE[areaCode]);
+      return this.newDefCnts[AREA_CODE[areaCode]];
     }
   },
   mounted: function mounted() {
-    //맵 생성
+    var _this4 = this;
+
+    //지역별 확진자수 초기화...
+    this.localData.map(function (v) {
+      _this4.newDefCnts[v.gubun] = v.localOccCnt + v.overFlowCnt;
+    }); //맵 생성
+
     var mapOptions = {
       center: new naver.maps.LatLng(37.3595704, 127.105399),
       logoControl: true,
@@ -25621,17 +25630,20 @@ var _hoisted_11 = {
   "class": "tracking-widest text-indigo-500 text-xs font-medium title-font"
 };
 var _hoisted_12 = {
-  "class": "text-lg text-gray-900 font-medium title-font mb-4"
+  "class": "text-lg text-gray-900 font-medium title-font mb-2"
 };
 var _hoisted_13 = {
+  "class": "bg-red-400 rounded-md font-semibold text-xs text-gray-100 p-2 right-4 bottom-0 float-right"
+};
+var _hoisted_14 = {
   key: 1,
   "class": "flex justify-center my-5"
 };
-var _hoisted_14 = {
+var _hoisted_15 = {
   "class": "flex justify-center py-8"
 };
 
-var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
   "class": "h-5 w-5 mr-2 fill-current",
   version: "1.1",
   id: "Layer_1",
@@ -25651,13 +25663,13 @@ var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 /* HOISTED */
 );
 
-var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Previous page ");
+var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Previous page ");
 
-var _hoisted_17 = [_hoisted_15, _hoisted_16];
+var _hoisted_18 = [_hoisted_16, _hoisted_17];
 
-var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Next page ");
+var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Next page ");
 
-var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
   "class": "h-5 w-5 ml-2 fill-current",
   clasversion: "1.1",
   id: "Layer_1",
@@ -25677,7 +25689,7 @@ var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 /* HOISTED */
 );
 
-var _hoisted_20 = [_hoisted_18, _hoisted_19];
+var _hoisted_21 = [_hoisted_19, _hoisted_20];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _this = this;
 
@@ -25737,29 +25749,31 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
         }, 1032
         /* PROPS, DYNAMIC_SLOTS */
-        , ["href"])])])], 8
+        , ["href"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, "지역 신규 확진자 수: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.getNewDefCntOfSpot(spot.areacode)) + "명", 1
+        /* TEXT */
+        )])], 8
         /* PROPS */
         , _hoisted_8);
       }), 128
       /* KEYED_FRAGMENT */
-      ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.loading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_pulse_loader, {
+      ))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.loading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_pulse_loader, {
         loading: _ctx.loading,
         color: _ctx.loadingColor
       }, null, 8
       /* PROPS */
-      , ["loading", "color"])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [_this.page !== 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
+      , ["loading", "color"])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [_this.page !== 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
         key: 0,
         onClick: _cache[2] || (_cache[2] = function () {
           return _ctx.onClickPreviousPage && _ctx.onClickPreviousPage.apply(_ctx, arguments);
         }),
         "class": "border border-black text-black block rounded-sm font-bold py-4 px-6 mr-2 flex items-center hover:bg-black hover:text-white"
-      }, _hoisted_17)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _this.page * 12 < _this.totalCount ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
+      }, _hoisted_18)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _this.page * 12 < _this.totalCount ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
         key: 1,
         onClick: _cache[3] || (_cache[3] = function () {
           return _ctx.onClickNextPage && _ctx.onClickNextPage.apply(_ctx, arguments);
         }),
         "class": "border border-black text-black block rounded-sm font-bold py-4 px-6 ml-2 flex items-center hover:bg-black hover:text-white"
-      }, _hoisted_20)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])])])];
+      }, _hoisted_21)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])])])];
     }),
     _: 1
     /* STABLE */

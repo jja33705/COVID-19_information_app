@@ -71,11 +71,12 @@
                 >
                   {{ spot.addr1 }}
                 </h3>
-                <div class="text-lg text-gray-900 font-medium title-font mb-4">
-                  <Link :href="route('travel.show', { id: spot.contentid })">
-                    {{ spot.title }}
-                  </Link>
-                </div>
+                  <div class="text-lg text-gray-900 font-medium title-font mb-2">
+                    <Link :href="route('travel.show', { id: spot.contentid })">
+                      {{ spot.title }}
+                    </Link>
+                  </div>
+                  <div class="bg-red-400 rounded-md font-semibold text-xs text-gray-100 p-2 right-4 bottom-0 float-right">지역 신규 확진자 수: {{ getNewDefCntOfSpot(spot.areacode) }}명</div>
               </div>
             </div>
           </div>
@@ -195,6 +196,9 @@ export default defineComponent({
     Link,
     PulseLoader,
   },
+  props: {
+    localData: Array,
+  },
   data() {
     return {
       map: null,
@@ -202,11 +206,13 @@ export default defineComponent({
       lng: 0, //자기 경도
       travelSpots: [],
       searchInput: '',
+      searched: '',
       markers: [],
       page: 1,
       totalCount: 0,
       loading: true,
       loadingColor: '#000000',
+      newDefCnts: {} //신규 확진자
     };
   },
   methods: {
@@ -303,7 +309,7 @@ export default defineComponent({
       axios
         .get(
           `/api/searchTravelSpots?search=${encodeURIComponent(
-            this.searchInput
+            this.searched
           )}&page=${this.page}`
         )
         .then((res) => {
@@ -319,6 +325,7 @@ export default defineComponent({
     },
     onClickSearchButton() {
       this.page = 1;
+      this.searched = this.searchInput;
       this.searchTravelSpots();
     },
     onClickTravel(tourSpot) {
@@ -334,11 +341,7 @@ export default defineComponent({
         return;
       }
       this.page += 1;
-      if (!this.searched) {
-        this.getNeartravelSpots();
-      } else {
-        this.searchTravelSpots();
-      }
+      this.searchTravelSpots();
     },
     onClickPreviousPage() {
       //이전 페이지
@@ -346,14 +349,20 @@ export default defineComponent({
         return;
       }
       this.page -= 1;
-      if (!this.searched) {
-        this.getNeartravelSpots();
-      } else {
-        this.searchTravelSpots();
-      }
+      this.searchTravelSpots();
+    },
+    getNewDefCntOfSpot(areaCode) { //해당 지역 확진자수
+      console.log(areaCode);
+      console.log(AREA_CODE[areaCode]);
+      return this.newDefCnts[AREA_CODE[areaCode]];
     },
   },
   mounted() {
+    //지역별 확진자수 초기화...
+    this.localData.map((v) => {
+      this.newDefCnts[v.gubun] = v.localOccCnt + v.overFlowCnt;
+    });
+
     //맵 생성
     const mapOptions = {
       center: new naver.maps.LatLng(37.3595704, 127.105399),

@@ -18,7 +18,7 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Covid/Covid', [
-        'localData' => Covid::where('stdDay', Covid::max('stdDay'))->where('gubun', 'not like', '합계')->orderByRaw('localOccCnt + overFlowCnt DESC')->get(),
+        'localData' => Covid::where([['stdDay', Covid::max('stdDay')], ['gubun', 'not like', '합계']])->orderByRaw('localOccCnt + overFlowCnt DESC')->get(),
         'totalData' => Covid::where('gubun', '합계')->orderByDesc('stdDay')->get(),
     ]);
 })->name('covid');
@@ -28,7 +28,9 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 Route::get('/travel', function () {
-    return Inertia::render('Travel/SearchTravel');
+    return Inertia::render('Travel/SearchTravel', [
+        'localData' => Covid::where([['stdDay', Covid::max('stdDay')], ['gubun', 'not like', '합계'], ['gubun', 'not like', '검역']])->get(),
+    ]);
 })->name('travel.index');
 
 Route::get('/travel/{id}', function ($id) {
