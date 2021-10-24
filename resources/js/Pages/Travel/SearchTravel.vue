@@ -256,43 +256,41 @@ export default defineComponent({
             travelSpots: [],
             searchInput: "",
             searched: "",
-            markers: [],
             page: 1,
-            totalCount: 0,
+            totalCount: 0,  //여행지 전체 개수
             loading: true,
             loadingColor: "#000000",
             newDefCnts: {}, //신규 확진자
         };
     },
     methods: {
-        clearMarkers() {
-            //현재 마커 전부 삭제
-            this.markers.map((v) => {
-                v.setMap(null);
-            });
-            this.markers = [];
+        clearMarkersAndInfoWindows() {
+          this.travelSpots.map((v) => {
+            v.marker.setMap(null);
+            v.infoWindow.close();
+          });
         },
         setMarkers() {
             //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시
-            this.clearMarkers();
             this.travelSpots.map((v) => {
                 const spot = new naver.maps.LatLng(v.mapy, v.mapx);
                 const marker = new naver.maps.Marker({
                     map: this.map,
                     position: spot,
                 });
-                this.markers.push(marker);
+                v.marker = marker;
                 var contentString = [
                     '<div class="iw_inner">',
-                    `   <h3>${v.title}</h3>`,
-                    `   <p>${v.addr1}<br />`,
-                    `       <img src="${v.firstimage}" width="55" height="55" alt="${v.title}" class="thumb" /><br />`,
-                    "   </p>",
+                    `   <div class="font-bold">${v.title}</div>`,
                     "</div>",
                 ].join("");
                 const infoWindow = new naver.maps.InfoWindow({
                     content: contentString,
+                    borderWidth: 0,
+                    disableAnchor: true,
+                    backgroundColor: 'transparent',
                 });
+                v.infoWindow = infoWindow;
 
                 //마커 클릭시 정보창 보여줌
                 naver.maps.Event.addListener(marker, "click", (e) => {
@@ -362,11 +360,12 @@ export default defineComponent({
                     )}&page=${this.page}`
                 )
                 .then((res) => {
-                    this.travelSpots = res.data.body.items.item;
-                    this.loading = false;
-                    this.totalCount = res.data.body.totalCount;
-                    this.setMarkers();
-                    this.map.setOptions("zoom", 1);
+                  this.clearMarkersAndInfoWindows();
+                  this.travelSpots = res.data.body.items.item;
+                  this.loading = false;
+                  this.totalCount = res.data.body.totalCount;
+                  this.setMarkers();
+                  this.map.setOptions("zoom", 1);
                 })
                 .catch((err) => {
                     console.log(err);
@@ -377,12 +376,13 @@ export default defineComponent({
             this.searched = this.searchInput;
             this.searchTravelSpots();
         },
-        onClickTravel(tourSpot) {
+        onClickTravel(travelSpot) {
             //여행지 하나 클릭
             //클릭한 여행지로 맵 위치 이동하고 줌 시킴
-            const spot = new naver.maps.LatLng(tourSpot.mapy, tourSpot.mapx);
+            const spot = new naver.maps.LatLng(travelSpot.mapy, travelSpot.mapx);
             this.map.setCenter(spot);
-            this.map.setOptions("zoom", 15);
+            this.map.setOptions("zoom", 13);
+            travelSpot.infoWindow.open(this.map, travelSpot.marker);
         },
         onClickNextPage() {
             //다음페이지
@@ -402,8 +402,6 @@ export default defineComponent({
         },
         getNewDefCntOfSpot(areaCode) {
             //해당 지역 확진자수
-            console.log(areaCode);
-            console.log(AREA_CODE[areaCode]);
             return this.newDefCnts[AREA_CODE[areaCode]];
         },
     },

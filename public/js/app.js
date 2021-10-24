@@ -21260,9 +21260,9 @@ var AREA_CODE = {
       travelSpots: [],
       searchInput: "",
       searched: "",
-      markers: [],
       page: 1,
       totalCount: 0,
+      //여행지 전체 개수
       loading: true,
       loadingColor: "#000000",
       newDefCnts: {} //신규 확진자
@@ -21270,31 +21270,31 @@ var AREA_CODE = {
     };
   },
   methods: {
-    clearMarkers: function clearMarkers() {
-      //현재 마커 전부 삭제
-      this.markers.map(function (v) {
-        v.setMap(null);
+    clearMarkersAndInfoWindows: function clearMarkersAndInfoWindows() {
+      this.travelSpots.map(function (v) {
+        v.marker.setMap(null);
+        v.infoWindow.close();
       });
-      this.markers = [];
     },
     setMarkers: function setMarkers() {
       var _this = this;
 
       //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시
-      this.clearMarkers();
       this.travelSpots.map(function (v) {
         var spot = new naver.maps.LatLng(v.mapy, v.mapx);
         var marker = new naver.maps.Marker({
           map: _this.map,
           position: spot
         });
-
-        _this.markers.push(marker);
-
-        var contentString = ['<div class="iw_inner">', "   <h3>".concat(v.title, "</h3>"), "   <p>".concat(v.addr1, "<br />"), "       <img src=\"".concat(v.firstimage, "\" width=\"55\" height=\"55\" alt=\"").concat(v.title, "\" class=\"thumb\" /><br />"), "   </p>", "</div>"].join("");
+        v.marker = marker;
+        var contentString = ['<div class="iw_inner">', "   <div class=\"font-bold\">".concat(v.title, "</div>"), "</div>"].join("");
         var infoWindow = new naver.maps.InfoWindow({
-          content: contentString
-        }); //마커 클릭시 정보창 보여줌
+          content: contentString,
+          borderWidth: 0,
+          disableAnchor: true,
+          backgroundColor: 'transparent'
+        });
+        v.infoWindow = infoWindow; //마커 클릭시 정보창 보여줌
 
         naver.maps.Event.addListener(marker, "click", function (e) {
           if (infoWindow.getMap()) {
@@ -21357,6 +21357,8 @@ var AREA_CODE = {
       // cors때문에 라라벨백엔드로 우회해서 받음...
       this.loading = true;
       axios.get("/api/searchTravelSpots?search=".concat(encodeURIComponent(this.searched), "&page=").concat(this.page)).then(function (res) {
+        _this3.clearMarkersAndInfoWindows();
+
         _this3.travelSpots = res.data.body.items.item;
         _this3.loading = false;
         _this3.totalCount = res.data.body.totalCount;
@@ -21373,12 +21375,13 @@ var AREA_CODE = {
       this.searched = this.searchInput;
       this.searchTravelSpots();
     },
-    onClickTravel: function onClickTravel(tourSpot) {
+    onClickTravel: function onClickTravel(travelSpot) {
       //여행지 하나 클릭
       //클릭한 여행지로 맵 위치 이동하고 줌 시킴
-      var spot = new naver.maps.LatLng(tourSpot.mapy, tourSpot.mapx);
+      var spot = new naver.maps.LatLng(travelSpot.mapy, travelSpot.mapx);
       this.map.setCenter(spot);
-      this.map.setOptions("zoom", 15);
+      this.map.setOptions("zoom", 13);
+      travelSpot.infoWindow.open(this.map, travelSpot.marker);
     },
     onClickNextPage: function onClickNextPage() {
       //다음페이지
@@ -21400,8 +21403,6 @@ var AREA_CODE = {
     },
     getNewDefCntOfSpot: function getNewDefCntOfSpot(areaCode) {
       //해당 지역 확진자수
-      console.log(areaCode);
-      console.log(AREA_CODE[areaCode]);
       return this.newDefCnts[AREA_CODE[areaCode]];
     }
   },
