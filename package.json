@@ -27,6 +27,7 @@
     },
     "dependencies": {
         "chart.js": "^3.5.1",
-        "vue-spinner": "^1.0.4"
+        "vue-spinner": "^1.0.4",
+        "vuex": "^4.0.2"
     }
 }

@@ -11,10 +11,10 @@
                     <div class="flex justify-between px-5 pt-6 mb-2 text-sm text-gray-600">
                         {{ getStdDay }}일 기준
                     </div>
-                    <p class="py-2 text-xl ml-5 font-semibold">확진자 수: {{ getDefCnt }}</p>
-                    <p class="py-2 text-xl ml-5 font-semibold">신규 확진자: {{ getNewDefCnt }}</p>
-                    <p class="py-2 text-xl ml-5 font-semibold">사망자 수: {{ getDeathCnt }}</p>
-                    <p class="py-2 text-xl ml-5 font-semibold">격리해제 수: {{ getIsolClearCnt }}</p>
+                    <p class="py-2 text-xl ml-5 font-medium">확진자 수: {{ getDefCnt }}</p>
+                    <p class="py-2 text-xl ml-5 font-medium">신규 확진자: {{ getNewDefCnt }}</p>
+                    <p class="py-2 text-xl ml-5 font-medium">사망자 수: {{ getDeathCnt }}</p>
+                    <p class="py-2 text-xl ml-5 font-medium">격리해제 수: {{ getIsolClearCnt }}</p>
                 </div>
             </div>
 
@@ -42,8 +42,8 @@
                         </thead>
                         <tbody>
                             <tr v-for="data in getPaginatedLocalData" :key="data.id" class="hover:bg-grey-lighter">
-                                <td class="py-2 px-6 border-b border-grey-light">{{ data.gubun }}</td>
-                                <td class="py-2 px-6 text-center border-b border-grey-light">
+                                <td class="py-2 px-6 border-b border-grey-light font-medium">{{ data.gubun }}</td>
+                                <td class="py-2 px-6 text-center border-b border-grey-light font-medium">
                                     {{ data.localOccCnt + data.overFlowCnt }}
                                 </td>
                             </tr>
