@@ -81,7 +81,7 @@
                     <Link class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" :href="route('covid')" :class="{ 'border-b-4' : $page.url === '/' }">
                         코로나 정보
                     </Link>
-                    <Link class="text-gray-600  tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" :href="route('travel.index')" :class="{ 'border-b-4' : $page.url.startsWith('/travel') }">
+                    <Link class="text-gray-600  tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" :href="route('travel.index', { searchWay: 'near', lat: myLocation.lat, lng: myLocation.lng  })" :class="{ 'border-b-4' : $page.url.startsWith('/travel') }">
                         여행지 검색
                     </Link>
                     <a class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" href="#">
@@ -99,19 +99,18 @@
 </template>
 
 <script>
-    import { defineComponent } from 'vue'
     import JetApplicationMark from '@/Jetstream/ApplicationMark.vue'
     import JetDropdown from '@/Jetstream/Dropdown.vue'
     import JetDropdownLink from '@/Jetstream/DropdownLink.vue'
     import JetNavLink from '@/Jetstream/NavLink.vue'
     import JetResponsiveNavLink from '@/Jetstream/ResponsiveNavLink.vue'
     import { Head, Link } from '@inertiajs/inertia-vue3';
+    import { mapMutations, mapState } from 'vuex';
 
-    export default defineComponent({
+    export default ({
         props: {
             title: String,
         },
-
         components: {
             Head,
             JetApplicationMark,
@@ -121,10 +120,8 @@
             JetResponsiveNavLink,
             Link,
         },
-
         data() {
         },
-
         methods: {
             switchToTeam(team) {
                 this.$inertia.put(route('current-team.update'), {
@@ -133,10 +130,36 @@
                     preserveState: false
                 })
             },
-
             logout() {
                 this.$inertia.post(route('logout'));
             },
+            getCurrentLocationSuccess(position) {
+                //자기위치 가져오기(성공)
+                this.setMyLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
+            },
+            getCurrentLocationError() {
+                //자기위치 가져오기(실패)
+                console.log("cant get current location");
+            },
+            ...mapMutations([
+                'setMyLocation'
+            ]),
         },
+        computed: {
+            ...mapState({
+                myLocation: 'myLocation',
+            })
+        },
+        mounted() {
+            //자기위치 가져오기
+            if (!navigator.geolocation) {
+                console.log("cant get location in this browser");
+            } else {
+                navigator.geolocation.getCurrentPosition(
+                    this.getCurrentLocationSuccess,
+                    this.getCurrentLocationError
+                );
+            }
+        }
     })
 </script>

@@ -30,7 +30,7 @@ Route::get('/nearTravelSpots', function (Request $request) { //근처 관광지�
     return response($array);
 });
 
-Route::get('/searchTravelSpots', function (Request $request) {  //관광지 검색색
+Route::get('/searchTravelSpots', function (Request $request) {  //관광지 검색
     $search = $request->search;
     $page = $request->page;
     $client = new GuzzleHttp\Client();

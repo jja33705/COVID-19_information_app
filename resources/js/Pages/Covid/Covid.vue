@@ -67,11 +67,10 @@
 
 <script>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { defineComponent } from "vue";
 import { Head, Link } from "@inertiajs/inertia-vue3";
 import Chart from 'chart.js/auto';
 
-export default defineComponent({
+export default ({
     components: {
         AppLayout,
         Head,

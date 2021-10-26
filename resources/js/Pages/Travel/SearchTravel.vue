@@ -2,26 +2,26 @@
     <app-layout :title="Tour">
         <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <form @submit.prevent="onClickSearchButton">
-                    <div class="pt-2 relative mx-auto text-gray-600">
-                        <input
-                            class="
-                                border-2 border-gray-300
-                                bg-white
-                                h-10
-                                px-5
-                                pr-16
-                                rounded-lg
-                                text-sm
-                                focus:outline-none
-                                w-full
-                            "
-                            type="search"
-                            name="search"
-                            placeholder="Search"
-                            v-model="searchInput"
-                            required
-                        />
+                <div class="pt-2 relative mx-auto text-gray-600">
+                    <input
+                        class="
+                            border-2 border-gray-300
+                            bg-white
+                            h-10
+                            px-5
+                            pr-16
+                            rounded-lg
+                            text-sm
+                            focus:outline-none
+                            w-full
+                        "
+                        type="search"
+                        name="search"
+                        placeholder="Search"
+                        v-model="searchInput"
+                        required
+                    />
+                    <Link :href="route('travel.index', { searchWay: 'keyWord', search: encodeURIComponent(searchInput) })">
                         <button
                             type="submit"
                             class="absolute right-0 top-0 mt-5 mr-4"
@@ -47,10 +47,10 @@
                                 />
                             </svg>
                         </button>
-                    </div>
-                </form>
+                    </Link>
+                </div>
                 <div id="map" style="width: 100%; height: 400px"></div>
-                <div v-if="!loading" class="flex flex-wrap mt-4">
+                <div class="flex flex-wrap mt-4">
                     <div
                         class="
                             hover:bg-gray-100
@@ -118,87 +118,87 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="loading" class="flex justify-center my-5">
+                <!-- <div v-if="loading" class="flex justify-center my-5">
                     <pulse-loader
                         :loading="loading"
                         :color="loadingColor"
                     ></pulse-loader>
-                </div>
-                <div v-if="!loading && travelSpots.lenth === 0" class="flex justify-center my-4">검색결과 없음</div>
+                </div> -->
+                <!-- <div v-if="!loading && travelSpots.lenth === 0" class="flex justify-center my-4">검색결과 없음</div> -->
                 <div class="flex justify-center py-8">
-                    <button
-                        @click="onClickPreviousPage"
-                        v-if="this.page !== 1"
-                        class="
-                            border border-black
-                            text-black
-                            block
-                            rounded-sm
-                            font-bold
-                            py-4
-                            px-6
-                            mr-2
-                            flex
-                            items-center
-                            hover:bg-black hover:text-white
-                        "
-                    >
-                        <svg
-                            class="h-5 w-5 mr-2 fill-current"
-                            version="1.1"
-                            id="Layer_1"
-                            xmlns="http://www.w3.org/2000/svg"
-                            xmlns:xlink="http://www.w3.org/1999/xlink"
-                            x="0px"
-                            y="0px"
-                            viewBox="-49 141 512 512"
-                            style="enable-background: new -49 141 512 512"
-                            xml:space="preserve"
+                    <Link :href="route('travel.index', { searchWay: searchWay, search: search, page: Number(page)-1, lat: myLocation.lat, lng: myLocation.lng })" v-if="page > 1">
+                        <button
+                            class="
+                                border border-black
+                                text-black
+                                block
+                                rounded-sm
+                                font-bold
+                                py-4
+                                px-6
+                                mr-2
+                                flex
+                                items-center
+                                hover:bg-black hover:text-white
+                            "
                         >
-                            <path
-                                id="XMLID_10_"
-                                d="M438,372H36.355l72.822-72.822c9.763-9.763,9.763-25.592,0-35.355c-9.763-9.764-25.593-9.762-35.355,0 l-115.5,115.5C-46.366,384.01-49,390.369-49,397s2.634,12.989,7.322,17.678l115.5,115.5c9.763,9.762,25.593,9.763,35.355,0 c9.763-9.763,9.763-25.592,0-35.355L36.355,422H438c13.808,0,25-11.193,25-25S451.808,372,438,372z"
-                            ></path>
-                        </svg>
-                        Previous page
-                    </button>
-                    <button
-                        @click="onClickNextPage"
-                        v-if="this.page * 12 < this.totalCount"
-                        class="
-                            border border-black
-                            text-black
-                            block
-                            rounded-sm
-                            font-bold
-                            py-4
-                            px-6
-                            ml-2
-                            flex
-                            items-center
-                            hover:bg-black hover:text-white
-                        "
-                    >
-                        Next page
-                        <svg
-                            class="h-5 w-5 ml-2 fill-current"
-                            clasversion="1.1"
-                            id="Layer_1"
-                            xmlns="http://www.w3.org/2000/svg"
-                            xmlns:xlink="http://www.w3.org/1999/xlink"
-                            x="0px"
-                            y="0px"
-                            viewBox="-49 141 512 512"
-                            style="enable-background: new -49 141 512 512"
-                            xml:space="preserve"
+                            <svg
+                                class="h-5 w-5 mr-2 fill-current"
+                                version="1.1"
+                                id="Layer_1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                                x="0px"
+                                y="0px"
+                                viewBox="-49 141 512 512"
+                                style="enable-background: new -49 141 512 512"
+                                xml:space="preserve"
+                            >
+                                <path
+                                    id="XMLID_10_"
+                                    d="M438,372H36.355l72.822-72.822c9.763-9.763,9.763-25.592,0-35.355c-9.763-9.764-25.593-9.762-35.355,0 l-115.5,115.5C-46.366,384.01-49,390.369-49,397s2.634,12.989,7.322,17.678l115.5,115.5c9.763,9.762,25.593,9.763,35.355,0 c9.763-9.763,9.763-25.592,0-35.355L36.355,422H438c13.808,0,25-11.193,25-25S451.808,372,438,372z"
+                                ></path>
+                            </svg>
+                            Previous page
+                        </button>
+                    </Link>
+                    <Link v-if="page * 12 < totalCount" :href="route('travel.index', { searchWay: searchWay, search: search, page: Number(page)+1, lat: myLocation.lat, lng: myLocation.lng })">
+                        <button
+                            class="
+                                border border-black
+                                text-black
+                                block
+                                rounded-sm
+                                font-bold
+                                py-4
+                                px-6
+                                ml-2
+                                flex
+                                items-center
+                                hover:bg-black hover:text-white
+                            "
                         >
-                            <path
-                                id="XMLID_11_"
-                                d="M-24,422h401.645l-72.822,72.822c-9.763,9.763-9.763,25.592,0,35.355c9.763,9.764,25.593,9.762,35.355,0l115.5-115.5C460.366,409.989,463,403.63,463,397s-2.634-12.989-7.322-17.678l-115.5-115.5c-9.763-9.762-25.593-9.763-35.355,0
-                        c-9.763,9.763-9.763,25.592,0,35.355l72.822,72.822H-24c-13.808,0-25,11.193-25,25S-37.808,422-24,422z"
-                            />
-                        </svg>
-                    </button>
+                            Next page
+                            <svg
+                                class="h-5 w-5 ml-2 fill-current"
+                                clasversion="1.1"
+                                id="Layer_1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                                x="0px"
+                                y="0px"
+                                viewBox="-49 141 512 512"
+                                style="enable-background: new -49 141 512 512"
+                                xml:space="preserve"
+                            >
+                                <path
+                                    id="XMLID_11_"
+                                    d="M-24,422h401.645l-72.822,72.822c-9.763,9.763-9.763,25.592,0,35.355c9.763,9.764,25.593,9.762,35.355,0l115.5-115.5C460.366,409.989,463,403.63,463,397s-2.634-12.989-7.322-17.678l-115.5-115.5c-9.763-9.762-25.593-9.763-35.355,0
+                            c-9.763,9.763-9.763,25.592,0,35.355l72.822,72.822H-24c-13.808,0-25,11.193-25,25S-37.808,422-24,422z"
+                                />
+                            </svg>
+                        </button>
+                    </Link>
                 </div>
             </div>
         </div>
@@ -226,39 +226,26 @@ const AREA_CODE = {
     39: "제주",
 };
 
-const SEARCH_WAY = {
-    NEAR: 'NEAR',
-    KEYWORD: 'KEYWORD',
-};
-
-import { defineComponent } from "vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Link } from "@inertiajs/inertia-vue3";
+import { mapState } from 'vuex';
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 
-export default defineComponent({
+export default ({
     components: {
         AppLayout,
         Link,
         PulseLoader,
     },
-    props: {
-        localData: Array,
-    },
+    props: ['localData', 'searchResult', 'page', 'search', 'totalCount', 'searchWay'],
     data() {
         return {
             map: null,
-            lat: 0, //자기 위도
-            lng: 0, //자기 경도
-            travelSpots: [],
-            searchInput: "",
-            searched: "",
-            page: 1,
-            totalCount: 0,  //여행지 전체 개수
-            loading: true,
+            travelSpots: this.searchResult,
+            searchInput: this.search ? decodeURIComponent(this.search) : '',
+            // loading: true,
             loadingColor: "#000000",
             newDefCnts: {}, //신규 확진자
-            searchWay: SEARCH_WAY.NEAR,
         };
     },
     methods: {
@@ -307,97 +294,98 @@ export default defineComponent({
                 });
             });
         },
-        getCurrentLocationSuccess(position) {
-            //자기위치 가져오기(성공)
-            this.lat = position.coords.latitude;
-            this.lng = position.coords.longitude;
-            const currentLocation = new naver.maps.LatLng(this.lat, this.lng);
-            this.map.setCenter(currentLocation);
-            this.map.setOptions("zoom", 10);
-            new naver.maps.Marker({
-                map: this.map,
-                position: currentLocation,
-                icon: {
-                    path: naver.maps.SymbolPath.CIRCLE,
-                    style: naver.maps.SymbolStyle.CIRCLE,
-                    fillColor: "#FF0000",
-                    fillOpacity: 1,
-                    strokeColor: "#000000",
-                    strokeStyle: "solid",
-                    strokeWeight: 1,
-                    radius: 10,
-                },
-            });
-            this.getNearTravelSpots();
-        },
-        getCurrentLocationError() {
-            //자기위치 가져오기(실패)
-            console.log("cant get current location");
-        },
-        getNearTravelSpots() {
-            //주변 관광지 데이터 가져오기(10km)
-            // cors때문에 라라벨백엔드로 우회해서 받음...
-            this.loading = true;
-            axios
-                .get(
-                    `/api/nearTravelSpots?lat=${this.lat}&lng=${this.lng}&page=${this.page}`
-                )
-                .then((res) => {
-                    this.clearMarkersAndInfoWindows();
-                    console.log(res);
-                    this.totalCount = res.data.body.totalCount;
-                    if (this.totalCount == 0) {
-                        this.travelSpots = []
-                    } else {
-                        if (!res.data.body.items.item.length) { //길이가 1일때
-                            this.travelSpots = [res.data.body.items.item];
-                        } else {
-                            this.travelSpots = res.data.body.items.item;
-                        }
-                    }
-                    this.loading = false;
-                    this.setMarkers();
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        },
-        searchTravelSpots() {
-            //검색
-            // cors때문에 라라벨백엔드로 우회해서 받음...
-            this.loading = true;
-            axios
-                .get(
-                    `/api/searchTravelSpots?search=${encodeURIComponent(
-                        this.searched
-                    )}&page=${this.page}`
-                )
-                .then((res) => {
-                    this.clearMarkersAndInfoWindows();
-                    console.log(res);
-                    this.totalCount = res.data.body.totalCount;
-                    if (this.totalCount == 0) {
-                        this.travelSpots = []
-                    } else {
-                        if (!res.data.body.items.item.length) { //길이가 1일때
-                            this.travelSpots = [res.data.body.items.item];
-                        } else {
-                            this.travelSpots = res.data.body.items.item;
-                        }
-                    }
-                    this.loading = false;
-                    this.map.setOptions("zoom", 1);
-                    this.setMarkers();
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        },
+        // getCurrentLocationSuccess(position) {
+        //     //자기위치 가져오기(성공)
+        //     this.lat = position.coords.latitude;
+        //     this.lng = position.coords.longitude;
+        //     const currentLocation = new naver.maps.LatLng(this.lat, this.lng);
+        //     this.map.setCenter(currentLocation);
+        //     this.map.setOptions("zoom", 10);
+        //     new naver.maps.Marker({
+        //         map: this.map,
+        //         position: currentLocation,
+        //         icon: {
+        //             path: naver.maps.SymbolPath.CIRCLE,
+        //             style: naver.maps.SymbolStyle.CIRCLE,
+        //             fillColor: "#FF0000",
+        //             fillOpacity: 1,
+        //             strokeColor: "#000000",
+        //             strokeStyle: "solid",
+        //             strokeWeight: 1,
+        //             radius: 10,
+        //         },
+        //     });
+        //     this.getNearTravelSpots();
+        // },
+        // getCurrentLocationError() {
+        //     //자기위치 가져오기(실패)
+        //     console.log("cant get current location");
+        // },
+        // getNearTravelSpots() {
+        //     //주변 관광지 데이터 가져오기(10km)
+        //     // cors때문에 라라벨백엔드로 우회해서 받음...
+        //     this.loading = true;
+        //     axios
+        //         .get(
+        //             `/api/nearTravelSpots?lat=${this.lat}&lng=${this.lng}&page=${this.page}`
+        //         )
+        //         .then((res) => {
+        //             this.clearMarkersAndInfoWindows();
+        //             console.log(res);
+        //             this.totalCount = res.data.body.totalCount;
+        //             if (this.totalCount == 0) {
+        //                 this.travelSpots = []
+        //             } else {
+        //                 if (!res.data.body.items.item.length) { //길이가 1일때
+        //                     this.travelSpots = [res.data.body.items.item];
+        //                 } else {
+        //                     this.travelSpots = res.data.body.items.item;
+        //                 }
+        //             }
+        //             this.loading = false;
+        //             this.setMarkers();
+        //         })
+        //         .catch((err) => {
+        //             console.log(err);
+        //         });
+        // },
+        // searchTravelSpots() {
+        //     //검색
+        //     // cors때문에 라라벨백엔드로 우회해서 받음...
+        //     this.loading = true;
+        //     axios
+        //         .get(
+        //             `/api/searchTravelSpots?search=${encodeURIComponent(
+        //                 this.searched
+        //             )}&page=${this.page}`
+        //         )
+        //         .then((res) => {
+        //             this.clearMarkersAndInfoWindows();
+        //             console.log(res);
+        //             this.totalCount = res.data.body.totalCount;
+        //             if (this.totalCount == 0) {
+        //                 this.travelSpots = []
+        //             } else {
+        //                 if (!res.data.body.items.item.length) { //길이가 1일때
+        //                     this.travelSpots = [res.data.body.items.item];
+        //                 } else {
+        //                     this.travelSpots = res.data.body.items.item;
+        //                 }
+        //             }
+        //             this.loading = false;
+        //             this.map.setOptions("zoom", 1);
+        //             this.setMarkers();
+        //         })
+        //         .catch((err) => {
+        //             console.log(err);
+        //         });
+        // },
         onClickSearchButton() {
-            this.page = 1;
-            this.searchWay = SEARCH_WAY.KEYWORD;
-            this.searched = this.searchInput;
-            this.searchTravelSpots();
+            // this.page = 1;
+            // this.searchWay = SEARCH_WAY.KEYWORD;
+            // this.searched = this.searchInput;
+            // this.searchTravelSpots();
+            axios.get(`http://localhost:8000/travel?searchWay=search&search=${this.searchInput}`)
         },
         onClickTravel(travelSpot) {
             //여행지 하나 클릭
@@ -407,44 +395,62 @@ export default defineComponent({
             this.map.setOptions("zoom", 13);
             travelSpot.infoWindow.open(this.map, travelSpot.marker);
         },
-        onClickNextPage() {
-            //다음페이지
-            if (this.page * 12 >= this.totalCount) {
-                return;
-            }
-            this.page += 1;
-            switch (this.searchWay) {  //검색방법에 따라 분기처리
-                case SEARCH_WAY.NEAR:
-                    this.getNearTravelSpots();
-                    break;
-                case SEARCH_WAY.KEYWORD:
-                    this.searchTravelSpots();
-                    break;
-                default:
-                    break;
+        // onClickNextPage() {
+        //     //다음페이지
+        //     if (this.page * 12 >= this.totalCount) {
+        //         return;
+        //     }
+        //     this.page += 1;
+        //     switch (this.searchWay) {  //검색방법에 따라 분기처리
+        //         case 'search':
+        //             axios.get(`http://localhost:8000/travel?searchWay=search&search=${this.searchInput}&page=${this.page+1}`);
+        //             break;
+        //         case 'near':
+        //             axios.get(`http://localhost:8000/travel?searchWay=near&lat=${this.myLocation.lat}&lng=${this.myLocation.lng}&page=${this.page+1}`)
+        //             break;
+        //         default:
+        //             break;
+        //     }
+        // },
+        nextPage() {
+            if (this.searchWay == 'search') {
+                return `http://localhost:8000/travel?searchWay=search&search=${this.search}&page=${this.page+1}`;
+            } else if (this.searchWay == 'near') {
+                return `http://localhost:8000/travel?searchWay=near&lat=${this.myLocation.lat}&lng=${this.myLocation.lng}&page=${this.page+1}`;
             }
         },
-        onClickPreviousPage() {
-            //이전 페이지
-            if (this.page === 1) {
-                return;
+        // onClickPreviousPage() {
+        //     //이전 페이지
+        //     if (this.page === 1) {
+        //         return;
+        //     }
+        //     switch (this.searchWay) {   //검색방법에 따라 분기처리
+        //         case 'search':
+        //             this.getNearTravelSpots();
+        //             break;
+        //         case 'near':
+        //             this.searchTravelSpots();
+        //             break;
+        //         default:
+        //             break;
+        //     }
+        //     this.searchTravelSpots();
+        // },
+        previousPage() {
+            if (this.searchWay == 'search') {
+                return `http://localhost:8000/travel?searchWay=search&search=${this.search}&page=${this.page-1}`;
+            } else if (this.searchWay == 'near') {
+                return `http://localhost:8000/travel?searchWay=near&lat=${this.myLocation.lat}&lng=${this.myLocation.lng}&page=${this.page-1}`;
             }
-            this.page -= 1;
-            switch (this.searchWay) {   //검색방법에 따라 분기처리
-                case SEARCH_WAY.NEAR:
-                    this.getNearTravelSpots();
-                    break;
-                case SEARCH_WAY.KEYWORD:
-                    this.searchTravelSpots();
-                    break;
-                default:
-                    break;
-            }
-            this.searchTravelSpots();
         },
         getNewDefCntOfSpot(areaCode) { //해당 지역 확진자수
             return this.newDefCnts[AREA_CODE[areaCode]];
         },
+    },
+    computed: {
+        ...mapState({
+            myLocation: 'myLocation',
+        }),
     },
     mounted() {
         //지역별 확진자수 초기화...
@@ -462,15 +468,15 @@ export default defineComponent({
         };
         this.map = new naver.maps.Map("map", mapOptions);
 
-        //자기위치 가져오기
-        if (!navigator.geolocation) {
-            console.log("cant get location in this browser");
-        } else {
-            navigator.geolocation.getCurrentPosition(
-                this.getCurrentLocationSuccess,
-                this.getCurrentLocationError
-            );
-        }
+        // //자기위치 가져오기
+        // if (!navigator.geolocation) {
+        //     console.log("cant get location in this browser");
+        // } else {
+        //     navigator.geolocation.getCurrentPosition(
+        //         this.getCurrentLocationSuccess,
+        //         this.getCurrentLocationError
+        //     );
+        // }
     },
 });
 </script>

@@ -3,10 +3,13 @@ import { createStore } from 'vuex';
 export default createStore({
     state() {
         return {
-            test: 'sadfas',
-        }
+            myLocation: {},
+        };
     },
     mutations: {
+        setMyLocation (state, location) {
+            state.myLocation = location;
+        },
 
     },
 });
