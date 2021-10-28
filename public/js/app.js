@@ -19479,6 +19479,28 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/TravelSpotCard.vue?vue&type=script&lang=js":
+/*!********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/TravelSpotCard.vue?vue&type=script&lang=js ***!
+  \********************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @inertiajs/inertia-vue3 */ "./node_modules/@inertiajs/inertia-vue3/dist/index.js");
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  components: {
+    Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_0__.Link
+  },
+  props: ['travelSpot', 'myLocation', 'page', 'search', 'searchWay', 'lat', 'lng']
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Jetstream/ActionMessage.vue?vue&type=script&lang=js":
 /*!******************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Jetstream/ActionMessage.vue?vue&type=script&lang=js ***!
@@ -20217,14 +20239,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Jetstream_NavLink_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Jetstream/NavLink.vue */ "./resources/js/Jetstream/NavLink.vue");
 /* harmony import */ var _Jetstream_ResponsiveNavLink_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Jetstream/ResponsiveNavLink.vue */ "./resources/js/Jetstream/ResponsiveNavLink.vue");
 /* harmony import */ var _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @inertiajs/inertia-vue3 */ "./node_modules/@inertiajs/inertia-vue3/dist/index.js");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-
 
 
 
@@ -20245,7 +20259,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_5__.Link
   },
   data: function data() {},
-  methods: _objectSpread({
+  methods: {
     switchToTeam: function switchToTeam(team) {
       this.$inertia.put(route('current-team.update'), {
         'team_id': team.id
@@ -20255,28 +20269,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     logout: function logout() {
       this.$inertia.post(route('logout'));
-    },
-    getCurrentLocationSuccess: function getCurrentLocationSuccess(position) {
-      //자기위치 가져오기(성공)
-      this.setMyLocation({
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      });
-    },
-    getCurrentLocationError: function getCurrentLocationError() {
-      //자기위치 가져오기(실패)
-      console.log("cant get current location");
-    }
-  }, (0,vuex__WEBPACK_IMPORTED_MODULE_6__.mapMutations)(['setMyLocation'])),
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_6__.mapState)({
-    myLocation: 'myLocation'
-  })),
-  mounted: function mounted() {
-    //자기위치 가져오기
-    if (!navigator.geolocation) {
-      console.log("cant get location in this browser");
-    } else {
-      navigator.geolocation.getCurrentPosition(this.getCurrentLocationSuccess, this.getCurrentLocationError);
     }
   }
 });
@@ -21575,14 +21567,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Layouts_AppLayout_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Layouts/AppLayout.vue */ "./resources/js/Layouts/AppLayout.vue");
 /* harmony import */ var _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @inertiajs/inertia-vue3 */ "./node_modules/@inertiajs/inertia-vue3/dist/index.js");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
 /* harmony import */ var vue_spinner_src_PulseLoader_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-spinner/src/PulseLoader.vue */ "./node_modules/vue-spinner/src/PulseLoader.vue");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+/* harmony import */ var _Components_TravelSpotCard_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Components/TravelSpotCard.vue */ "./resources/js/Components/TravelSpotCard.vue");
 var AREA_CODE = {
   1: "서울",
   2: "인천",
@@ -21610,9 +21596,10 @@ var AREA_CODE = {
   components: {
     AppLayout: _Layouts_AppLayout_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__.Link,
-    PulseLoader: vue_spinner_src_PulseLoader_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+    PulseLoader: vue_spinner_src_PulseLoader_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    TravelSpotCard: _Components_TravelSpotCard_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
-  props: ['localData', 'searchResult', 'page', 'search', 'totalCount', 'searchWay'],
+  props: ['localData', 'searchResult', 'page', 'search', 'totalCount', 'searchWay', 'lat', 'lng'],
   data: function data() {
     return {
       map: null,
@@ -21625,6 +21612,27 @@ var AREA_CODE = {
     };
   },
   methods: {
+    onClickNearButton: function onClickNearButton() {
+      var _this = this;
+
+      var getCurrentLocationError = function getCurrentLocationError() {
+        //자기위치 가져오기(실패) 콜백
+        console.log("cant get current location");
+      };
+
+      var getCurrentLocationSuccess = function getCurrentLocationSuccess(position) {
+        //자기위치 가져오기(성공) 콜백
+        // this.setMyLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
+        _this.$inertia.get("/travel?searchWay=near&lat=".concat(position.coords.latitude, "&lng=").concat(position.coords.longitude));
+      };
+
+      if (!navigator.geolocation) {
+        //자기위치 가져오기
+        console.log("cant get location in this browser");
+      } else {
+        navigator.geolocation.getCurrentPosition(getCurrentLocationSuccess, getCurrentLocationError);
+      }
+    },
     clearMarkersAndInfoWindows: function clearMarkersAndInfoWindows() {
       if (this.travelSpots.length === 0) {
         return;
@@ -21636,7 +21644,7 @@ var AREA_CODE = {
       });
     },
     setMarkers: function setMarkers() {
-      var _this = this;
+      var _this2 = this;
 
       if (this.travelSpots.length === 0) {
         return;
@@ -21646,7 +21654,7 @@ var AREA_CODE = {
       this.travelSpots.map(function (v) {
         var spot = new naver.maps.LatLng(v.mapy, v.mapx);
         var marker = new naver.maps.Marker({
-          map: _this.map,
+          map: _this2.map,
           position: spot
         });
         v.marker = marker;
@@ -21663,8 +21671,8 @@ var AREA_CODE = {
           if (infoWindow.getMap()) {
             infoWindow.close();
           } else {
-            console.log(_this);
-            infoWindow.open(_this.map, marker);
+            console.log(_this2);
+            infoWindow.open(_this2.map, marker);
           }
         });
       });
@@ -21691,10 +21699,6 @@ var AREA_CODE = {
     //         },
     //     });
     //     this.getNearTravelSpots();
-    // },
-    // getCurrentLocationError() {
-    //     //자기위치 가져오기(실패)
-    //     console.log("cant get current location");
     // },
     // getNearTravelSpots() {
     //     //주변 관광지 데이터 가져오기(10km)
@@ -21755,13 +21759,6 @@ var AREA_CODE = {
     //             console.log(err);
     //         });
     // },
-    onClickSearchButton: function onClickSearchButton() {
-      // this.page = 1;
-      // this.searchWay = SEARCH_WAY.KEYWORD;
-      // this.searched = this.searchInput;
-      // this.searchTravelSpots();
-      axios.get("http://localhost:8000/travel?searchWay=search&search=".concat(this.searchInput));
-    },
     onClickTravel: function onClickTravel(travelSpot) {
       //여행지 하나 클릭
       //클릭한 여행지로 맵 위치 이동하고 줌 시킴
@@ -21770,68 +21767,17 @@ var AREA_CODE = {
       this.map.setOptions("zoom", 13);
       travelSpot.infoWindow.open(this.map, travelSpot.marker);
     },
-    // onClickNextPage() {
-    //     //다음페이지
-    //     if (this.page * 12 >= this.totalCount) {
-    //         return;
-    //     }
-    //     this.page += 1;
-    //     switch (this.searchWay) {  //검색방법에 따라 분기처리
-    //         case 'search':
-    //             axios.get(`http://localhost:8000/travel?searchWay=search&search=${this.searchInput}&page=${this.page+1}`);
-    //             break;
-    //         case 'near':
-    //             axios.get(`http://localhost:8000/travel?searchWay=near&lat=${this.myLocation.lat}&lng=${this.myLocation.lng}&page=${this.page+1}`)
-    //             break;
-    //         default:
-    //             break;
-    //     }
-    // },
-    nextPage: function nextPage() {
-      if (this.searchWay == 'search') {
-        return "http://localhost:8000/travel?searchWay=search&search=".concat(this.search, "&page=").concat(this.page + 1);
-      } else if (this.searchWay == 'near') {
-        return "http://localhost:8000/travel?searchWay=near&lat=".concat(this.myLocation.lat, "&lng=").concat(this.myLocation.lng, "&page=").concat(this.page + 1);
-      }
-    },
-    // onClickPreviousPage() {
-    //     //이전 페이지
-    //     if (this.page === 1) {
-    //         return;
-    //     }
-    //     switch (this.searchWay) {   //검색방법에 따라 분기처리
-    //         case 'search':
-    //             this.getNearTravelSpots();
-    //             break;
-    //         case 'near':
-    //             this.searchTravelSpots();
-    //             break;
-    //         default:
-    //             break;
-    //     }
-    //     this.searchTravelSpots();
-    // },
-    previousPage: function previousPage() {
-      if (this.searchWay == 'search') {
-        return "http://localhost:8000/travel?searchWay=search&search=".concat(this.search, "&page=").concat(this.page - 1);
-      } else if (this.searchWay == 'near') {
-        return "http://localhost:8000/travel?searchWay=near&lat=".concat(this.myLocation.lat, "&lng=").concat(this.myLocation.lng, "&page=").concat(this.page - 1);
-      }
-    },
     getNewDefCntOfSpot: function getNewDefCntOfSpot(areaCode) {
       //해당 지역 확진자수
       return this.newDefCnts[AREA_CODE[areaCode]];
     }
   },
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_3__.mapState)({
-    myLocation: 'myLocation'
-  })),
   mounted: function mounted() {
-    var _this2 = this;
+    var _this3 = this;
 
     //지역별 확진자수 초기화...
     this.localData.map(function (v) {
-      _this2.newDefCnts[v.gubun] = v.localOccCnt + v.overFlowCnt;
+      _this3.newDefCnts[v.gubun] = v.localOccCnt + v.overFlowCnt;
     }); //맵 생성
 
     var mapOptions = {
@@ -21841,15 +21787,7 @@ var AREA_CODE = {
       mapTypeControl: true,
       zoom: 1
     };
-    this.map = new naver.maps.Map("map", mapOptions); // //자기위치 가져오기
-    // if (!navigator.geolocation) {
-    //     console.log("cant get location in this browser");
-    // } else {
-    //     navigator.geolocation.getCurrentPosition(
-    //         this.getCurrentLocationSuccess,
-    //         this.getCurrentLocationError
-    //     );
-    // }
+    this.map = new naver.maps.Map("map", mapOptions);
   }
 });
 
@@ -21867,39 +21805,83 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Layouts_AppLayout_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Layouts/AppLayout.vue */ "./resources/js/Layouts/AppLayout.vue");
+/* harmony import */ var _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @inertiajs/inertia-vue3 */ "./node_modules/@inertiajs/inertia-vue3/dist/index.js");
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: {
-    contentId: Number
-  },
+  props: ['searchWay', 'page', 'search', 'lat', 'lng', 'content', 'images'],
   components: {
-    AppLayout: _Layouts_AppLayout_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
-  },
-  data: function data() {
-    return {
-      content: {},
-      images: []
-    };
-  },
-  mounted: function mounted() {
-    var _this = this;
-
-    axios.get("/api/travel/".concat(this.contentId)) //상세정보
-    .then(function (res) {
-      console.log(res);
-      _this.content = res.data.body.items.item;
-    })["catch"](function (err) {
-      console.log(err);
-    });
-    axios.get("/api/image/".concat(this.contentId)) //이미지
-    .then(function (res) {
-      console.log(res);
-      _this.images = res.data.body.items.item;
-    })["catch"](function (err) {
-      console.log(err);
-    });
+    AppLayout: _Layouts_AppLayout_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
+    Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__.Link
   }
 });
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/TravelSpotCard.vue?vue&type=template&id=5a708577":
+/*!************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/TravelSpotCard.vue?vue&type=template&id=5a708577 ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+var _hoisted_1 = {
+  "class": "hover:bg-gray-100 xl:w-1/3 md:w-1/2 p-4 border-solid border-2"
+};
+var _hoisted_2 = {
+  "class": "p-6 rounded-lg"
+};
+var _hoisted_3 = ["src", "alt"];
+var _hoisted_4 = {
+  "class": "tracking-widest text-indigo-500 text-xs font-medium title-font"
+};
+var _hoisted_5 = {
+  "class": "text-lg text-gray-900 font-medium title-font mb-2"
+};
+var _hoisted_6 = {
+  "class": "bg-red-400 rounded-md font-semibold text-xs text-gray-100 p-2 right-4 bottom-0 float-right"
+};
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _component_Link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Link");
+
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+    "class": "lg:h-60 xl:h-56 md:h-64 sm:h-72 xs:h-72 h-72 rounded w-full object-cover object-center mb-6",
+    src: $props.travelSpot.firstimage,
+    alt: $props.travelSpot.title
+  }, null, 8
+  /* PROPS */
+  , _hoisted_3), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.travelSpot.addr1), 1
+  /* TEXT */
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
+    href: _ctx.route('travel.show', {
+      'id': $props.travelSpot.contentid,
+      'page': $props.page,
+      'search': $props.search,
+      'searchWay': $props.searchWay,
+      'lat': $props.lat,
+      'lng': $props.lng
+    })
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.travelSpot.title), 1
+      /* TEXT */
+      )];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
+  /* PROPS */
+  , ["href"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, " 지역 신규 확진자 수: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)() + "명 ", 1
+  /* TEXT */
+  )])]);
+}
 
 /***/ }),
 
@@ -23239,9 +23221,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       'border-b-4': _ctx.$page.url.startsWith('/travel')
     }]),
     href: _ctx.route('travel.index', {
-      searchWay: 'near',
-      lat: _ctx.myLocation.lat,
-      lng: _ctx.myLocation.lng
+      searchWay: 'keyWord'
     })
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -26030,7 +26010,6 @@ var _hoisted_3 = {
 };
 
 var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-  type: "submit",
   "class": "absolute right-0 top-0 mt-5 mr-4"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
   "class": "text-gray-600 h-4 w-4 fill-current",
@@ -26066,25 +26045,11 @@ var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 var _hoisted_6 = {
   "class": "flex flex-wrap mt-4"
 };
-var _hoisted_7 = ["onClick"];
-var _hoisted_8 = {
-  "class": "p-6 rounded-lg"
-};
-var _hoisted_9 = ["src", "alt"];
-var _hoisted_10 = {
-  "class": "tracking-widest text-indigo-500 text-xs font-medium title-font"
-};
-var _hoisted_11 = {
-  "class": "text-lg text-gray-900 font-medium title-font mb-2"
-};
-var _hoisted_12 = {
-  "class": "bg-red-400 rounded-md font-semibold text-xs text-gray-100 p-2 right-4 bottom-0 float-right"
-};
-var _hoisted_13 = {
+var _hoisted_7 = {
   "class": "flex justify-center py-8"
 };
 
-var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   "class": "border border-black text-black block rounded-sm font-bold py-4 px-6 mr-2 flex items-center hover:bg-black hover:text-white"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
   "class": "h-5 w-5 mr-2 fill-current",
@@ -26106,7 +26071,7 @@ var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 /* HOISTED */
 );
 
-var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   "class": "border border-black text-black block rounded-sm font-bold py-4 px-6 ml-2 flex items-center hover:bg-black hover:text-white"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Next page "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
   "class": "h-5 w-5 ml-2 fill-current",
@@ -26130,6 +26095,8 @@ var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Link");
+
+  var _component_travel_spot_card = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("travel-spot-card");
 
   var _component_app_layout = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("app-layout");
 
@@ -26162,55 +26129,41 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
       }, 8
       /* PROPS */
-      , ["href"])]), _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.travelSpots, function (spot) {
-        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
-          "class": "hover:bg-gray-100 xl:w-1/3 md:w-1/2 p-4 border-solid border-2",
-          key: spot.contentid,
+      , ["href"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+        onClick: _cache[1] || (_cache[1] = function () {
+          return $options.onClickNearButton && $options.onClickNearButton.apply($options, arguments);
+        }),
+        "class": "px-4 py-2 rounded-md font-semibold text-sm font-medium border-0 focus:outline-none focus:ring transition text-black-600 bg-purple-50 hover:text-black-800 hover:bg-purple-100 active:bg-purple-200 focus:ring-purple-300",
+        type: "submit"
+      }, "주변 관광지 보기")]), _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.travelSpots, function (travelSpot) {
+        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_travel_spot_card, {
+          key: travelSpot.contentid,
+          travelSpot: travelSpot,
           onClick: function onClick($event) {
-            return $options.onClickTravel(spot);
-          }
-        }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
-          "class": "lg:h-60 xl:h-56 md:h-64 sm:h-72 xs:h-72 h-72 rounded w-full object-cover object-center mb-6",
-          src: spot.firstimage,
-          alt: spot.title
+            return $options.onClickTravel(travelSpot);
+          },
+          searchWay: $props.searchWay,
+          search: $props.search,
+          lat: $props.lat,
+          lng: $props.lng,
+          page: $props.page
         }, null, 8
         /* PROPS */
-        , _hoisted_9), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(spot.addr1), 1
-        /* TEXT */
-        ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
-          href: _ctx.route('travel.show', {
-            id: spot.contentid
-          })
-        }, {
-          "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-            return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(spot.title), 1
-            /* TEXT */
-            )];
-          }),
-          _: 2
-          /* DYNAMIC */
-
-        }, 1032
-        /* PROPS, DYNAMIC_SLOTS */
-        , ["href"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, " 지역 신규 확진자 수: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getNewDefCntOfSpot(spot.areacode)) + "명 ", 1
-        /* TEXT */
-        )])], 8
-        /* PROPS */
-        , _hoisted_7);
+        , ["travelSpot", "onClick", "searchWay", "search", "lat", "lng", "page"]);
       }), 128
       /* KEYED_FRAGMENT */
-      ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <div v-if=\"loading\" class=\"flex justify-center my-5\">\r\n                    <pulse-loader\r\n                        :loading=\"loading\"\r\n                        :color=\"loadingColor\"\r\n                    ></pulse-loader>\r\n                </div> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <div v-if=\"!loading && travelSpots.lenth === 0\" class=\"flex justify-center my-4\">검색결과 없음</div> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [$props.page > 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Link, {
+      ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <div v-if=\"loading\" class=\"flex justify-center my-5\">\r\n                    <pulse-loader\r\n                        :loading=\"loading\"\r\n                        :color=\"loadingColor\"\r\n                    ></pulse-loader>\r\n                </div> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <div v-if=\"!loading && travelSpots.lenth === 0\" class=\"flex justify-center my-4\">검색결과 없음</div> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [$props.page > 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Link, {
         key: 0,
         href: _ctx.route('travel.index', {
           searchWay: $props.searchWay,
           search: $props.search,
           page: Number($props.page) - 1,
-          lat: _ctx.myLocation.lat,
-          lng: _ctx.myLocation.lng
+          lat: $props.lat,
+          lng: $props.lng
         })
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_14];
+          return [_hoisted_8];
         }),
         _: 1
         /* STABLE */
@@ -26223,12 +26176,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           searchWay: $props.searchWay,
           search: $props.search,
           page: Number($props.page) + 1,
-          lat: _ctx.myLocation.lat,
-          lng: _ctx.myLocation.lng
+          lat: $props.lat,
+          lng: $props.lng
         })
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_15];
+          return [_hoisted_9];
         }),
         _: 1
         /* STABLE */
@@ -26266,60 +26219,83 @@ var _hoisted_1 = {
 var _hoisted_2 = {
   "class": "max-w-7xl mx-auto sm:px-6 lg:px-8"
 };
-
-var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_3 = {
   "class": "flex justify-end"
-}, "돌아가기", -1
+};
+
+var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  "class": "px-4 py-2 rounded-md font-semibold text-sm font-medium border-0 focus:outline-none focus:ring transition text-black-600 bg-purple-50 hover:text-black-800 hover:bg-purple-100 active:bg-purple-200 focus:ring-purple-300",
+  type: "submit"
+}, "목록으로", -1
 /* HOISTED */
 );
 
-var _hoisted_4 = {
+var _hoisted_5 = {
   "class": "flex justify-center text-4xl my-7 font-semibold"
 };
-var _hoisted_5 = ["src"];
-var _hoisted_6 = {
+var _hoisted_6 = ["src"];
+var _hoisted_7 = {
   "class": "my-3"
 };
-var _hoisted_7 = {
+var _hoisted_8 = {
   key: 0,
   "class": "my-3"
 };
 
-var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "홈페이지: ", -1
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "홈페이지: ", -1
 /* HOISTED */
 );
 
-var _hoisted_9 = ["innerHTML"];
 var _hoisted_10 = ["innerHTML"];
+var _hoisted_11 = ["innerHTML"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _component_Link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Link");
+
   var _component_app_layout = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("app-layout");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_app_layout, null, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.content.title), 1
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
+        href: _ctx.route('travel.index', {
+          searchWay: $props.searchWay,
+          search: $props.search,
+          page: $props.page,
+          lat: $props.lat,
+          lng: $props.lng
+        })
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [_hoisted_4];
+        }),
+        _: 1
+        /* STABLE */
+
+      }, 8
+      /* PROPS */
+      , ["href"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.content.title), 1
       /* TEXT */
-      ), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.images, function (image) {
+      ), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.images, function (image) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("img", {
           key: image.serialnum,
           "class": "w-full",
           src: image.originimgurl
         }, null, 8
         /* PROPS */
-        , _hoisted_5);
+        , _hoisted_6);
       }), 128
       /* KEYED_FRAGMENT */
-      )), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, "주소: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.content.addr1 + $data.content.addr2), 1
+      )), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, "주소: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.content.addr1 + $props.content.addr2), 1
       /* TEXT */
-      ), $data.content.homepage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_7, [_hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
-        innerHTML: $data.content.homepage
+      ), $props.content.homepage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_8, [_hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+        innerHTML: $props.content.homepage
       }, null, 8
       /* PROPS */
-      , _hoisted_9)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-        innerHTML: $data.content.overview,
+      , _hoisted_10)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+        innerHTML: $props.content.overview,
         "class": "text-lg"
       }, null, 8
       /* PROPS */
-      , _hoisted_10)])])];
+      , _hoisted_11)])])];
     }),
     _: 1
     /* STABLE */
@@ -26423,18 +26399,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,vuex__WEBPACK_IMPORTED_MODULE_0__.createStore)({
-  state: function state() {
-    return {
-      myLocation: {}
-    };
-  },
-  mutations: {
-    setMyLocation: function setMyLocation(state, location) {
-      state.myLocation = location;
-    }
-  }
-}));
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,vuex__WEBPACK_IMPORTED_MODULE_0__.createStore)({}));
 
 /***/ }),
 
@@ -64036,6 +64001,34 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/Components/TravelSpotCard.vue":
+/*!****************************************************!*\
+  !*** ./resources/js/Components/TravelSpotCard.vue ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _TravelSpotCard_vue_vue_type_template_id_5a708577__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TravelSpotCard.vue?vue&type=template&id=5a708577 */ "./resources/js/Components/TravelSpotCard.vue?vue&type=template&id=5a708577");
+/* harmony import */ var _TravelSpotCard_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TravelSpotCard.vue?vue&type=script&lang=js */ "./resources/js/Components/TravelSpotCard.vue?vue&type=script&lang=js");
+/* harmony import */ var C_Users_jja33_Desktop_Laravel_COVID_19_tavel_app_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+
+;
+const __exports__ = /*#__PURE__*/(0,C_Users_jja33_Desktop_Laravel_COVID_19_tavel_app_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_TravelSpotCard_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_TravelSpotCard_vue_vue_type_template_id_5a708577__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Components/TravelSpotCard.vue"]])
+/* hot reload */
+if (false) {}
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__exports__);
+
+/***/ }),
+
 /***/ "./resources/js/Jetstream/ActionMessage.vue":
 /*!**************************************************!*\
   !*** ./resources/js/Jetstream/ActionMessage.vue ***!
@@ -65370,6 +65363,22 @@ if (false) {}
 
 /***/ }),
 
+/***/ "./resources/js/Components/TravelSpotCard.vue?vue&type=script&lang=js":
+/*!****************************************************************************!*\
+  !*** ./resources/js/Components/TravelSpotCard.vue?vue&type=script&lang=js ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_TravelSpotCard_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_TravelSpotCard_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./TravelSpotCard.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/TravelSpotCard.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
 /***/ "./resources/js/Jetstream/ActionMessage.vue?vue&type=script&lang=js":
 /*!**************************************************************************!*\
   !*** ./resources/js/Jetstream/ActionMessage.vue?vue&type=script&lang=js ***!
@@ -66055,6 +66064,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_ShowTravel_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./ShowTravel.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Pages/Travel/ShowTravel.vue?vue&type=script&lang=js");
  
+
+/***/ }),
+
+/***/ "./resources/js/Components/TravelSpotCard.vue?vue&type=template&id=5a708577":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/Components/TravelSpotCard.vue?vue&type=template&id=5a708577 ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_TravelSpotCard_vue_vue_type_template_id_5a708577__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_TravelSpotCard_vue_vue_type_template_id_5a708577__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./TravelSpotCard.vue?vue&type=template&id=5a708577 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/TravelSpotCard.vue?vue&type=template&id=5a708577");
+
 
 /***/ }),
 

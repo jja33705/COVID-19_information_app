@@ -2,7 +2,11 @@
     <app-layout>
         <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="flex justify-end">돌아가기</div>
+                <div class="flex justify-end">
+                    <Link :href="route('travel.index', { searchWay: searchWay, search: search, page: page, lat: lat, lng: lng })">
+                        <button class="px-4 py-2 rounded-md font-semibold text-sm font-medium border-0 focus:outline-none focus:ring transition text-black-600 bg-purple-50 hover:text-black-800 hover:bg-purple-100 active:bg-purple-200 focus:ring-purple-300" type="submit">목록으로</button>
+                    </Link>
+                </div>
                 <div class="flex justify-center text-4xl my-7 font-semibold">{{ content.title }}</div>
                 <img v-for="image in images" :key="image.serialnum" class="w-full" :src="image.originimgurl">
                 <div class="my-3">주소: {{ content.addr1 + content.addr2 }}</div>
@@ -21,37 +25,12 @@
 
 <script>
 import AppLayout from "@/Layouts/AppLayout.vue";
-export default ({
-    props: {
-        contentId: Number,
-    },
+import { Link } from "@inertiajs/inertia-vue3";
+export default {
+    props: ['searchWay', 'page', 'search', 'lat', 'lng', 'content', 'images'],
     components: {
         AppLayout,
+        Link,
     },
-    data() {
-        return {
-            content: {},
-            images: [],
-        };
-    },
-    mounted() {
-        axios.get(`/api/travel/${this.contentId}`) //상세정보
-        .then((res) => {
-            console.log(res);
-            this.content = res.data.body.items.item;
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-        
-        axios.get(`/api/image/${this.contentId}`) //이미지
-        .then((res) => {
-            console.log(res);
-            this.images = res.data.body.items.item;
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-    },
-})
+};
 </script>

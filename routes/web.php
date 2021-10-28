@@ -35,11 +35,10 @@ Route::get('/travel', function (Request $request) {
     }
     $searchWay = $request->searchWay;  //검색방법
     $search = $request->search; //검색어
+    $lng = $request->lng;
+    $lat = $request->lat;
 
     if ($searchWay == 'near') { //주변위치 검색
-        $lng = $request->lng;
-        $lat = $request->lat;
-
         $client = new GuzzleHttp\Client();
         $res = $client->request('GET', 'http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=' . env('DATA_PORTAL_KEY') . '&numOfRows=12&pageNo=' . $page . '&MobileOS=ETC&MobileApp=AppTest&arrange=B&contentTypeId=12&mapX=' . $lng . '&mapY=' . $lat . '&radius=10000&listYN=Y');
         $xml = simplexml_load_string($res->getBody());
@@ -77,12 +76,44 @@ Route::get('/travel', function (Request $request) {
         'search' => $search,
         'searchWay' => $searchWay,
         'totalCount' => $totalCount,
+        'lat' => $lat,
+        'lng' => $lng
     ]);
 })->name('travel.index');
 
-Route::get('/travel/{id}', function ($id) {
+Route::get('/travel/{id}', function (Request $request, $id) {
+    $contentId = $id;
+
+    $client = new GuzzleHttp\Client(); //관광지 세부정보
+    $res = $client->request('GET', 'http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailCommon?serviceKey=' . env('DATA_PORTAL_KEY') . '&numOfRows=100&pageNo=1&MobileOS=ETC&MobileApp=AppTest&contentId=' . $contentId . '&contentTypeId=12&defaultYN=Y&firstImageYN=Y&areacodeYN=Y&catcodeYN=N&addrinfoYN=Y&mapinfoYN=N&overviewYN=Y');
+    $xml = simplexml_load_string($res->getBody());
+    $json = json_encode($xml);
+    $data = json_decode($json, true);
+    $content = $data['body']['items']['item'];
+
+    $client = new GuzzleHttp\Client(); //이미지
+    $res = $client->request('GET', 'http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailImage?serviceKey=' . env('DATA_PORTAL_KEY') . '&numOfRows=100&pageNo=1&MobileOS=ETC&MobileApp=AppTest&contentId=' . $contentId . '&imageYN=Y&subImageYN=Y');
+    $xml = simplexml_load_string($res->getBody());
+    $json = json_encode($xml);
+    $data = json_decode($json, true);
+    $totalCount = $data['body']['totalCount'];
+    if ($totalCount == 0) {
+        $images = $data['body']['items'];
+    } else if ($totalCount == 1) {
+        $images = array();
+        $images[0] = $data['body']['items']['item'];
+    } else {
+        $images = $data['body']['items']['item'];
+    }
+
     return Inertia::render('Travel/ShowTravel', [
-        'contentId' => $id,
+        'content' => $content,
+        'images' => $images,
+        'page' => $request->page,
+        'searchWay' => $request->searchWay,
+        'search' => $request->search,
+        'lat' => $request->lat,
+        'lng' => $request->lng,
     ]);
 })->name('travel.show');
 
