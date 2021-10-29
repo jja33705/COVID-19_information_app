@@ -21,10 +21,15 @@
                         v-model="searchInput"
                         required
                     />
-                    <Link :href="route('travel.index', { searchWay: 'keyWord', search: encodeURIComponent(searchInput) })">
-                        <button
-                            class="absolute right-0 top-0 mt-5 mr-4"
-                        >
+                    <Link
+                        :href="
+                            route('travel.index', {
+                                searchWay: 'keyWord',
+                                search: encodeURIComponent(searchInput),
+                            })
+                        "
+                    >
+                        <button class="absolute right-0 top-0 mt-5 mr-4">
                             <svg
                                 class="text-gray-600 h-4 w-4 fill-current"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -34,9 +39,7 @@
                                 x="0px"
                                 y="0px"
                                 viewBox="0 0 56.966 56.966"
-                                style="
-                                    enable-background: new 0 0 56.966 56.966;
-                                "
+                                style="enable-background: new 0 0 56.966 56.966"
                                 xml:space="preserve"
                                 width="512px"
                                 height="512px"
@@ -49,23 +52,72 @@
                     </Link>
                 </div>
                 <div>
-                    <button @click="onClickNearButton" class="px-4 py-2 rounded-md font-semibold text-sm font-medium border-0 focus:outline-none focus:ring transition text-black-600 bg-purple-50 hover:text-black-800 hover:bg-purple-100 active:bg-purple-200 focus:ring-purple-300" type="submit">주변 관광지 보기</button>
+                    <button
+                        @click="onClickNearButton"
+                        class="
+                            px-4
+                            py-2
+                            rounded-md
+                            font-semibold
+                            text-sm
+                            font-medium
+                            border-0
+                            focus:outline-none focus:ring
+                            transition
+                            text-black-600
+                            bg-purple-50
+                            hover:text-black-800 hover:bg-purple-100
+                            active:bg-purple-200
+                            focus:ring-purple-300
+                        "
+                        type="submit"
+                    >
+                        주변 관광지 보기
+                    </button>
                 </div>
-                <div id="map" style="width: 100%; height: 400px"></div>
+                <!-- <div id="map" style="width: 100%; height: 400px"></div> -->
+                <naver-map />
                 <div class="flex flex-wrap mt-4">
-                    <travel-spot-card v-for="travelSpot in travelSpots"
-                        :key="travelSpot.contentid" :travelSpot="travelSpot" @click="onClickTravel(travelSpot)" :searchWay="searchWay" :search="search" :lat="lat" :lng="lng" :page="page"/>
+                    <travel-spot-card
+                        v-for="travelSpot in travelSpots"
+                        :key="travelSpot.contentid"
+                        :travelSpot="travelSpot"
+                        @click="onClickTravel(travelSpot)"
+                        :searchWay="searchWay"
+                        :search="search"
+                        :lat="lat"
+                        :lng="lng"
+                        :page="page"
+                    />
                 </div>
-                <!-- <div v-if="loading" class="flex justify-center my-5">
-                    <pulse-loader
-                        :loading="loading"
-                        :color="loadingColor"
-                    ></pulse-loader>
-                </div> -->
-                <!-- <div v-if="!loading && travelSpots.lenth === 0" class="flex justify-center my-4">검색결과 없음</div> -->
                 <div class="flex justify-center py-8">
-                    <Link :href="route('travel.index', { searchWay: searchWay, search: search, page: Number(page)-1, lat: lat, lng: lng })" v-if="page > 1">
-                        <button class="border border-black text-black block rounded-sm font-bold py-4 px-6 mr-2 flex items-center hover:bg-black hover:text-white">
+                    <Link
+                        :href="
+                            route('travel.index', {
+                                searchWay: searchWay,
+                                search: search,
+                                page: Number(page) - 1,
+                                lat: lat,
+                                lng: lng,
+                            })
+                        "
+                        v-if="page > 1"
+                    >
+                        <button
+                            class="
+                                border border-black
+                                text-black
+                                block
+                                rounded-sm
+                                font-bold
+                                py-4
+                                px-6
+                                mr-2
+                                flex
+                                items-center
+                                hover:bg-black hover:text-white
+                            "
+                        >
                             <svg
                                 class="h-5 w-5 mr-2 fill-current"
                                 version="1.1"
@@ -86,7 +138,18 @@
                             Previous page
                         </button>
                     </Link>
-                    <Link v-if="page * 12 < totalCount" :href="route('travel.index', { searchWay: searchWay, search: search, page: Number(page)+1, lat: lat, lng: lng })">
+                    <Link
+                        v-if="page * 12 < totalCount"
+                        :href="
+                            route('travel.index', {
+                                searchWay: searchWay,
+                                search: search,
+                                page: Number(page) + 1,
+                                lat: lat,
+                                lng: lng,
+                            })
+                        "
+                    >
                         <button
                             class="
                                 border border-black
@@ -153,7 +216,8 @@ const AREA_CODE = {
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Link } from "@inertiajs/inertia-vue3";
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
-import TravelSpotCard from '@/Components/TravelSpotCard.vue';
+import TravelSpotCard from "@/Components/TravelSpotCard.vue";
+import NaverMap from '@/Components/NaverMap.vue';
 
 export default {
     components: {
@@ -161,28 +225,43 @@ export default {
         Link,
         PulseLoader,
         TravelSpotCard,
+        NaverMap,
     },
-    props: ['localData', 'searchResult', 'page', 'search', 'totalCount', 'searchWay', 'lat', 'lng'],
+    props: [
+        "localData",
+        "searchResult",
+        "page",
+        "search",
+        "totalCount",
+        "searchWay",
+        "lat",
+        "lng",
+    ],
     data() {
         return {
             map: null,
             travelSpots: this.searchResult,
-            searchInput: this.search ? decodeURIComponent(this.search) : '',
-            // loading: true,
+            searchInput: this.search ? decodeURIComponent(this.search) : "",
             loadingColor: "#000000",
+            selectedTravelSpot: null,
             newDefCnts: {}, //신규 확진자
         };
     },
     methods: {
         onClickNearButton() {
-            const getCurrentLocationError = () => { //자기위치 가져오기(실패) 콜백
+            const getCurrentLocationError = () => {
+                //자기위치 가져오기(실패) 콜백
                 console.log("cant get current location");
-            }
-            const getCurrentLocationSuccess = (position) => { //자기위치 가져오기(성공) 콜백
+            };
+            const getCurrentLocationSuccess = (position) => {
+                //자기위치 가져오기(성공) 콜백
                 // this.setMyLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
-                this.$inertia.get(`/travel?searchWay=near&lat=${position.coords.latitude}&lng=${position.coords.longitude}`)
-            }
-            if (!navigator.geolocation) { //자기위치 가져오기
+                this.$inertia.get(
+                    `/travel?searchWay=near&lat=${position.coords.latitude}&lng=${position.coords.longitude}`
+                );
+            };
+            if (!navigator.geolocation) {
+                //자기위치 가져오기
                 console.log("cant get location in this browser");
             } else {
                 navigator.geolocation.getCurrentPosition(
@@ -221,7 +300,7 @@ export default {
                     content: contentString,
                     borderWidth: 0,
                     disableAnchor: true,
-                    backgroundColor: 'transparent',
+                    backgroundColor: "transparent",
                 });
                 v.infoWindow = infoWindow;
 
@@ -322,12 +401,16 @@ export default {
         onClickTravel(travelSpot) {
             //여행지 하나 클릭
             //클릭한 여행지로 맵 위치 이동하고 줌 시킴
-            const spot = new naver.maps.LatLng(travelSpot.mapy, travelSpot.mapx);
+            const spot = new naver.maps.LatLng(
+                travelSpot.mapy,
+                travelSpot.mapx
+            );
             this.map.setCenter(spot);
             this.map.setOptions("zoom", 13);
             travelSpot.infoWindow.open(this.map, travelSpot.marker);
         },
-        getNewDefCntOfSpot(areaCode) { //해당 지역 확진자수
+        getNewDefCntOfSpot(areaCode) {
+            //해당 지역 확진자수
             return this.newDefCnts[AREA_CODE[areaCode]];
         },
     },
@@ -346,8 +429,6 @@ export default {
             zoom: 1,
         };
         this.map = new naver.maps.Map("map", mapOptions);
-
-
     },
 };
 </script>

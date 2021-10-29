@@ -9,7 +9,10 @@
                 </div>
                 <div class="flex justify-center text-4xl my-7 font-semibold">{{ content.title }}</div>
                 <img v-for="image in images" :key="image.serialnum" class="w-full" :src="image.originimgurl">
-                <div class="my-3">주소: {{ content.addr1 + content.addr2 }}</div>
+                <div class="my-3">
+                    <span>주소: {{ content.addr1 }}</span>
+                    <span>{{ content.addr2 }}</span>
+                </div>
                 <div class="my-3" v-if="content.homepage">
                     <span>홈페이지: </span>
                     <span v-html="content.homepage"></span>

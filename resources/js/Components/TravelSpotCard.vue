@@ -1,7 +1,7 @@
 <template>
     <div class="hover:bg-gray-100 xl:w-1/3 md:w-1/2 p-4 border-solid border-2">
         <div class="p-6 rounded-lg">
-            <img class="lg:h-60 xl:h-56 md:h-64 sm:h-72 xs:h-72 h-72 rounded w-full object-cover object-center mb-6" :src="travelSpot.firstimage" :alt="travelSpot.title"/>
+            <img class="lg:h-60 xl:h-56 md:h-64 sm:h-72 xs:h-72 h-72 rounded w-full object-cover object-center mb-6" :src="travelSpot.firstimage ? travelSpot.firstimage : 'http://localhost:8000/storage/images/no_image.png'" :alt="travelSpot.title"/>
             <h3 class="tracking-widest text-indigo-500 text-xs font-medium title-font">
                 {{ travelSpot.addr1 }}
             </h3>
