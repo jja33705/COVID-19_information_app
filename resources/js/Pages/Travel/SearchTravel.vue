@@ -75,8 +75,7 @@
                         주변 관광지 보기
                     </button>
                 </div>
-                <!-- <div id="map" style="width: 100%; height: 400px"></div> -->
-                <naver-map />
+                <naver-map :searchResult="searchResult" :searchWay="searchWay" :lat="lat" :lng="lng" :selectedTravelSpot="selectedTravelSpot" />
                 <div class="flex flex-wrap mt-4">
                     <travel-spot-card
                         v-for="travelSpot in travelSpots"
@@ -239,10 +238,8 @@ export default {
     ],
     data() {
         return {
-            map: null,
             travelSpots: this.searchResult,
             searchInput: this.search ? decodeURIComponent(this.search) : "",
-            loadingColor: "#000000",
             selectedTravelSpot: null,
             newDefCnts: {}, //신규 확진자
         };
@@ -260,8 +257,7 @@ export default {
                     `/travel?searchWay=near&lat=${position.coords.latitude}&lng=${position.coords.longitude}`
                 );
             };
-            if (!navigator.geolocation) {
-                //자기위치 가져오기
+            if (!navigator.geolocation) {//자기위치 가져오기
                 console.log("cant get location in this browser");
             } else {
                 navigator.geolocation.getCurrentPosition(
@@ -401,13 +397,14 @@ export default {
         onClickTravel(travelSpot) {
             //여행지 하나 클릭
             //클릭한 여행지로 맵 위치 이동하고 줌 시킴
-            const spot = new naver.maps.LatLng(
-                travelSpot.mapy,
-                travelSpot.mapx
-            );
-            this.map.setCenter(spot);
-            this.map.setOptions("zoom", 13);
-            travelSpot.infoWindow.open(this.map, travelSpot.marker);
+            // const spot = new naver.maps.LatLng(
+            //     travelSpot.mapy,
+            //     travelSpot.mapx
+            // );
+            // this.map.setCenter(spot);
+            // this.map.setOptions("zoom", 13);
+            // travelSpot.infoWindow.open(this.map, travelSpot.marker);
+            this.selectedTravelSpot = travelSpot;
         },
         getNewDefCntOfSpot(areaCode) {
             //해당 지역 확진자수
@@ -420,15 +417,7 @@ export default {
             this.newDefCnts[v.gubun] = v.localOccCnt + v.overFlowCnt;
         });
 
-        //맵 생성
-        const mapOptions = {
-            center: new naver.maps.LatLng(37.3595704, 127.105399),
-            logoControl: true,
-            mapDataControl: true,
-            mapTypeControl: true,
-            zoom: 1,
-        };
-        this.map = new naver.maps.Map("map", mapOptions);
+        
     },
 };
 </script>

@@ -19491,15 +19491,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: [],
+  props: ['searchWay', 'lat', 'lng', 'searchResult', 'selectedTravelSpot'],
   data: function data() {
     return {
-      map: null
+      map: null,
+      markers: [],
+      infoWindows: []
     };
   },
   mounted: function mounted() {
-    //맵 생성
+    var _this = this;
+
     var mapOptions = {
+      //맵 생성
       center: new naver.maps.LatLng(37.3595704, 127.105399),
       logoControl: true,
       mapDataControl: true,
@@ -19507,6 +19511,72 @@ __webpack_require__.r(__webpack_exports__);
       zoom: 1
     };
     this.map = new naver.maps.Map("map", mapOptions);
+
+    if (this.searchWay === 'near') {
+      //자기위치 표시
+      var currentLocation = new naver.maps.LatLng(this.lat, this.lng);
+      this.map.setCenter(currentLocation);
+      this.map.setOptions("zoom", 12);
+      new naver.maps.Marker({
+        map: this.map,
+        position: currentLocation,
+        icon: {
+          path: naver.maps.SymbolPath.CIRCLE,
+          style: naver.maps.SymbolStyle.CIRCLE,
+          fillColor: "#FF0000",
+          fillOpacity: 1,
+          strokeColor: "#000000",
+          strokeStyle: "solid",
+          strokeWeight: 1,
+          radius: 10
+        }
+      });
+    }
+
+    if (this.searchResult.length > 0) {
+      this.SearchResult.map(function (v) {
+        //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시
+        var spot = new naver.maps.LatLng(v.mapy, v.mapx);
+        var marker = new naver.maps.Marker({
+          map: _this.map,
+          position: spot
+        });
+
+        _this.markers.push(marker);
+
+        var contentString = ['<div>', "   <div class=\"font-bold\">".concat(v.title, "</div>"), "</div>"].join("");
+        var infoWindow = new naver.maps.InfoWindow({
+          content: contentString,
+          borderWidth: 0,
+          disableAnchor: true,
+          backgroundColor: "transparent"
+        });
+
+        _this.infoWindows.push(infoWindow); //마커 클릭시 정보창 보여줌
+
+
+        naver.maps.Event.addListener(marker, "click", function (e) {
+          if (infoWindow.getMap()) {
+            infoWindow.close();
+          } else {
+            infoWindow.open(_this.map, marker);
+          }
+        });
+      });
+    }
+  },
+  watch: {
+    selectedTravelSpot: function selectedTravelSpot(newSelectedTravelSpot) {
+      for (var i = 0; i < this.SearchResult.length; i++) {
+        if (newSelectedTravelSpot.contentid === this.SearchResult[i].contentid) {
+          var spot = new naver.maps.LatLng(this.SearchResult[i].mapy, this.SearchResult[i].mapx);
+          this.map.setCenter(spot);
+          this.map.setOptions("zoom", 13);
+          this.infoWindows[i].open(this.map, this.markers[i]);
+          break;
+        }
+      }
+    }
   }
 });
 
@@ -21638,10 +21708,8 @@ var AREA_CODE = {
   props: ["localData", "searchResult", "page", "search", "totalCount", "searchWay", "lat", "lng"],
   data: function data() {
     return {
-      map: null,
       travelSpots: this.searchResult,
       searchInput: this.search ? decodeURIComponent(this.search) : "",
-      loadingColor: "#000000",
       selectedTravelSpot: null,
       newDefCnts: {} //신규 확진자
 
@@ -21798,10 +21866,14 @@ var AREA_CODE = {
     onClickTravel: function onClickTravel(travelSpot) {
       //여행지 하나 클릭
       //클릭한 여행지로 맵 위치 이동하고 줌 시킴
-      var spot = new naver.maps.LatLng(travelSpot.mapy, travelSpot.mapx);
-      this.map.setCenter(spot);
-      this.map.setOptions("zoom", 13);
-      travelSpot.infoWindow.open(this.map, travelSpot.marker);
+      // const spot = new naver.maps.LatLng(
+      //     travelSpot.mapy,
+      //     travelSpot.mapx
+      // );
+      // this.map.setCenter(spot);
+      // this.map.setOptions("zoom", 13);
+      // travelSpot.infoWindow.open(this.map, travelSpot.marker);
+      this.selectedTravelSpot = travelSpot;
     },
     getNewDefCntOfSpot: function getNewDefCntOfSpot(areaCode) {
       //해당 지역 확진자수
@@ -21814,16 +21886,7 @@ var AREA_CODE = {
     //지역별 확진자수 초기화...
     this.localData.map(function (v) {
       _this3.newDefCnts[v.gubun] = v.localOccCnt + v.overFlowCnt;
-    }); //맵 생성
-
-    var mapOptions = {
-      center: new naver.maps.LatLng(37.3595704, 127.105399),
-      logoControl: true,
-      mapDataControl: true,
-      mapTypeControl: true,
-      zoom: 1
-    };
-    this.map = new naver.maps.Map("map", mapOptions);
+    });
   }
 });
 
@@ -21878,13 +21941,9 @@ var _hoisted_1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 /* HOISTED */
 );
 
-var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", null, "??", -1
-/* HOISTED */
-);
-
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [_hoisted_1, _hoisted_2], 64
-  /* STABLE_FRAGMENT */
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [_hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <button>??</button> ")], 2112
+  /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
   );
 }
 
@@ -26199,7 +26258,15 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         }),
         "class": "px-4 py-2 rounded-md font-semibold text-sm font-medium border-0 focus:outline-none focus:ring transition text-black-600 bg-purple-50 hover:text-black-800 hover:bg-purple-100 active:bg-purple-200 focus:ring-purple-300",
         type: "submit"
-      }, " 주변 관광지 보기 ")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <div id=\"map\" style=\"width: 100%; height: 400px\"></div> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_naver_map), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.travelSpots, function (travelSpot) {
+      }, " 주변 관광지 보기 ")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_naver_map, {
+        searchResult: $props.searchResult,
+        searchWay: $props.searchWay,
+        lat: $props.lat,
+        lng: $props.lng,
+        selectedTravelSpot: $data.selectedTravelSpot
+      }, null, 8
+      /* PROPS */
+      , ["searchResult", "searchWay", "lat", "lng", "selectedTravelSpot"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.travelSpots, function (travelSpot) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_travel_spot_card, {
           key: travelSpot.contentid,
           travelSpot: travelSpot,
