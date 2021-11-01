@@ -46,48 +46,46 @@ export default {
                 },
             });
         }
-
-        if(this.searchResult.length > 0) {
-            this.SearchResult.map((v) => { //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시
-                const spot = new naver.maps.LatLng(v.mapy, v.mapx);
-                const marker = new naver.maps.Marker({
-                    map: this.map,
-                    position: spot,
-                });
-                this.markers.push(marker);
-
-                var contentString = [
-                    '<div>',
-                    `   <div class="font-bold">${v.title}</div>`,
-                    `</div>`,
-                ].join("");
-                const infoWindow = new naver.maps.InfoWindow({
-                    content: contentString,
-                    borderWidth: 0,
-                    disableAnchor: true,
-                    backgroundColor: "transparent",
-                });
-                this.infoWindows.push(infoWindow);
-
-                //마커 클릭시 정보창 보여줌
-                naver.maps.Event.addListener(marker, "click", (e) => {
-                    if (infoWindow.getMap()) {
-                        infoWindow.close();
-                    } else {
-                        infoWindow.open(this.map, marker);
-                    }
-                });
+        
+        this.searchResult.map((v) => { //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시
+            const spot = new naver.maps.LatLng(v.mapy, v.mapx);
+            const marker = new naver.maps.Marker({
+                map: this.map,
+                position: spot,
             });
-        }
+            this.markers.push(marker);
+
+            var contentString = [
+                '<div>',
+                `   <div class="font-bold">${v.title}</div>`,
+                `</div>`,
+            ].join("");
+            const infoWindow = new naver.maps.InfoWindow({
+                content: contentString,
+                borderWidth: 0,
+                disableAnchor: true,
+                backgroundColor: "transparent",
+            });
+            this.infoWindows.push(infoWindow);
+
+            //마커 클릭시 정보창 보여줌
+            naver.maps.Event.addListener(marker, "click", (e) => {
+                if (infoWindow.getMap()) {
+                    infoWindow.close();
+                } else {
+                    infoWindow.open(this.map, marker);
+                }
+            });
+        });
 
     },
     watch: {
-        selectedTravelSpot: function (newSelectedTravelSpot) {
-            for (let i = 0; i < this.SearchResult.length; i++) {
-                if (newSelectedTravelSpot.contentid === this.SearchResult[i].contentid) {
+        selectedTravelSpot: function (newSelectedTravelSpot) { //선택된 여행지가 바뀌면 그곳을 줌하고 정보창을 펼쳐준다.
+            for (let i = 0; i < this.searchResult.length; i++) {
+                if (newSelectedTravelSpot.contentid === this.searchResult[i].contentid) {
                     const spot = new naver.maps.LatLng(
-                        this.SearchResult[i].mapy,
-                        this.SearchResult[i].mapx
+                        this.searchResult[i].mapy,
+                        this.searchResult[i].mapx
                     );
                     this.map.setCenter(spot);
                     this.map.setOptions("zoom", 13);
