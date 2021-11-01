@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\CovidController;
 use App\Http\Controllers\GoogleOAuthController;
 use App\Http\Controllers\TravelController;
-use App\Models\Covid;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -17,12 +17,7 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Covid/Covid', [
-        'localData' => Covid::where([['stdDay', Covid::max('stdDay')], ['gubun', 'not like', '합계']])->orderByRaw('localOccCnt + overFlowCnt DESC')->get(),
-        'totalData' => Covid::where('gubun', '합계')->orderByDesc('stdDay')->get(),
-    ]);
-})->name('covid');
+Route::get('/', [CovidController::class, 'index'])->name('covid.index');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

@@ -6,6 +6,7 @@ use App\Models\Covid;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\DB;
 
 class TravelController extends Controller
 {
@@ -52,14 +53,14 @@ class TravelController extends Controller
             }
         }
         return Inertia::render('Travel/SearchTravel', [
-            'localData' => Covid::where([['stdDay', Covid::max('stdDay')], ['gubun', 'not like', '합계'], ['gubun', 'not like', '검역']])->get(),
+            'localData' => Covid::selectRaw('gubun, localOccCnt + overFlowCnt as newDefCnt')->where([['stdDay', Covid::max('stdDay')], ['gubun', 'not like', '합계'], ['gubun', 'not like', '검역']])->get(),
             'searchResult' => $searchResult,
             'page' => $page,
             'search' => $search,
             'searchWay' => $searchWay,
             'totalCount' => $totalCount,
             'lat' => $lat,
-            'lng' => $lng
+            'lng' => $lng,
         ]);
     }
 
@@ -68,7 +69,7 @@ class TravelController extends Controller
         $contentId = $id;
 
         $client = new Client(); //관광지 세부정보
-        $res = $client->request('GET', 'http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailCommon?serviceKey=' . env('DATA_PORTAL_KEY') . '&numOfRows=100&pageNo=1&MobileOS=ETC&MobileApp=AppTest&contentId=' . $contentId . '&contentTypeId=12&defaultYN=Y&firstImageYN=Y&areacodeYN=Y&catcodeYN=N&addrinfoYN=Y&mapinfoYN=N&overviewYN=Y');
+        $res = $client->request('GET', 'http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailCommon?serviceKey=' . env('DATA_PORTAL_KEY') . '&numOfRows=100&pageNo=1&MobileOS=ETC&MobileApp=AppTest&contentId=' . $contentId . '&contentTypeId=12&defaultYN=Y&firstImageYN=Y&areacodeYN=Y&catcodeYN=N&addrinfoYN=Y&mapinfoYN=Y&overviewYN=Y');
         $xml = simplexml_load_string($res->getBody());
         $json = json_encode($xml);
         $data = json_decode($json, true);

@@ -74,11 +74,11 @@
                 </div>
             </nav>
             <div class="my-5">
-                <p class="text-6xl font-bold text-center">covid-19 travel</p>
+                <p class="text-6xl font-bold text-center">??????????</p>
             </div>
             <nav class="bg-white px-8 pt-2 shadow-md">
                 <div class="-mb-px flex justify-around">
-                    <Link class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" :href="route('covid')" :class="{ 'border-b-4' : $page.url === '/' }">
+                    <Link class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" :href="route('covid.index')" :class="{ 'border-b-4' : $page.url === '/' }">
                         코로나 정보
                     </Link>
                     <Link class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" :href="route('travel.index', { searchWay: 'keyWord'  })" :class="{ 'border-b-4' : $page.url.startsWith('/travel') }">

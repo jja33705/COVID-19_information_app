@@ -20,36 +20,29 @@
                         placeholder="Search"
                         v-model="searchInput"
                         required
+                        @keyup.enter="searchTravelSpots"
                     />
-                    <Link
-                        :href="
-                            route('travel.index', {
-                                searchWay: 'keyWord',
-                                search: encodeURIComponent(searchInput),
-                            })
-                        "
-                    >
-                        <button class="absolute right-0 top-0 mt-5 mr-4">
-                            <svg
-                                class="text-gray-600 h-4 w-4 fill-current"
-                                xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink"
-                                version="1.1"
-                                id="Capa_1"
-                                x="0px"
-                                y="0px"
-                                viewBox="0 0 56.966 56.966"
-                                style="enable-background: new 0 0 56.966 56.966"
-                                xml:space="preserve"
-                                width="512px"
-                                height="512px"
-                            >
-                                <path
-                                    d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z"
-                                />
-                            </svg>
-                        </button>
-                    </Link>
+                    <button class="absolute right-0 top-0 mt-5 mr-4">
+                        <svg
+                            class="text-gray-600 h-4 w-4 fill-current"
+                            xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink"
+                            version="1.1"
+                            id="Capa_1"
+                            x="0px"
+                            y="0px"
+                            viewBox="0 0 56.966 56.966"
+                            style="enable-background: new 0 0 56.966 56.966"
+                            xml:space="preserve"
+                            width="512px"
+                            height="512px"
+                            @click="searchTravelSpots"
+                        >
+                            <path
+                                d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z"
+                            />
+                        </svg>
+                    </button>
                 </div>
                 <div>
                     <button
@@ -78,15 +71,16 @@
                 <naver-map :searchResult="searchResult" :searchWay="searchWay" :lat="lat" :lng="lng" :selectedTravelSpot="selectedTravelSpot" />
                 <div class="flex flex-wrap mt-4">
                     <travel-spot-card
-                        v-for="travelSpot in travelSpots"
+                        v-for="travelSpot in searchResult"
                         :key="travelSpot.contentid"
                         :travelSpot="travelSpot"
-                        @click="onClickTravel(travelSpot)"
+                        @click="onClickTravelSpot(travelSpot)"
                         :searchWay="searchWay"
                         :search="search"
                         :lat="lat"
                         :lng="lng"
                         :page="page"
+                        :newDefCnt="newDefCntOfSpot(travelSpot.areacode)"
                     />
                 </div>
                 <div class="flex justify-center py-8">
@@ -238,186 +232,46 @@ export default {
     ],
     data() {
         return {
-            travelSpots: this.searchResult,
             searchInput: this.search ? decodeURIComponent(this.search) : "",
             selectedTravelSpot: null,
-            newDefCnts: {}, //신규 확진자
         };
     },
     methods: {
+        getCurrentLocationError() {
+            //자기위치 가져오기(실패) 콜백
+            console.log("cant get current location");
+        },
+        getCurrentLocationSuccess(position) {
+            //자기위치 가져오기(성공) 콜백
+            this.$inertia.get(
+                `/travel?searchWay=near&lat=${position.coords.latitude}&lng=${position.coords.longitude}`
+            );
+        },
         onClickNearButton() {
-            const getCurrentLocationError = () => {
-                //자기위치 가져오기(실패) 콜백
-                console.log("cant get current location");
-            };
-            const getCurrentLocationSuccess = (position) => {
-                //자기위치 가져오기(성공) 콜백
-                // this.setMyLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
-                this.$inertia.get(
-                    `/travel?searchWay=near&lat=${position.coords.latitude}&lng=${position.coords.longitude}`
-                );
-            };
             if (!navigator.geolocation) {//자기위치 가져오기
                 console.log("cant get location in this browser");
             } else {
                 navigator.geolocation.getCurrentPosition(
-                    getCurrentLocationSuccess,
-                    getCurrentLocationError
+                    this.getCurrentLocationSuccess,
+                    this.getCurrentLocationError
                 );
             }
         },
-        clearMarkersAndInfoWindows() {
-            if (this.travelSpots.length === 0) {
-                return;
-            }
-            this.travelSpots.map((v) => {
-                v.marker.setMap(null);
-                v.infoWindow.close();
-            });
+        searchTravelSpots() {
+            this.$inertia.get(`/travel?searchWay=keyWord&search=${this.searchInput}`)
         },
-        setMarkers() {
-            if (this.travelSpots.length === 0) {
-                return;
-            }
-            //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시
-            this.travelSpots.map((v) => {
-                const spot = new naver.maps.LatLng(v.mapy, v.mapx);
-                const marker = new naver.maps.Marker({
-                    map: this.map,
-                    position: spot,
-                });
-                v.marker = marker;
-                var contentString = [
-                    '<div class="iw_inner">',
-                    `   <div class="font-bold">${v.title}</div>`,
-                    "</div>",
-                ].join("");
-                const infoWindow = new naver.maps.InfoWindow({
-                    content: contentString,
-                    borderWidth: 0,
-                    disableAnchor: true,
-                    backgroundColor: "transparent",
-                });
-                v.infoWindow = infoWindow;
-
-                //마커 클릭시 정보창 보여줌
-                naver.maps.Event.addListener(marker, "click", (e) => {
-                    if (infoWindow.getMap()) {
-                        infoWindow.close();
-                    } else {
-                        console.log(this);
-                        infoWindow.open(this.map, marker);
-                    }
-                });
-            });
-        },
-        // getCurrentLocationSuccess(position) {
-        //     //자기위치 가져오기(성공)
-        //     this.lat = position.coords.latitude;
-        //     this.lng = position.coords.longitude;
-        //     const currentLocation = new naver.maps.LatLng(this.lat, this.lng);
-        //     this.map.setCenter(currentLocation);
-        //     this.map.setOptions("zoom", 10);
-        //     new naver.maps.Marker({
-        //         map: this.map,
-        //         position: currentLocation,
-        //         icon: {
-        //             path: naver.maps.SymbolPath.CIRCLE,
-        //             style: naver.maps.SymbolStyle.CIRCLE,
-        //             fillColor: "#FF0000",
-        //             fillOpacity: 1,
-        //             strokeColor: "#000000",
-        //             strokeStyle: "solid",
-        //             strokeWeight: 1,
-        //             radius: 10,
-        //         },
-        //     });
-        //     this.getNearTravelSpots();
-        // },
-
-        // getNearTravelSpots() {
-        //     //주변 관광지 데이터 가져오기(10km)
-        //     // cors때문에 라라벨백엔드로 우회해서 받음...
-        //     this.loading = true;
-        //     axios
-        //         .get(
-        //             `/api/nearTravelSpots?lat=${this.lat}&lng=${this.lng}&page=${this.page}`
-        //         )
-        //         .then((res) => {
-        //             this.clearMarkersAndInfoWindows();
-        //             console.log(res);
-        //             this.totalCount = res.data.body.totalCount;
-        //             if (this.totalCount == 0) {
-        //                 this.travelSpots = []
-        //             } else {
-        //                 if (!res.data.body.items.item.length) { //길이가 1일때
-        //                     this.travelSpots = [res.data.body.items.item];
-        //                 } else {
-        //                     this.travelSpots = res.data.body.items.item;
-        //                 }
-        //             }
-        //             this.loading = false;
-        //             this.setMarkers();
-        //         })
-        //         .catch((err) => {
-        //             console.log(err);
-        //         });
-        // },
-        // searchTravelSpots() {
-        //     //검색
-        //     // cors때문에 라라벨백엔드로 우회해서 받음...
-        //     this.loading = true;
-        //     axios
-        //         .get(
-        //             `/api/searchTravelSpots?search=${encodeURIComponent(
-        //                 this.searched
-        //             )}&page=${this.page}`
-        //         )
-        //         .then((res) => {
-        //             this.clearMarkersAndInfoWindows();
-        //             console.log(res);
-        //             this.totalCount = res.data.body.totalCount;
-        //             if (this.totalCount == 0) {
-        //                 this.travelSpots = []
-        //             } else {
-        //                 if (!res.data.body.items.item.length) { //길이가 1일때
-        //                     this.travelSpots = [res.data.body.items.item];
-        //                 } else {
-        //                     this.travelSpots = res.data.body.items.item;
-        //                 }
-        //             }
-        //             this.loading = false;
-        //             this.map.setOptions("zoom", 1);
-        //             this.setMarkers();
-        //         })
-        //         .catch((err) => {
-        //             console.log(err);
-        //         });
-        // },
-        onClickTravel(travelSpot) {
-            //여행지 하나 클릭
-            //클릭한 여행지로 맵 위치 이동하고 줌 시킴
-            // const spot = new naver.maps.LatLng(
-            //     travelSpot.mapy,
-            //     travelSpot.mapx
-            // );
-            // this.map.setCenter(spot);
-            // this.map.setOptions("zoom", 13);
-            // travelSpot.infoWindow.open(this.map, travelSpot.marker);
+        onClickTravelSpot(travelSpot) {
             this.selectedTravelSpot = travelSpot;
         },
-        getNewDefCntOfSpot(areaCode) {
+        newDefCntOfSpot(areaCode) {
             //해당 지역 확진자수
-            return this.newDefCnts[AREA_CODE[areaCode]];
+            const local = this.localData.find((e) => {
+                if (AREA_CODE[areaCode] === e.gubun) {
+                    return true;
+                }
+            });
+            return local.newDefCnt;
         },
-    },
-    mounted() {
-        //지역별 확진자수 초기화...
-        this.localData.map((v) => {
-            this.newDefCnts[v.gubun] = v.localOccCnt + v.overFlowCnt;
-        });
-
-        
     },
 };
 </script>

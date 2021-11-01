@@ -19496,28 +19496,22 @@ __webpack_require__.r(__webpack_exports__);
     return {
       map: null,
       markers: [],
-      infoWindows: []
+      infoWindows: [],
+      myLocationMarker: null
     };
   },
-  mounted: function mounted() {
-    var _this = this;
+  methods: {
+    drawMyLocation: function drawMyLocation(lat, lng) {
+      //자기 위치를 그린다.
+      if (this.myLocationMarker !== null) {
+        //이미 표시돼 있는 자기 위치가 있으면 먼저 지움
+        this.myLocationMarker.setMap(null);
+      }
 
-    var mapOptions = {
-      //맵 생성
-      center: new naver.maps.LatLng(37.3595704, 127.105399),
-      logoControl: true,
-      mapDataControl: true,
-      mapTypeControl: true,
-      zoom: 1
-    };
-    this.map = new naver.maps.Map("map", mapOptions);
-
-    if (this.searchWay === 'near') {
-      //자기위치 표시
-      var currentLocation = new naver.maps.LatLng(this.lat, this.lng);
+      var currentLocation = new naver.maps.LatLng(lat, lng);
       this.map.setCenter(currentLocation);
-      this.map.setOptions("zoom", 12);
-      new naver.maps.Marker({
+      this.map.setOptions("zoom", 11);
+      this.myLocationMarker = new naver.maps.Marker({
         map: this.map,
         position: currentLocation,
         icon: {
@@ -19528,11 +19522,50 @@ __webpack_require__.r(__webpack_exports__);
           strokeColor: "#000000",
           strokeStyle: "solid",
           strokeWeight: 1,
-          radius: 10
+          radius: 8
         }
       });
+    },
+    getCurrentLocationError: function getCurrentLocationError() {
+      //자기위치 가져오기(실패) 콜백
+      console.log("cant get current location");
+    },
+    getCurrentLocationSuccess: function getCurrentLocationSuccess(position) {
+      //자기위치 가져오기(성공)시 맵에 자기위치 그림
+      this.drawMyLocation(position.coords.latitude, position.coords.longitude);
+    }
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    var mapOptions = {
+      //맵 생성
+      center: new naver.maps.LatLng(37.3595704, 127.105399),
+      useStyleMap: true,
+      zoom: 1
+    };
+    this.map = new naver.maps.Map("map", mapOptions);
+
+    if (this.searchWay === 'near') {
+      //근처 관광지 검색했을때 자기위치 표시
+      this.drawMyLocation(this.lat, this.lng);
     }
 
+    naver.maps.Event.once(this.map, 'init_stylemap', function (e) {
+      // 내 위치 가져오기 버튼 생성
+      var getLocationBtnHtml = '<button><span style="font-size: 3em;"><i class="fas fa-compass"></i></span></button>';
+      var customControl = new naver.maps.CustomControl(getLocationBtnHtml, {
+        position: naver.maps.Position.TOP_RIGHT
+      });
+      customControl.setMap(_this.map);
+      naver.maps.Event.addDOMListener(customControl.getElement(), 'click', function () {
+        if (!navigator.geolocation) {
+          console.log("cant get location in this browser");
+        } else {
+          navigator.geolocation.getCurrentPosition(_this.getCurrentLocationSuccess, _this.getCurrentLocationError);
+        }
+      });
+    });
     this.searchResult.map(function (v) {
       //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시
       var spot = new naver.maps.LatLng(v.mapy, v.mapx);
@@ -19561,6 +19594,15 @@ __webpack_require__.r(__webpack_exports__);
           infoWindow.open(_this.map, marker);
         }
       });
+
+      if (_this.$parent.$page.component === 'Travel/ShowTravel') {
+        //여행지 상세정보의 지도일때는 오픈시켜놓음
+        infoWindow.open(_this.map, marker);
+
+        _this.map.setCenter(spot);
+
+        _this.map.setOptions("zoom", 12);
+      }
     });
   },
   watch: {
@@ -19570,7 +19612,6 @@ __webpack_require__.r(__webpack_exports__);
         if (newSelectedTravelSpot.contentid === this.searchResult[i].contentid) {
           var spot = new naver.maps.LatLng(this.searchResult[i].mapy, this.searchResult[i].mapx);
           this.map.setCenter(spot);
-          this.map.setOptions("zoom", 13);
           this.infoWindows[i].open(this.map, this.markers[i]);
           break;
         }
@@ -19598,7 +19639,7 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_0__.Link
   },
-  props: ['travelSpot', 'myLocation', 'page', 'search', 'searchWay', 'lat', 'lng']
+  props: ['travelSpot', 'page', 'search', 'searchWay', 'lat', 'lng', 'newDefCnt']
 });
 
 /***/ }),
@@ -21707,185 +21748,42 @@ var AREA_CODE = {
   props: ["localData", "searchResult", "page", "search", "totalCount", "searchWay", "lat", "lng"],
   data: function data() {
     return {
-      travelSpots: this.searchResult,
       searchInput: this.search ? decodeURIComponent(this.search) : "",
-      selectedTravelSpot: null,
-      newDefCnts: {} //신규 확진자
-
+      selectedTravelSpot: null
     };
   },
   methods: {
+    getCurrentLocationError: function getCurrentLocationError() {
+      //자기위치 가져오기(실패) 콜백
+      console.log("cant get current location");
+    },
+    getCurrentLocationSuccess: function getCurrentLocationSuccess(position) {
+      //자기위치 가져오기(성공) 콜백
+      this.$inertia.get("/travel?searchWay=near&lat=".concat(position.coords.latitude, "&lng=").concat(position.coords.longitude));
+    },
     onClickNearButton: function onClickNearButton() {
-      var _this = this;
-
-      var getCurrentLocationError = function getCurrentLocationError() {
-        //자기위치 가져오기(실패) 콜백
-        console.log("cant get current location");
-      };
-
-      var getCurrentLocationSuccess = function getCurrentLocationSuccess(position) {
-        //자기위치 가져오기(성공) 콜백
-        // this.setMyLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
-        _this.$inertia.get("/travel?searchWay=near&lat=".concat(position.coords.latitude, "&lng=").concat(position.coords.longitude));
-      };
-
       if (!navigator.geolocation) {
         //자기위치 가져오기
         console.log("cant get location in this browser");
       } else {
-        navigator.geolocation.getCurrentPosition(getCurrentLocationSuccess, getCurrentLocationError);
+        navigator.geolocation.getCurrentPosition(this.getCurrentLocationSuccess, this.getCurrentLocationError);
       }
     },
-    clearMarkersAndInfoWindows: function clearMarkersAndInfoWindows() {
-      if (this.travelSpots.length === 0) {
-        return;
-      }
-
-      this.travelSpots.map(function (v) {
-        v.marker.setMap(null);
-        v.infoWindow.close();
-      });
+    searchTravelSpots: function searchTravelSpots() {
+      this.$inertia.get("/travel?searchWay=keyWord&search=".concat(this.searchInput));
     },
-    setMarkers: function setMarkers() {
-      var _this2 = this;
-
-      if (this.travelSpots.length === 0) {
-        return;
-      } //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시
-
-
-      this.travelSpots.map(function (v) {
-        var spot = new naver.maps.LatLng(v.mapy, v.mapx);
-        var marker = new naver.maps.Marker({
-          map: _this2.map,
-          position: spot
-        });
-        v.marker = marker;
-        var contentString = ['<div class="iw_inner">', "   <div class=\"font-bold\">".concat(v.title, "</div>"), "</div>"].join("");
-        var infoWindow = new naver.maps.InfoWindow({
-          content: contentString,
-          borderWidth: 0,
-          disableAnchor: true,
-          backgroundColor: "transparent"
-        });
-        v.infoWindow = infoWindow; //마커 클릭시 정보창 보여줌
-
-        naver.maps.Event.addListener(marker, "click", function (e) {
-          if (infoWindow.getMap()) {
-            infoWindow.close();
-          } else {
-            console.log(_this2);
-            infoWindow.open(_this2.map, marker);
-          }
-        });
-      });
-    },
-    // getCurrentLocationSuccess(position) {
-    //     //자기위치 가져오기(성공)
-    //     this.lat = position.coords.latitude;
-    //     this.lng = position.coords.longitude;
-    //     const currentLocation = new naver.maps.LatLng(this.lat, this.lng);
-    //     this.map.setCenter(currentLocation);
-    //     this.map.setOptions("zoom", 10);
-    //     new naver.maps.Marker({
-    //         map: this.map,
-    //         position: currentLocation,
-    //         icon: {
-    //             path: naver.maps.SymbolPath.CIRCLE,
-    //             style: naver.maps.SymbolStyle.CIRCLE,
-    //             fillColor: "#FF0000",
-    //             fillOpacity: 1,
-    //             strokeColor: "#000000",
-    //             strokeStyle: "solid",
-    //             strokeWeight: 1,
-    //             radius: 10,
-    //         },
-    //     });
-    //     this.getNearTravelSpots();
-    // },
-    // getNearTravelSpots() {
-    //     //주변 관광지 데이터 가져오기(10km)
-    //     // cors때문에 라라벨백엔드로 우회해서 받음...
-    //     this.loading = true;
-    //     axios
-    //         .get(
-    //             `/api/nearTravelSpots?lat=${this.lat}&lng=${this.lng}&page=${this.page}`
-    //         )
-    //         .then((res) => {
-    //             this.clearMarkersAndInfoWindows();
-    //             console.log(res);
-    //             this.totalCount = res.data.body.totalCount;
-    //             if (this.totalCount == 0) {
-    //                 this.travelSpots = []
-    //             } else {
-    //                 if (!res.data.body.items.item.length) { //길이가 1일때
-    //                     this.travelSpots = [res.data.body.items.item];
-    //                 } else {
-    //                     this.travelSpots = res.data.body.items.item;
-    //                 }
-    //             }
-    //             this.loading = false;
-    //             this.setMarkers();
-    //         })
-    //         .catch((err) => {
-    //             console.log(err);
-    //         });
-    // },
-    // searchTravelSpots() {
-    //     //검색
-    //     // cors때문에 라라벨백엔드로 우회해서 받음...
-    //     this.loading = true;
-    //     axios
-    //         .get(
-    //             `/api/searchTravelSpots?search=${encodeURIComponent(
-    //                 this.searched
-    //             )}&page=${this.page}`
-    //         )
-    //         .then((res) => {
-    //             this.clearMarkersAndInfoWindows();
-    //             console.log(res);
-    //             this.totalCount = res.data.body.totalCount;
-    //             if (this.totalCount == 0) {
-    //                 this.travelSpots = []
-    //             } else {
-    //                 if (!res.data.body.items.item.length) { //길이가 1일때
-    //                     this.travelSpots = [res.data.body.items.item];
-    //                 } else {
-    //                     this.travelSpots = res.data.body.items.item;
-    //                 }
-    //             }
-    //             this.loading = false;
-    //             this.map.setOptions("zoom", 1);
-    //             this.setMarkers();
-    //         })
-    //         .catch((err) => {
-    //             console.log(err);
-    //         });
-    // },
-    onClickTravel: function onClickTravel(travelSpot) {
-      //여행지 하나 클릭
-      //클릭한 여행지로 맵 위치 이동하고 줌 시킴
-      // const spot = new naver.maps.LatLng(
-      //     travelSpot.mapy,
-      //     travelSpot.mapx
-      // );
-      // this.map.setCenter(spot);
-      // this.map.setOptions("zoom", 13);
-      // travelSpot.infoWindow.open(this.map, travelSpot.marker);
+    onClickTravelSpot: function onClickTravelSpot(travelSpot) {
       this.selectedTravelSpot = travelSpot;
     },
-    getNewDefCntOfSpot: function getNewDefCntOfSpot(areaCode) {
+    newDefCntOfSpot: function newDefCntOfSpot(areaCode) {
       //해당 지역 확진자수
-      return this.newDefCnts[AREA_CODE[areaCode]];
+      var local = this.localData.find(function (e) {
+        if (AREA_CODE[areaCode] === e.gubun) {
+          return true;
+        }
+      });
+      return local.newDefCnt;
     }
-  },
-  mounted: function mounted() {
-    var _this3 = this;
-
-    //지역별 확진자수 초기화...
-    this.localData.map(function (v) {
-      _this3.newDefCnts[v.gubun] = v.localOccCnt + v.overFlowCnt;
-    });
   }
 });
 
@@ -21904,13 +21802,37 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Layouts_AppLayout_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Layouts/AppLayout.vue */ "./resources/js/Layouts/AppLayout.vue");
 /* harmony import */ var _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @inertiajs/inertia-vue3 */ "./node_modules/@inertiajs/inertia-vue3/dist/index.js");
+/* harmony import */ var _Components_NaverMap__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Components/NaverMap */ "./resources/js/Components/NaverMap.vue");
+
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['searchWay', 'page', 'search', 'lat', 'lng', 'content', 'images'],
   components: {
     AppLayout: _Layouts_AppLayout_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
-    Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__.Link
+    Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__.Link,
+    NaverMap: _Components_NaverMap__WEBPACK_IMPORTED_MODULE_2__["default"]
+  },
+  data: function data() {
+    return {
+      imageIndex: 0
+    };
+  },
+  methods: {
+    onClickLeftImage: function onClickLeftImage() {
+      if (this.imageIndex < 1) {
+        return;
+      }
+
+      this.imageIndex -= 1;
+    },
+    onClickRightImage: function onClickRightImage() {
+      if (this.imageIndex > this.images.length - 2) {
+        return;
+      }
+
+      this.imageIndex += 1;
+    }
   }
 });
 
@@ -21929,21 +21851,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
-
-var _hoisted_1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_1 = {
   id: "map",
   style: {
     "width": "100%",
-    "height": "400px"
+    "height": "500px"
   }
-}, null, -1
-/* HOISTED */
-);
-
+};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [_hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <button>??</button> ")], 2112
-  /* STABLE_FRAGMENT, DEV_ROOT_FRAGMENT */
-  );
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1);
 }
 
 /***/ }),
@@ -22008,7 +21924,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["href"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, " 지역 신규 확진자 수: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)() + "명 ", 1
+  , ["href"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, " 지역 신규 확진자 수: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.newDefCnt) + "명 ", 1
   /* TEXT */
   )])]);
 }
@@ -23210,7 +23126,7 @@ var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
   "class": "my-5"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
   "class": "text-6xl font-bold text-center"
-}, "covid-19 travel")], -1
+}, "??????????")], -1
 /* HOISTED */
 );
 
@@ -23336,7 +23252,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800", {
       'border-b-4': _ctx.$page.url === '/'
     }]),
-    href: _ctx.route('covid')
+    href: _ctx.route('covid.index')
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [_hoisted_22];
@@ -26138,38 +26054,25 @@ var _hoisted_2 = {
 var _hoisted_3 = {
   "class": "pt-2 relative mx-auto text-gray-600"
 };
-
-var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+var _hoisted_4 = {
   "class": "absolute right-0 top-0 mt-5 mr-4"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
-  "class": "text-gray-600 h-4 w-4 fill-current",
-  xmlns: "http://www.w3.org/2000/svg",
-  "xmlns:xlink": "http://www.w3.org/1999/xlink",
-  version: "1.1",
-  id: "Capa_1",
-  x: "0px",
-  y: "0px",
-  viewBox: "0 0 56.966 56.966",
-  style: {
-    "enable-background": "new 0 0 56.966 56.966"
-  },
-  "xml:space": "preserve",
-  width: "512px",
-  height: "512px"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+};
+
+var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
   d: "M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z"
-})])], -1
+}, null, -1
 /* HOISTED */
 );
 
-var _hoisted_5 = {
+var _hoisted_6 = [_hoisted_5];
+var _hoisted_7 = {
   "class": "flex flex-wrap mt-4"
 };
-var _hoisted_6 = {
+var _hoisted_8 = {
   "class": "flex justify-center py-8"
 };
 
-var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   "class": "border border-black text-black block rounded-sm font-bold py-4 px-6 mr-2 flex items-center hover:bg-black hover:text-white"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
   "class": "h-5 w-5 mr-2 fill-current",
@@ -26191,7 +26094,7 @@ var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 /* HOISTED */
 );
 
-var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   "class": "border border-black text-black block rounded-sm font-bold py-4 px-6 ml-2 flex items-center hover:bg-black hover:text-white"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Next page "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
   "class": "h-5 w-5 ml-2 fill-current",
@@ -26214,11 +26117,11 @@ var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 );
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  var _component_Link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Link");
-
   var _component_naver_map = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("naver-map");
 
   var _component_travel_spot_card = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("travel-spot-card");
+
+  var _component_Link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Link");
 
   var _component_app_layout = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("app-layout");
 
@@ -26234,25 +26137,32 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
           return $data.searchInput = $event;
         }),
-        required: ""
-      }, null, 512
-      /* NEED_PATCH */
-      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.searchInput]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
-        href: _ctx.route('travel.index', {
-          searchWay: 'keyWord',
-          search: encodeURIComponent($data.searchInput)
+        required: "",
+        onKeyup: _cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withKeys)(function () {
+          return $options.searchTravelSpots && $options.searchTravelSpots.apply($options, arguments);
+        }, ["enter"]))
+      }, null, 544
+      /* HYDRATE_EVENTS, NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.searchInput]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", _hoisted_4, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", {
+        "class": "text-gray-600 h-4 w-4 fill-current",
+        xmlns: "http://www.w3.org/2000/svg",
+        "xmlns:xlink": "http://www.w3.org/1999/xlink",
+        version: "1.1",
+        id: "Capa_1",
+        x: "0px",
+        y: "0px",
+        viewBox: "0 0 56.966 56.966",
+        style: {
+          "enable-background": "new 0 0 56.966 56.966"
+        },
+        "xml:space": "preserve",
+        width: "512px",
+        height: "512px",
+        onClick: _cache[2] || (_cache[2] = function () {
+          return $options.searchTravelSpots && $options.searchTravelSpots.apply($options, arguments);
         })
-      }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_4];
-        }),
-        _: 1
-        /* STABLE */
-
-      }, 8
-      /* PROPS */
-      , ["href"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-        onClick: _cache[1] || (_cache[1] = function () {
+      }, _hoisted_6))])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+        onClick: _cache[3] || (_cache[3] = function () {
           return $options.onClickNearButton && $options.onClickNearButton.apply($options, arguments);
         }),
         "class": "px-4 py-2 rounded-md font-semibold text-sm font-medium border-0 focus:outline-none focus:ring transition text-black-600 bg-purple-50 hover:text-black-800 hover:bg-purple-100 active:bg-purple-200 focus:ring-purple-300",
@@ -26265,24 +26175,25 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         selectedTravelSpot: $data.selectedTravelSpot
       }, null, 8
       /* PROPS */
-      , ["searchResult", "searchWay", "lat", "lng", "selectedTravelSpot"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.travelSpots, function (travelSpot) {
+      , ["searchResult", "searchWay", "lat", "lng", "selectedTravelSpot"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.searchResult, function (travelSpot) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_travel_spot_card, {
           key: travelSpot.contentid,
           travelSpot: travelSpot,
           onClick: function onClick($event) {
-            return $options.onClickTravel(travelSpot);
+            return $options.onClickTravelSpot(travelSpot);
           },
           searchWay: $props.searchWay,
           search: $props.search,
           lat: $props.lat,
           lng: $props.lng,
-          page: $props.page
+          page: $props.page,
+          newDefCnt: $options.newDefCntOfSpot(travelSpot.areacode)
         }, null, 8
         /* PROPS */
-        , ["travelSpot", "onClick", "searchWay", "search", "lat", "lng", "page"]);
+        , ["travelSpot", "onClick", "searchWay", "search", "lat", "lng", "page", "newDefCnt"]);
       }), 128
       /* KEYED_FRAGMENT */
-      ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [$props.page > 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Link, {
+      ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [$props.page > 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Link, {
         key: 0,
         href: _ctx.route('travel.index', {
           searchWay: $props.searchWay,
@@ -26293,7 +26204,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         })
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_7];
+          return [_hoisted_9];
         }),
         _: 1
         /* STABLE */
@@ -26311,7 +26222,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         })
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_8];
+          return [_hoisted_10];
         }),
         _: 1
         /* STABLE */
@@ -26361,25 +26272,33 @@ var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 );
 
 var _hoisted_5 = {
-  "class": "flex justify-center text-4xl my-7 font-semibold"
+  "class": "flex justify-center text-4xl mt-7 font-semibold"
 };
-var _hoisted_6 = ["src"];
+var _hoisted_6 = {
+  "class": "mx-auto max-w-2xl my-7"
+};
 var _hoisted_7 = {
+  "class": "shadow-2xl relative"
+};
+var _hoisted_8 = ["src"];
+var _hoisted_9 = {
   "class": "my-3"
 };
-var _hoisted_8 = {
+var _hoisted_10 = {
   key: 0,
   "class": "my-3"
 };
 
-var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "홈페이지: ", -1
+var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "홈페이지: ", -1
 /* HOISTED */
 );
 
-var _hoisted_10 = ["innerHTML"];
-var _hoisted_11 = ["innerHTML"];
+var _hoisted_12 = ["innerHTML"];
+var _hoisted_13 = ["innerHTML"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Link");
+
+  var _component_naver_map = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("naver-map");
 
   var _component_app_layout = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("app-layout");
 
@@ -26404,30 +26323,42 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       /* PROPS */
       , ["href"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.content.title), 1
       /* TEXT */
-      ), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.images, function (image) {
-        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("img", {
-          key: image.serialnum,
-          "class": "w-full",
-          src: image.originimgurl
-        }, null, 8
-        /* PROPS */
-        , _hoisted_6);
-      }), 128
-      /* KEYED_FRAGMENT */
-      )), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "주소: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.content.addr1), 1
+      ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <img v-for=\"image in images\" :key=\"image.serialnum\" :src=\"image.originimgurl\" class=\"my-7\"> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("section", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" large image on slides "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+        "class": "w-full object-cover",
+        src: $props.images[$data.imageIndex].originimgurl
+      }, null, 8
+      /* PROPS */
+      , _hoisted_8)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" butttons "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+        "class": "absolute left-0 inset-y-0 flex items-center -mt-32 px-4 text-white hover:text-gray-800 cursor-pointer text-3xl font-extrabold",
+        onClick: _cache[0] || (_cache[0] = function () {
+          return $options.onClickLeftImage && $options.onClickLeftImage.apply($options, arguments);
+        })
+      }, "❮"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+        "class": "absolute right-0 inset-y-0 flex items-center -mt-32 px-4 text-white hover:text-gray-800 cursor-pointer text-3xl font-extrabold",
+        onClick: _cache[1] || (_cache[1] = function () {
+          return $options.onClickRightImage && $options.onClickRightImage.apply($options, arguments);
+        })
+      }, "❯")])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_naver_map, {
+        searchResult: [$props.content],
+        searchWay: $props.searchWay,
+        lat: $props.lat,
+        lng: $props.lng
+      }, null, 8
+      /* PROPS */
+      , ["searchResult", "searchWay", "lat", "lng"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "주소: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.content.addr1), 1
       /* TEXT */
       ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.content.addr2), 1
       /* TEXT */
-      )]), $props.content.homepage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_8, [_hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+      )]), $props.content.homepage ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_10, [_hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
         innerHTML: $props.content.homepage
       }, null, 8
       /* PROPS */
-      , _hoisted_10)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+      , _hoisted_12)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
         innerHTML: $props.content.overview,
         "class": "text-lg"
       }, null, 8
       /* PROPS */
-      , _hoisted_11)])])];
+      , _hoisted_13)])])];
     }),
     _: 1
     /* STABLE */
@@ -39916,10 +39847,10 @@ function styleChanged(style, prevStyle) {
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/vue-spinner/src/PulseLoader.vue?vue&type=style&index=0&id=bc13a466&lang=css":
-/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/vue-spinner/src/PulseLoader.vue?vue&type=style&index=0&id=bc13a466&lang=css ***!
-  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-10.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-10.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/vue-spinner/src/PulseLoader.vue?vue&type=style&index=0&id=bc13a466&lang=css":
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-10.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-10.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/vue-spinner/src/PulseLoader.vue?vue&type=style&index=0&id=bc13a466&lang=css ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -61503,6 +61434,19 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 /***/ }),
 
+/***/ "./resources/sass/app.scss":
+/*!*********************************!*\
+  !*** ./resources/sass/app.scss ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "./resources/css/app.css":
 /*!*******************************!*\
   !*** ./resources/css/app.css ***!
@@ -63702,10 +63646,10 @@ module.exports = function getSideChannel() {
 
 /***/ }),
 
-/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/vue-spinner/src/PulseLoader.vue?vue&type=style&index=0&id=bc13a466&lang=css":
-/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/vue-spinner/src/PulseLoader.vue?vue&type=style&index=0&id=bc13a466&lang=css ***!
-  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-10.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-10.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/vue-spinner/src/PulseLoader.vue?vue&type=style&index=0&id=bc13a466&lang=css":
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-10.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-10.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/vue-spinner/src/PulseLoader.vue?vue&type=style&index=0&id=bc13a466&lang=css ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -63715,7 +63659,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
 /* harmony import */ var _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _css_loader_dist_cjs_js_clonedRuleSet_9_use_1_vue_loader_dist_stylePostLoader_js_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_vue_loader_dist_index_js_ruleSet_0_use_0_PulseLoader_vue_vue_type_style_index_0_id_bc13a466_lang_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!../../vue-loader/dist/stylePostLoader.js!../../postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!../../vue-loader/dist/index.js??ruleSet[0].use[0]!./PulseLoader.vue?vue&type=style&index=0&id=bc13a466&lang=css */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/vue-spinner/src/PulseLoader.vue?vue&type=style&index=0&id=bc13a466&lang=css");
+/* harmony import */ var _css_loader_dist_cjs_js_clonedRuleSet_10_use_1_vue_loader_dist_stylePostLoader_js_postcss_loader_dist_cjs_js_clonedRuleSet_10_use_2_vue_loader_dist_index_js_ruleSet_0_use_0_PulseLoader_vue_vue_type_style_index_0_id_bc13a466_lang_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../css-loader/dist/cjs.js??clonedRuleSet-10.use[1]!../../vue-loader/dist/stylePostLoader.js!../../postcss-loader/dist/cjs.js??clonedRuleSet-10.use[2]!../../vue-loader/dist/index.js??ruleSet[0].use[0]!./PulseLoader.vue?vue&type=style&index=0&id=bc13a466&lang=css */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-10.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-10.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/vue-spinner/src/PulseLoader.vue?vue&type=style&index=0&id=bc13a466&lang=css");
 
             
 
@@ -63724,11 +63668,11 @@ var options = {};
 options.insert = "head";
 options.singleton = false;
 
-var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_vue_loader_dist_stylePostLoader_js_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_vue_loader_dist_index_js_ruleSet_0_use_0_PulseLoader_vue_vue_type_style_index_0_id_bc13a466_lang_css__WEBPACK_IMPORTED_MODULE_1__["default"], options);
+var update = _style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_css_loader_dist_cjs_js_clonedRuleSet_10_use_1_vue_loader_dist_stylePostLoader_js_postcss_loader_dist_cjs_js_clonedRuleSet_10_use_2_vue_loader_dist_index_js_ruleSet_0_use_0_PulseLoader_vue_vue_type_style_index_0_id_bc13a466_lang_css__WEBPACK_IMPORTED_MODULE_1__["default"], options);
 
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_vue_loader_dist_stylePostLoader_js_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_vue_loader_dist_index_js_ruleSet_0_use_0_PulseLoader_vue_vue_type_style_index_0_id_bc13a466_lang_css__WEBPACK_IMPORTED_MODULE_1__["default"].locals || {});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_css_loader_dist_cjs_js_clonedRuleSet_10_use_1_vue_loader_dist_stylePostLoader_js_postcss_loader_dist_cjs_js_clonedRuleSet_10_use_2_vue_loader_dist_index_js_ruleSet_0_use_0_PulseLoader_vue_vue_type_style_index_0_id_bc13a466_lang_css__WEBPACK_IMPORTED_MODULE_1__["default"].locals || {});
 
 /***/ }),
 
@@ -67051,7 +66995,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _style_loader_dist_cjs_js_css_loader_dist_cjs_js_clonedRuleSet_9_use_1_vue_loader_dist_stylePostLoader_js_postcss_loader_dist_cjs_js_clonedRuleSet_9_use_2_vue_loader_dist_index_js_ruleSet_0_use_0_PulseLoader_vue_vue_type_style_index_0_id_bc13a466_lang_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../style-loader/dist/cjs.js!../../css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!../../vue-loader/dist/stylePostLoader.js!../../postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!../../vue-loader/dist/index.js??ruleSet[0].use[0]!./PulseLoader.vue?vue&type=style&index=0&id=bc13a466&lang=css */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/vue-spinner/src/PulseLoader.vue?vue&type=style&index=0&id=bc13a466&lang=css");
+/* harmony import */ var _style_loader_dist_cjs_js_css_loader_dist_cjs_js_clonedRuleSet_10_use_1_vue_loader_dist_stylePostLoader_js_postcss_loader_dist_cjs_js_clonedRuleSet_10_use_2_vue_loader_dist_index_js_ruleSet_0_use_0_PulseLoader_vue_vue_type_style_index_0_id_bc13a466_lang_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../style-loader/dist/cjs.js!../../css-loader/dist/cjs.js??clonedRuleSet-10.use[1]!../../vue-loader/dist/stylePostLoader.js!../../postcss-loader/dist/cjs.js??clonedRuleSet-10.use[2]!../../vue-loader/dist/index.js??ruleSet[0].use[0]!./PulseLoader.vue?vue&type=style&index=0&id=bc13a466&lang=css */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-10.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-10.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./node_modules/vue-spinner/src/PulseLoader.vue?vue&type=style&index=0&id=bc13a466&lang=css");
 
 
 /***/ }),
@@ -69101,6 +69045,7 @@ module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"P
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
 /******/ 	__webpack_require__.O(undefined, ["css/app"], () => (__webpack_require__("./resources/js/app.js")))
+/******/ 	__webpack_require__.O(undefined, ["css/app"], () => (__webpack_require__("./resources/sass/app.scss")))
 /******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/app"], () => (__webpack_require__("./resources/css/app.css")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	

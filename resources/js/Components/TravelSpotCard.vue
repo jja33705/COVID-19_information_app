@@ -16,7 +16,7 @@
                 })">{{ travelSpot.title }}</Link>
             </div>
             <div class="bg-red-400 rounded-md font-semibold text-xs text-gray-100 p-2 right-4 bottom-0 float-right">
-                지역 신규 확진자 수: {{  }}명
+                지역 신규 확진자 수: {{ newDefCnt }}명
             </div>
         </div>
     </div>
@@ -29,6 +29,6 @@ export default {
     components: {
         Link,
     },
-    props: ['travelSpot', 'myLocation', 'page', 'search', 'searchWay', 'lat', 'lng'],
+    props: ['travelSpot', 'page', 'search', 'searchWay', 'lat', 'lng', 'newDefCnt'],
 };
 </script>
