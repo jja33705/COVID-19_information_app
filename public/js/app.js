@@ -19541,52 +19541,42 @@ __webpack_require__.r(__webpack_exports__);
     startDataLayer: function startDataLayer() {
       var _this = this;
 
-      //가져온 시군구 geoJson데이터 그림
+      //가져온 시군구 geoJson데이터 그리고 마우스 이벤트 등록
       var tooltip = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div style="position:absolute;z-index:1000;padding:5px 10px;background-color:#fff;border:solid 2px #000;font-size:14px;pointer-events:none;display:none;"></div>');
       tooltip.appendTo(this.map.getPanes().floatPane);
       this.map.data.setStyle(function (feature) {
         var styleOptions = {
-          fillColor: '#ff0000',
-          fillOpacity: 0.0001,
-          strokeColor: '#ff0000',
-          strokeWeight: 2,
-          strokeOpacity: 0.4
+          fillColor: '#0000ff',
+          fillOpacity: 0,
+          strokeColor: '#000000',
+          strokeWeight: 0,
+          strokeOpacity: 0
         };
-
-        if (feature.getProperty('focus')) {
-          styleOptions.fillOpacity = 0.6;
-          styleOptions.fillColor = '#0f0';
-          styleOptions.strokeColor = '#0f0';
-          styleOptions.strokeWeight = 4;
-          styleOptions.strokeOpacity = 1;
-        }
-
         return styleOptions;
       });
       this.regionGeoJson.forEach(function (geojson) {
         _this.map.data.addGeoJson(geojson);
       });
-      this.map.data.addListener('click', function (e) {
-        var feature = e.feature;
-
-        if (feature.getProperty('focus') !== true) {
-          feature.setProperty('focus', true);
-        } else {
-          feature.setProperty('focus', false);
-        }
-      });
       this.map.data.addListener('mouseover', function (e) {
-        var feature = e.feature,
-            regionName = feature.getProperty('CTP_KOR_NM');
+        var feature = e.feature;
+        var regionName = feature.getProperty('CTP_KOR_NM');
+
+        var regionData = _this.localData.find(function (e) {
+          if (feature.getProperty('CTP_KOR_NM') === e.gubun) {
+            return true;
+          }
+        });
+
+        var regionText = regionName + ': ' + regionData['newDefCnt'];
         tooltip.css({
           display: '',
           left: e.offset.x,
           top: e.offset.y
-        }).text(regionName);
+        }).text(regionText);
 
         _this.map.data.overrideStyle(feature, {
-          fillOpacity: 0.6,
-          strokeWeight: 4,
+          fillOpacity: 0.1,
+          strokeWeight: 1,
           strokeOpacity: 1
         });
       });
@@ -19637,8 +19627,6 @@ __webpack_require__.r(__webpack_exports__);
 
         axios.get("/api/geoJson/".concat(regionId)).then(function (res) {
           _this2.regionGeoJson.push(res.data);
-
-          console.log(res);
 
           if (i === 17) {
             _this2.startDataLayer();
@@ -21894,7 +21882,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['searchWay', 'page', 'search', 'lat', 'lng', 'content', 'images'],
+  props: ['searchWay', 'page', 'search', 'lat', 'lng', 'content', 'images', 'localData'],
   components: {
     AppLayout: _Layouts_AppLayout_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__.Link,
@@ -26411,12 +26399,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       /* PROPS */
       , ["href"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.content.title), 1
       /* TEXT */
-      ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <img v-for=\"image in images\" :key=\"image.serialnum\" :src=\"image.originimgurl\" class=\"my-7\"> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("section", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" large image on slides "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+      ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("section", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
         "class": "w-full object-cover",
         src: $props.images[$data.imageIndex].originimgurl
       }, null, 8
       /* PROPS */
-      , _hoisted_8)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" butttons "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+      , _hoisted_8)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
         "class": "absolute left-0 inset-y-0 flex items-center -mt-32 px-4 text-white hover:text-gray-800 cursor-pointer text-3xl font-extrabold",
         onClick: _cache[0] || (_cache[0] = function () {
           return $options.onClickLeftImage && $options.onClickLeftImage.apply($options, arguments);
@@ -26430,10 +26418,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         searchResult: [$props.content],
         searchWay: $props.searchWay,
         lat: $props.lat,
-        lng: $props.lng
+        lng: $props.lng,
+        localData: $props.localData
       }, null, 8
       /* PROPS */
-      , ["searchResult", "searchWay", "lat", "lng"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "주소: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.content.addr1), 1
+      , ["searchResult", "searchWay", "lat", "lng", "localData"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "주소: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.content.addr1), 1
       /* TEXT */
       ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.content.addr2), 1
       /* TEXT */

@@ -45,27 +45,19 @@ export default {
         getCurrentLocationSuccess (position) { //자기위치 가져오기(성공)시 맵에 자기위치 그림
             this.drawMyLocation(position.coords.latitude, position.coords.longitude)
         },
-        startDataLayer() { //가져온 시군구 geoJson데이터 그림
+        startDataLayer() { //가져온 시군구 geoJson데이터 그리고 마우스 이벤트 등록
             const tooltip = $('<div style="position:absolute;z-index:1000;padding:5px 10px;background-color:#fff;border:solid 2px #000;font-size:14px;pointer-events:none;display:none;"></div>');
 
             tooltip.appendTo(this.map.getPanes().floatPane);
 
             this.map.data.setStyle((feature) => {
                 const styleOptions = {
-                    fillColor: '#ff0000',
-                    fillOpacity: 0.0001,
-                    strokeColor: '#ff0000',
-                    strokeWeight: 2,
-                    strokeOpacity: 0.4
+                    fillColor: '#0000ff',
+                    fillOpacity: 0,
+                    strokeColor: '#000000',
+                    strokeWeight: 0,
+                    strokeOpacity: 0,
                 };
-
-                if (feature.getProperty('focus')) {
-                    styleOptions.fillOpacity = 0.6;
-                    styleOptions.fillColor = '#0f0';
-                    styleOptions.strokeColor = '#0f0';
-                    styleOptions.strokeWeight = 4;
-                    styleOptions.strokeOpacity = 1;
-                }
 
                 return styleOptions;
             });
@@ -73,30 +65,27 @@ export default {
             this.regionGeoJson.forEach((geojson) => {
                 this.map.data.addGeoJson(geojson);
             });
-            this.map.data.addListener('click', (e) => {
-                const feature = e.feature;
-
-                if (feature.getProperty('focus') !== true) {
-                    feature.setProperty('focus', true);
-                } else {
-                    feature.setProperty('focus', false);
-                }
-            });
 
             this.map.data.addListener('mouseover', (e) => {
-                const feature = e.feature,
-                    regionName = feature.getProperty('CTP_KOR_NM');
+                const feature = e.feature;
+                const regionName = feature.getProperty('CTP_KOR_NM');
+                const regionData = this.localData.find((e) => {
+                    if (feature.getProperty('CTP_KOR_NM') === e.gubun) {
+                        return true;
+                    }
+                });
+                const regionText = regionName + ': ' + regionData['newDefCnt'];
 
                 tooltip.css({
                     display: '',
                     left: e.offset.x,
                     top: e.offset.y
-                }).text(regionName);
+                }).text(regionText);
 
                 this.map.data.overrideStyle(feature, {
-                    fillOpacity: 0.6,
-                    strokeWeight: 4,
-                    strokeOpacity: 1
+                    fillOpacity: 0.1,
+                    strokeWeight: 1,
+                    strokeOpacity: 1,
                 });
             });
 
@@ -145,7 +134,6 @@ export default {
                 axios.get(`/api/geoJson/${regionId}`)
                 .then((res) => {
                     this.regionGeoJson.push(res.data);
-                    console.log(res);
                     if (i === 17) {
                         this.startDataLayer();
                     }

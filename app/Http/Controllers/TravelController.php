@@ -6,7 +6,6 @@ use App\Models\Covid;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class TravelController extends Controller
@@ -92,6 +91,7 @@ class TravelController extends Controller
         }
 
         return Inertia::render('Travel/ShowTravel', [
+            'localData' => Covid::selectRaw('gubun, localOccCnt + overFlowCnt as newDefCnt')->where([['stdDay', Covid::max('stdDay')], ['gubun', 'not like', '합계'], ['gubun', 'not like', '검역']])->get(),
             'content' => $content,
             'images' => $images,
             'page' => $request->page,

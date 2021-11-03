@@ -8,20 +8,17 @@
                     </Link>
                 </div>
                 <div class="flex justify-center text-4xl mt-7 font-semibold">{{ content.title }}</div>
-                <!-- <img v-for="image in images" :key="image.serialnum" :src="image.originimgurl" class="my-7"> -->
                 <section class="mx-auto max-w-2xl my-7">
                     <div class="shadow-2xl relative">
-                        <!-- large image on slides -->
                         <div>
                             <img class="w-full object-cover" :src="images[imageIndex].originimgurl"/>
                         </div>
-                        <!-- butttons -->
                         <a class="absolute left-0 inset-y-0 flex items-center -mt-32 px-4 text-white hover:text-gray-800 cursor-pointer text-3xl font-extrabold" @click="onClickLeftImage">❮</a>
                         <a class="absolute right-0 inset-y-0 flex items-center -mt-32 px-4 text-white hover:text-gray-800 cursor-pointer text-3xl font-extrabold" @click="onClickRightImage">❯</a>
                     </div>
                 </section>
 
-                <naver-map :searchResult="[content]" :searchWay="searchWay" :lat="lat" :lng="lng" />
+                <naver-map :searchResult="[content]" :searchWay="searchWay" :lat="lat" :lng="lng" :localData="localData" />
                 <div class="my-3">
                     <span>주소: {{ content.addr1 }}</span>
                     <span>{{ content.addr2 }}</span>
@@ -44,7 +41,7 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import { Link } from "@inertiajs/inertia-vue3";
 import NaverMap from '@/Components/NaverMap';
 export default {
-    props: ['searchWay', 'page', 'search', 'lat', 'lng', 'content', 'images'],
+    props: ['searchWay', 'page', 'search', 'lat', 'lng', 'content', 'images', 'localData'],
     components: {
         AppLayout,
         Link,
