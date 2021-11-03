@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class TravelController extends Controller
 {
@@ -99,5 +100,11 @@ class TravelController extends Controller
             'lat' => $request->lat,
             'lng' => $request->lng,
         ]);
+    }
+    public function geoJson($id)
+    {
+        $string = Storage::disk('public')->get('geoJson/' . $id . '.json');
+        $json_file = json_decode($string, true);
+        return $json_file;
     }
 }

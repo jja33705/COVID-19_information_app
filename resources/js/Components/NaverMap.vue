@@ -3,14 +3,16 @@
 </template>
 
 <script>
+import $ from 'jquery';
 export default {
-    props: ['searchWay', 'lat', 'lng', 'searchResult', 'selectedTravelSpot'],
+    props: ['searchWay', 'lat', 'lng', 'searchResult', 'selectedTravelSpot', 'localData'],
     data() {
         return {
             map: null,
             markers: [],
             infoWindows: [],
             myLocationMarker: null,
+            regionGeoJson: [],
         };
     },
     methods: {
@@ -43,6 +45,66 @@ export default {
         getCurrentLocationSuccess (position) { //자기위치 가져오기(성공)시 맵에 자기위치 그림
             this.drawMyLocation(position.coords.latitude, position.coords.longitude)
         },
+        startDataLayer() { //가져온 시군구 geoJson데이터 그림
+            const tooltip = $('<div style="position:absolute;z-index:1000;padding:5px 10px;background-color:#fff;border:solid 2px #000;font-size:14px;pointer-events:none;display:none;"></div>');
+
+            tooltip.appendTo(this.map.getPanes().floatPane);
+
+            this.map.data.setStyle((feature) => {
+                const styleOptions = {
+                    fillColor: '#ff0000',
+                    fillOpacity: 0.0001,
+                    strokeColor: '#ff0000',
+                    strokeWeight: 2,
+                    strokeOpacity: 0.4
+                };
+
+                if (feature.getProperty('focus')) {
+                    styleOptions.fillOpacity = 0.6;
+                    styleOptions.fillColor = '#0f0';
+                    styleOptions.strokeColor = '#0f0';
+                    styleOptions.strokeWeight = 4;
+                    styleOptions.strokeOpacity = 1;
+                }
+
+                return styleOptions;
+            });
+
+            this.regionGeoJson.forEach((geojson) => {
+                this.map.data.addGeoJson(geojson);
+            });
+            this.map.data.addListener('click', (e) => {
+                const feature = e.feature;
+
+                if (feature.getProperty('focus') !== true) {
+                    feature.setProperty('focus', true);
+                } else {
+                    feature.setProperty('focus', false);
+                }
+            });
+
+            this.map.data.addListener('mouseover', (e) => {
+                const feature = e.feature,
+                    regionName = feature.getProperty('CTP_KOR_NM');
+
+                tooltip.css({
+                    display: '',
+                    left: e.offset.x,
+                    top: e.offset.y
+                }).text(regionName);
+
+                this.map.data.overrideStyle(feature, {
+                    fillOpacity: 0.6,
+                    strokeWeight: 4,
+                    strokeOpacity: 1
+                });
+            });
+
+            this.map.data.addListener('mouseout', (e) => {
+                tooltip.hide().empty();
+                this.map.data.revertStyle();
+            });
+        },
     },
     mounted() {
         const mapOptions = { //맵 생성
@@ -73,6 +135,25 @@ export default {
                     );
                 }
             });
+
+            //시군구 geoJson데이터 가져옴
+            for (let i = 1; i < 18; i++) {
+                let regionId = i + '';
+                if (regionId.length === 1) {
+                    regionId = '0' + regionId;
+                }
+                axios.get(`/api/geoJson/${regionId}`)
+                .then((res) => {
+                    this.regionGeoJson.push(res.data);
+                    console.log(res);
+                    if (i === 17) {
+                        this.startDataLayer();
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+            }
         })
         
         this.searchResult.map((v) => { //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시

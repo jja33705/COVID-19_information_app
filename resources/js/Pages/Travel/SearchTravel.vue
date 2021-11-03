@@ -68,7 +68,7 @@
                         주변 관광지 보기
                     </button>
                 </div>
-                <naver-map :searchResult="searchResult" :searchWay="searchWay" :lat="lat" :lng="lng" :selectedTravelSpot="selectedTravelSpot" />
+                <naver-map :searchResult="searchResult" :searchWay="searchWay" :lat="lat" :lng="lng" :selectedTravelSpot="selectedTravelSpot" :localData="localData" />
                 <div class="flex flex-wrap mt-4">
                     <travel-spot-card
                         v-for="travelSpot in searchResult"
@@ -186,7 +186,7 @@
 </template>
 
 <script>
-const AREA_CODE = {
+export const AREA_CODE = {
     1: "서울",
     2: "인천",
     3: "대전",

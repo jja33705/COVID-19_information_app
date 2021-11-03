@@ -33,3 +33,5 @@ Route::get('/google/callback', [GoogleOAuthController::class, 'handleGoogleCallb
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 });
+
+Route::get('/geoJson', [TravelController::class, 'geoJson']);
