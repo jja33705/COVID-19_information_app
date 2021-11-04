@@ -22194,7 +22194,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
 var _hoisted_1 = {
-  "class": "bg-white group relative rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transform duration-200"
+  "class": "bg-white group relative rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transform duration-200 hover:scale-110 transition hover:z-10"
 };
 var _hoisted_2 = {
   "class": "relative w-full h-80 md:h-64 lg:h-44"

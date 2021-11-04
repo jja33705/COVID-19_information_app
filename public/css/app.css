@@ -8211,9 +8211,39 @@ select {
 .ease-in {
 	transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
 }
+.hover\:z-10:hover {
+	z-index: 10;
+}
+.hover\:translate-x-full:hover {
+	--tw-translate-x: 100%;
+	transform: var(--tw-transform);
+}
+.hover\:rotate-90:hover {
+	--tw-rotate: 90deg;
+	transform: var(--tw-transform);
+}
+.hover\:skew-y-12:hover {
+	--tw-skew-y: 12deg;
+	transform: var(--tw-transform);
+}
 .hover\:scale-100:hover {
 	--tw-scale-x: 1;
 	--tw-scale-y: 1;
+	transform: var(--tw-transform);
+}
+.hover\:scale-150:hover {
+	--tw-scale-x: 1.5;
+	--tw-scale-y: 1.5;
+	transform: var(--tw-transform);
+}
+.hover\:scale-125:hover {
+	--tw-scale-x: 1.25;
+	--tw-scale-y: 1.25;
+	transform: var(--tw-transform);
+}
+.hover\:scale-110:hover {
+	--tw-scale-x: 1.1;
+	--tw-scale-y: 1.1;
 	transform: var(--tw-transform);
 }
 .hover\:border-gray-300:hover {
