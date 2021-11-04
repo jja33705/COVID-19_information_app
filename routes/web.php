@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CovidController;
 use App\Http\Controllers\GoogleOAuthController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\TravelController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -31,7 +32,7 @@ Route::get('auth/google', [GoogleOAuthController::class, 'redirectToGoogle'])->n
 
 Route::get('/google/callback', [GoogleOAuthController::class, 'handleGoogleCallback']);
 
+Route::get('/review', [ReviewController::class, 'index'])->name('review.index');
+
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 });
-
-Route::get('/geoJson', [TravelController::class, 'geoJson']);

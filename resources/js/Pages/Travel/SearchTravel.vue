@@ -68,8 +68,15 @@
                         주변 관광지 보기
                     </button>
                 </div>
-                <naver-map :searchResult="searchResult" :searchWay="searchWay" :lat="lat" :lng="lng" :selectedTravelSpot="selectedTravelSpot" :localData="localData" />
-                <div class="flex flex-wrap mt-4">
+                <naver-map
+                    :searchResult="searchResult"
+                    :searchWay="searchWay"
+                    :lat="lat"
+                    :lng="lng"
+                    :selectedTravelSpot="selectedTravelSpot"
+                    :localData="localData"
+                />
+                <div class="mt-6 grid md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8">
                     <travel-spot-card
                         v-for="travelSpot in searchResult"
                         :key="travelSpot.contentid"
@@ -210,7 +217,7 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import { Link } from "@inertiajs/inertia-vue3";
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 import TravelSpotCard from "@/Components/TravelSpotCard.vue";
-import NaverMap from '@/Components/NaverMap.vue';
+import NaverMap from "@/Components/NaverMap.vue";
 
 export default {
     components: {
@@ -248,7 +255,8 @@ export default {
             );
         },
         onClickNearButton() {
-            if (!navigator.geolocation) {//자기위치 가져오기
+            if (!navigator.geolocation) {
+                //자기위치 가져오기
                 console.log("cant get location in this browser");
             } else {
                 navigator.geolocation.getCurrentPosition(
@@ -258,7 +266,9 @@ export default {
             }
         },
         searchTravelSpots() {
-            this.$inertia.get(`/travel?searchWay=keyWord&search=${this.searchInput}`)
+            this.$inertia.get(
+                `/travel?searchWay=keyWord&search=${this.searchInput}`
+            );
         },
         onClickTravelSpot(travelSpot) {
             this.selectedTravelSpot = travelSpot;

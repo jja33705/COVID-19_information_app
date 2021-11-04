@@ -19,7 +19,7 @@ class GoogleOAuthController extends Controller
         $findUser = User::where('google_id', $user->id)->first();
         if ($findUser) {
             Auth::login($findUser);
-            return redirect()->route('covid');
+            return redirect()->route('covid.index');
         } else {
             $newUser = new User;
             $newUser->name = $user->name;
@@ -28,7 +28,7 @@ class GoogleOAuthController extends Controller
             $newUser->password = encrypt('');
             $newUser->save();
             Auth::login($newUser);
-            return redirect()->route('covid');
+            return redirect()->route('covid.index');
         }
     }
 }

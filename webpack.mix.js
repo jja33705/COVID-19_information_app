@@ -20,7 +20,7 @@ mix.js('resources/js/app.js', 'public/js').vue()
     .webpackConfig(require('./webpack.config'));
 
 mix.browserSync({
-    proxy: 'http://localhost/8000'
+    proxy: 'http://localhost/8000/'
 });
 
 if (mix.inProduction()) {

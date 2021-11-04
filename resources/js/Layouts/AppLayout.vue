@@ -84,7 +84,7 @@
                     <Link class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" :href="route('travel.index', { searchWay: 'keyWord'  })" :class="{ 'border-b-4' : $page.url.startsWith('/travel') }">
                         여행지 검색
                     </Link>
-                    <a class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" href="#">
+                    <a class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" :href="route('review.index')" :class="{ 'border-b-4' : $page.url.startsWith('/review') }">
                         여행 후기
                     </a>
                 </div>
