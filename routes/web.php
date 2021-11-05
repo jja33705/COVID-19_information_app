@@ -34,5 +34,7 @@ Route::get('/google/callback', [GoogleOAuthController::class, 'handleGoogleCallb
 
 Route::get('/review', [ReviewController::class, 'index'])->name('review.index');
 
+Route::get('/getReviews', [ReviewController::class, 'getReviews'])->name('review.getReviews');
+
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 });

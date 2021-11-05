@@ -17,6 +17,7 @@ class CreateHashtagReviewTable extends Migration
             $table->id();
             $table->foreignId('review_id')->constrained()->onDelete('cascade');
             $table->foreignId('hashtag_id')->constrained()->onDelete('cascade');
+            $table->unique(['review_id', 'hashtag_id']);
             $table->timestamps();
         });
     }

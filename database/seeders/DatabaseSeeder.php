@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Hashtag;
+use App\Models\Review;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,6 +15,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        Review::factory()->has(Hashtag::factory()->count(rand(0, 10)))->count(20)->create();
     }
 }

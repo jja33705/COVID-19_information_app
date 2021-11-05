@@ -13,8 +13,8 @@
                         <div>
                             <img class="w-full object-cover" :src="images[imageIndex].originimgurl"/>
                         </div>
-                        <a class="absolute left-0 inset-y-0 flex items-center -mt-32 px-4 text-white hover:text-gray-800 cursor-pointer text-3xl font-extrabold" @click="onClickLeftImage">❮</a>
-                        <a class="absolute right-0 inset-y-0 flex items-center -mt-32 px-4 text-white hover:text-gray-800 cursor-pointer text-3xl font-extrabold" @click="onClickRightImage">❯</a>
+                        <a v-if="imageIndex > 0" class="absolute left-0 inset-y-0 flex items-center px-4 text-white hover:text-gray-800 cursor-pointer text-3xl font-extrabold" @click="onClickLeftImage">❮</a>
+                        <a v-if="imageIndex < images.length - 1" class="absolute right-0 inset-y-0 flex items-center px-4 text-white hover:text-gray-800 cursor-pointer text-3xl font-extrabold" @click="onClickRightImage">❯</a>
                     </div>
                 </section>
 
