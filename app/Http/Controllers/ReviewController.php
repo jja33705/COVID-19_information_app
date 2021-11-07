@@ -2,19 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Hashtag;
 use App\Models\Review;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request;;
+
 use Inertia\Inertia;
 
 class ReviewController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('Review/Review');
+        return Inertia::render('Review/Review', [
+            'searchWay' => $request->searchWay,
+            'search' => $request->search,
+        ]);
     }
 
-    public function getReviews()
+    public function getReviews(Request $request)
     {
-        return Review::latest()->paginate(9);
+        $searchWay = $request->searchWay;
+        $search = $request->search;
+        if ($searchWay == 'keyWord') {
+            return Review::where('title', 'like', '%' . $search . '%')->latest()->paginate(9)->withQueryString();
+        } else if ($searchWay == 'hashtag') {
+            $hashtag = Hashtag::where('contents', $search)->first();
+            return $hashtag->reviews()->paginate(9);
+        }
     }
 }

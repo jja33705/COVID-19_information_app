@@ -22023,15 +22023,34 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var v3_infinite_loading__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! v3-infinite-loading */ "./node_modules/v3-infinite-loading/lib/v3-infinite-loading.umd.js");
 /* harmony import */ var v3_infinite_loading__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(v3_infinite_loading__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var v3_infinite_loading_lib_style_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! v3-infinite-loading/lib/style.css */ "./node_modules/v3-infinite-loading/lib/style.css");
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 
 
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: ['searchWay', 'search'],
   data: function data() {
     return {
-      reviews: [],
-      page: 1
+      reviews: {
+        next_page_url: "http://localhost:8000/getReviews?searchWay=".concat(this.searchWay, "&search=").concat(this.search ? this.search : ''),
+        data: []
+      },
+      searchInput: this.search ? this.searchWay === 'hashtag' ? '#' + this.search : this.search : '',
+      //초기화할때 null이면 공백으로. 공백아니면서 해쉬태그면 # 붙여줌.
+      searchedHashtag: this.searchWay === 'hashtag' //해쉬태그를 검색하는건지 확인하는 변수
+
     };
   },
   components: {
@@ -22039,21 +22058,48 @@ __webpack_require__.r(__webpack_exports__);
     ReviewCard: _Components_ReviewCard_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     InfiniteLoading: (v3_infinite_loading__WEBPACK_IMPORTED_MODULE_2___default())
   },
-  mounted: function mounted() {
-    this.getReviews();
-  },
   methods: {
     getReviews: function getReviews(state) {
       var _this = this;
 
-      console.log('불러옴');
-      axios.get("/getReviews?page=".concat(this.page)).then(function (res) {
-        console.log(res);
-        state.loaded();
-        _this.page += 1;
-      })["catch"](function (err) {
-        console.log(err);
-      });
+      setTimeout(function () {
+        //0.8초정도 로딩 표시후 불러옴
+        if (_this.reviews.next_page_url === null) {
+          state.complete();
+          return;
+        }
+
+        axios.get("".concat(_this.reviews.next_page_url)).then(function (res) {
+          console.log(res);
+          res.data.data = [].concat(_toConsumableArray(_this.reviews.data), _toConsumableArray(res.data.data));
+          _this.reviews = res.data;
+          state.loaded();
+        })["catch"](function (err) {
+          state.error();
+        });
+      }, 800);
+    },
+    searchReview: function searchReview() {
+      //검색
+      if (!this.searchedHashtag) {
+        //해쉬태그검색 아닐때
+        this.$inertia.get("/review?searchWay=keyWord&search=".concat(this.searchInput), {
+          preserveScroll: false
+        });
+      } else {
+        //해쉬태그검색할때
+        this.$inertia.get("/review?searchWay=hashtag&search=".concat(this.searchInput.slice(1)), {
+          preserveScroll: false
+        });
+      }
+    },
+    onInputSearchInput: function onInputSearchInput() {
+      //해시태그 검색할때 클래스 바꿔 줌
+      if (this.searchInput.startsWith('#')) {
+        this.searchedHashtag = true;
+      } else {
+        this.searchedHashtag = false;
+      }
     }
   }
 });
@@ -22096,7 +22142,6 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "AREA_CODE": () => (/* binding */ AREA_CODE),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Layouts_AppLayout_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Layouts/AppLayout.vue */ "./resources/js/Layouts/AppLayout.vue");
@@ -22161,7 +22206,9 @@ var AREA_CODE = {
       }
     },
     searchTravelSpots: function searchTravelSpots() {
-      this.$inertia.get("/travel?searchWay=keyWord&search=".concat(this.searchInput));
+      this.$inertia.get("/travel?searchWay=keyWord&search=".concat(this.searchInput), {
+        preserveScroll: false
+      });
     },
     onClickTravelSpot: function onClickTravelSpot(travelSpot) {
       this.selectedTravelSpot = travelSpot;
@@ -23691,7 +23738,8 @@ var _hoisted_22 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNo
 
 var _hoisted_23 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 여행지 검색 ");
 
-var _hoisted_24 = ["href"];
+var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 여행 후기 ");
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Head = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Head");
 
@@ -23822,14 +23870,23 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["href", "class"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+  , ["href", "class"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
     "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800", {
       'border-b-4': _ctx.$page.url.startsWith('/review')
     }]),
-    href: _ctx.route('review.index')
-  }, " 여행 후기 ", 10
-  /* CLASS, PROPS */
-  , _hoisted_24)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Page Content "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("main", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "default")])])]);
+    href: _ctx.route('review.index', {
+      searchWay: 'keyWord'
+    })
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [_hoisted_24];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
+  /* PROPS */
+  , ["href", "class"])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("main", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "default")])])]);
 }
 
 /***/ }),
@@ -26561,7 +26618,36 @@ var _hoisted_2 = {
   "class": "max-w-7xl mx-auto sm:px-6 lg:px-8"
 };
 var _hoisted_3 = {
+  "class": "pt-2 mb-5 relative mx-auto text-gray-600"
+};
+
+var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+  "class": "text-gray-600 h-4 w-4 fill-current",
+  xmlns: "http://www.w3.org/2000/svg",
+  "xmlns:xlink": "http://www.w3.org/1999/xlink",
+  version: "1.1",
+  id: "Capa_1",
+  x: "0px",
+  y: "0px",
+  viewBox: "0 0 56.966 56.966",
+  style: {
+    "enable-background": "new 0 0 56.966 56.966"
+  },
+  "xml:space": "preserve",
+  width: "512px",
+  height: "512px"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  d: "M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z"
+})], -1
+/* HOISTED */
+);
+
+var _hoisted_5 = [_hoisted_4];
+var _hoisted_6 = {
   "class": "sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 space-y-4 sm:space-y-0"
+};
+var _hoisted_7 = {
+  "class": "mt-10 flex items-center justify-center"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_review_card = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("review-card");
@@ -26574,7 +26660,29 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     title: _ctx.Review
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.reviews, function (review) {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" input "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-base focus:outline-none w-full", $data.searchedHashtag ? 'font-bold text-xl' : '']),
+        onInput: _cache[0] || (_cache[0] = function () {
+          return $options.onInputSearchInput && $options.onInputSearchInput.apply($options, arguments);
+        }),
+        type: "search",
+        name: "search",
+        placeholder: "Search",
+        "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
+          return $data.searchInput = $event;
+        }),
+        required: "",
+        onKeyup: _cache[2] || (_cache[2] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withKeys)(function () {
+          return $options.searchReview && $options.searchReview.apply($options, arguments);
+        }, ["enter"]))
+      }, null, 34
+      /* CLASS, HYDRATE_EVENTS */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.searchInput]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+        "class": "absolute right-0 top-0 mt-5 mr-4",
+        onClick: _cache[3] || (_cache[3] = function () {
+          return $options.searchReview && $options.searchReview.apply($options, arguments);
+        })
+      }, _hoisted_5)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 리뷰 리스트 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.reviews.data, function (review) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_review_card, {
           key: review.id,
           review: review
@@ -26583,12 +26691,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         , ["review"]);
       }), 128
       /* KEYED_FRAGMENT */
-      )), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_infinite_loading, {
-        reviews: $data.reviews,
+      ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" infinite loading "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_infinite_loading, {
         onInfinite: $options.getReviews
       }, null, 8
       /* PROPS */
-      , ["reviews", "onInfinite"])])])])];
+      , ["onInfinite"])])])])];
     }),
     _: 1
     /* STABLE */
@@ -26664,25 +26771,37 @@ var _hoisted_2 = {
 var _hoisted_3 = {
   "class": "pt-2 relative mx-auto text-gray-600"
 };
-var _hoisted_4 = {
-  "class": "absolute right-0 top-0 mt-5 mr-4"
-};
 
-var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+  "class": "text-gray-600 h-4 w-4 fill-current",
+  xmlns: "http://www.w3.org/2000/svg",
+  "xmlns:xlink": "http://www.w3.org/1999/xlink",
+  version: "1.1",
+  id: "Capa_1",
+  x: "0px",
+  y: "0px",
+  viewBox: "0 0 56.966 56.966",
+  style: {
+    "enable-background": "new 0 0 56.966 56.966"
+  },
+  "xml:space": "preserve",
+  width: "512px",
+  height: "512px"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
   d: "M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z"
-}, null, -1
+})], -1
 /* HOISTED */
 );
 
-var _hoisted_6 = [_hoisted_5];
-var _hoisted_7 = {
+var _hoisted_5 = [_hoisted_4];
+var _hoisted_6 = {
   "class": "mt-6 grid md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8"
 };
-var _hoisted_8 = {
+var _hoisted_7 = {
   "class": "flex justify-center py-8"
 };
 
-var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   "class": "border border-black text-black block rounded-sm font-bold py-4 px-6 mr-2 flex items-center hover:bg-black hover:text-white"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
   "class": "h-5 w-5 mr-2 fill-current",
@@ -26704,7 +26823,7 @@ var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 /* HOISTED */
 );
 
-var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   "class": "border border-black text-black block rounded-sm font-bold py-4 px-6 ml-2 flex items-center hover:bg-black hover:text-white"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Next page "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
   "class": "h-5 w-5 ml-2 fill-current",
@@ -26740,7 +26859,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-        "class": "border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none w-full",
+        "class": "border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-base focus:outline-none w-full",
         type: "search",
         name: "search",
         placeholder: "Search",
@@ -26753,25 +26872,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         }, ["enter"]))
       }, null, 544
       /* HYDRATE_EVENTS, NEED_PATCH */
-      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.searchInput]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", _hoisted_4, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", {
-        "class": "text-gray-600 h-4 w-4 fill-current",
-        xmlns: "http://www.w3.org/2000/svg",
-        "xmlns:xlink": "http://www.w3.org/1999/xlink",
-        version: "1.1",
-        id: "Capa_1",
-        x: "0px",
-        y: "0px",
-        viewBox: "0 0 56.966 56.966",
-        style: {
-          "enable-background": "new 0 0 56.966 56.966"
-        },
-        "xml:space": "preserve",
-        width: "512px",
-        height: "512px",
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.searchInput]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+        "class": "absolute right-0 top-0 mt-5 mr-4",
         onClick: _cache[2] || (_cache[2] = function () {
           return $options.searchTravelSpots && $options.searchTravelSpots.apply($options, arguments);
         })
-      }, _hoisted_6))])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+      }, _hoisted_5)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
         onClick: _cache[3] || (_cache[3] = function () {
           return $options.onClickNearButton && $options.onClickNearButton.apply($options, arguments);
         }),
@@ -26786,7 +26892,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         localData: $props.localData
       }, null, 8
       /* PROPS */
-      , ["searchResult", "searchWay", "lat", "lng", "selectedTravelSpot", "localData"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.searchResult, function (travelSpot) {
+      , ["searchResult", "searchWay", "lat", "lng", "selectedTravelSpot", "localData"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.searchResult, function (travelSpot) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_travel_spot_card, {
           key: travelSpot.contentid,
           travelSpot: travelSpot,
@@ -26804,7 +26910,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         , ["travelSpot", "onClick", "searchWay", "search", "lat", "lng", "page", "newDefCnt"]);
       }), 128
       /* KEYED_FRAGMENT */
-      ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [$props.page > 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Link, {
+      ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [$props.page > 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Link, {
         key: 0,
         href: _ctx.route('travel.index', {
           searchWay: $props.searchWay,
@@ -26812,10 +26918,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           page: Number($props.page) - 1,
           lat: $props.lat,
           lng: $props.lng
-        })
+        }),
+        "preserve-scroll": ""
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_9];
+          return [_hoisted_8];
         }),
         _: 1
         /* STABLE */
@@ -26830,10 +26937,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           page: Number($props.page) + 1,
           lat: $props.lat,
           lng: $props.lng
-        })
+        }),
+        "preserve-scroll": ""
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_10];
+          return [_hoisted_9];
         }),
         _: 1
         /* STABLE */
@@ -77132,7 +77240,6 @@ if (false) {}
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "AREA_CODE": () => (/* reexport safe */ _SearchTravel_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__.AREA_CODE),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _SearchTravel_vue_vue_type_template_id_b213ab84__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SearchTravel.vue?vue&type=template&id=b213ab84 */ "./resources/js/Pages/Travel/SearchTravel.vue?vue&type=template&id=b213ab84");
@@ -77925,8 +78032,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SearchTravel_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"]),
-/* harmony export */   "AREA_CODE": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SearchTravel_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__.AREA_CODE)
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SearchTravel_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SearchTravel_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./SearchTravel.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Pages/Travel/SearchTravel.vue?vue&type=script&lang=js");
  
