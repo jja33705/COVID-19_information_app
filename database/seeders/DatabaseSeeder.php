@@ -15,6 +15,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        Review::factory()->has(Hashtag::factory()->count(rand(0, 10)))->count(20)->create();
+        Hashtag::factory()->has(Review::factory()->count(rand(0, 10)))->count(20)->create();
     }
 }

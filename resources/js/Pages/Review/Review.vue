@@ -47,13 +47,11 @@
                     </button>
                 </div>
                 <!-- 리뷰 리스트 -->
-                <div class="sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 space-y-4 sm:space-y-0">
-                    <review-card v-for="review in reviews.data" :key="review.id" :review="review"/>
-                </div>
-                <!-- infinite loading -->
-                <div class="mt-10 flex flex-col items-center justify-center">
-                    <infinite-loading @infinite="getReviews" :firstLoad="true" />
-                </div>
+                <infinite-scroll @infinite-scroll="getReviews" :noResult="noResult" :message="message">
+                    <div class="sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 space-y-4 sm:space-y-0 pb-5">
+                        <review-card v-for="review in reviews.data" :key="review.id" :review="review"/>
+                    </div>
+                </infinite-scroll>
             </div>
         </div>
     </app-layout>
@@ -64,8 +62,7 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ReviewCard from '@/Components/ReviewCard.vue';
-import InfiniteLoading from "v3-infinite-loading";
-import "v3-infinite-loading/lib/style.css";
+import InfiniteScroll from 'infinite-loading-vue3';
 export default {
     props: ['searchWay', 'search'],
     data() {
@@ -76,33 +73,42 @@ export default {
             },
             searchInput: this.search ? (this.searchWay === 'hashtag' ? '#' + this.search : this.search) : '', //초기화할때 null이면 공백으로. 공백아니면서 해쉬태그면 # 붙여줌.
             searchHashtag: this.searchWay === 'hashtag', //해쉬태그를 검색하는건지 확인하는 변수
+            timer: null,
+            noResult: false,
+            message: '',
         };
     },
     components: {
         AppLayout,
         ReviewCard,
-        InfiniteLoading,
+        InfiniteScroll,
     },
     methods: {
-        getReviews(state) {
+        getReviews() {
             console.log('데이터 불러옴');
-            setTimeout(() => { //0.8초정도 로딩 표시후 불러옴
-                if (this.reviews.next_page_url === null) {
-                    state.complete();
-                    return;
-                }
-                axios.get(this.reviews.next_page_url)
-                .then((res) => {
-                    console.log(res);
-                    res.data.data = [...this.reviews.data, ...res.data.data];
-                    this.reviews = res.data;
-                    state.loaded();
-                })
-                .catch((err) => {
-                    state.error();
-                });
-            }, 800);
+            if (!this.timer) {
+                this.timer = setTimeout(() => { //0.5초정도 로딩 표시후 불러옴. 스크롤 이벤트가 연속적으로 발생하므로 쓰로틀링처리 해줌.
+                    this.timer = null;
+                    if (this.reviews.next_page_url === null) {
+                        this.noResult = true;
+                        this.message = 'No more result';
+                        return;
+                    }
+                    axios.get(this.reviews.next_page_url)
+                    .then((res) => {
+                        console.log(res);
+                        res.data.data = [...this.reviews.data, ...res.data.data];
+                        this.reviews = res.data;
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        this.noResult = true;
+                        this.message = 'Error loading data';
+                    });
+                }, 500);
+            }
         },
+
         searchReview() { //검색
             if (!this.searchHashtag) { //해쉬태그검색 아닐때
                 this.$inertia.get(
@@ -124,6 +130,7 @@ export default {
     },
     mounted() {
         console.log('마운트 됨');
+        this.getReviews();
     }
 }
 </script>

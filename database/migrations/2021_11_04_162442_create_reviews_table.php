@@ -19,7 +19,8 @@ class CreateReviewsTable extends Migration
             $table->string('title');
             $table->string('place');
             $table->text('contents');
-            $table->integer('viewCount');
+            $table->integer('viewCount')->default(0);
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

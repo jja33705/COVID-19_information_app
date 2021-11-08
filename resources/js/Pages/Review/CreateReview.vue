@@ -7,7 +7,7 @@
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                             <div class="p-6 bg-white border-b border-gray-200">
-                                <form @submit.prevent="submit">
+                                <form @submit.prevent="submit" @keydown.enter.prevent>
                                     <div class="mb-4">
                                         <label class="text-xl text-gray-600">제목</label>
                                         <br>
@@ -34,7 +34,7 @@
                                     <div class="my-6">
                                         <div class="relative">
                                             <div class="my-4 flex">
-                                                <input class="rounded-l-lg p-4 border-t mr-0 border-b border-l text-gray-800 border-gray-200 bg-white" placeholder="#없이 입력" v-model="hashtagInput" @keyup.enter="onClickAddHashtag"/>
+                                                <input class="rounded-l-lg p-4 border-t mr-0 border-b border-l text-gray-800 border-gray-200 bg-white" placeholder="#없이 입력" v-model="hashtagInput" @keyup.enter="onClickAddHashtag" ref="hashtagInput"/>
                                                 <button class="px-8 rounded-r-lg bg-gray-200  text-gray-800 font-bold p-4" @click="onClickAddHashtag" type="button">해시태그 추가</button>
                                             </div>
                                             <!-- selections -->
@@ -105,9 +105,11 @@ export default {
             if (this.form.hashtags.includes(this.hashtagInput) || !this.hashtagInput.trim()) {
                 return;
             }
-            this.form.hashtags.push(this.hashtagInput);
+            this.form.hashtags.push(this.hashtagInput.trim());
             this.hashtagInput = '';
+            this.$refs.hashtagInput.focus();
         },
+
         onClickDeleteHahtag(hashtag) { //해쉬태그 삭제
             this.form.hashtags.splice(this.form.hashtags.indexOf(hashtag), 1);
         },

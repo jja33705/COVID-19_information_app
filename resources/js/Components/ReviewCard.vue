@@ -1,7 +1,7 @@
 <template>
     <div class="bg-white">
         <div class="shadow-lg hover:shadow-xl transform transition duration-500 hover:scale-105">
-            <img class="w-full" src="https://i.imgur.com/lmYYa2s.png" />
+            <img class="w-full" :src="`http://127.0.0.1:8000/storage/images/${review.image}`" />
             <div class="px-4 py-2">
                 <h1 class="text-xl font-gray-700 font-bold truncate ...">{{ review.title }}</h1>
                 <div class="flex space-x-2 mt-2">
