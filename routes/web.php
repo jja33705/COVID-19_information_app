@@ -37,4 +37,7 @@ Route::get('/review', [ReviewController::class, 'index'])->name('review.index');
 Route::get('/getReviews', [ReviewController::class, 'getReviews'])->name('review.getReviews');
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::get('/review/create', [ReviewController::class, 'create'])->name('review.create');
+
+    Route::post('/review/store', [ReviewController::class, 'store'])->name('review.store');
 });

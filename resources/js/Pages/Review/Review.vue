@@ -1,5 +1,5 @@
 <template>
-    <app-layout :title="Review">
+    <app-layout title="Review">
         <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <!-- input -->
@@ -17,7 +17,7 @@
                             w-full
                         "
                         @input="onInputSearchInput"
-                        :class="searchedHashtag? 'font-bold text-xl' : ''"
+                        :class="searchHashtag? 'font-bold text-xl text-black' : ''"
                         type="search"
                         name="search"
                         placeholder="Search"
@@ -51,8 +51,8 @@
                     <review-card v-for="review in reviews.data" :key="review.id" :review="review"/>
                 </div>
                 <!-- infinite loading -->
-                <div class=" mt-10 flex items-center justify-center">
-                    <infinite-loading @infinite="getReviews"/>
+                <div class="mt-10 flex flex-col items-center justify-center">
+                    <infinite-loading @infinite="getReviews" :firstLoad="true" />
                 </div>
             </div>
         </div>
@@ -64,7 +64,7 @@
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ReviewCard from '@/Components/ReviewCard.vue';
-import InfiniteLoading from 'v3-infinite-loading';
+import InfiniteLoading from "v3-infinite-loading";
 import "v3-infinite-loading/lib/style.css";
 export default {
     props: ['searchWay', 'search'],
@@ -75,8 +75,8 @@ export default {
                 data: [],
             },
             searchInput: this.search ? (this.searchWay === 'hashtag' ? '#' + this.search : this.search) : '', //초기화할때 null이면 공백으로. 공백아니면서 해쉬태그면 # 붙여줌.
-            searchedHashtag: this.searchWay === 'hashtag', //해쉬태그를 검색하는건지 확인하는 변수
-        }
+            searchHashtag: this.searchWay === 'hashtag', //해쉬태그를 검색하는건지 확인하는 변수
+        };
     },
     components: {
         AppLayout,
@@ -85,12 +85,13 @@ export default {
     },
     methods: {
         getReviews(state) {
+            console.log('데이터 불러옴');
             setTimeout(() => { //0.8초정도 로딩 표시후 불러옴
                 if (this.reviews.next_page_url === null) {
                     state.complete();
                     return;
                 }
-                axios.get(`${this.reviews.next_page_url}`)
+                axios.get(this.reviews.next_page_url)
                 .then((res) => {
                     console.log(res);
                     res.data.data = [...this.reviews.data, ...res.data.data];
@@ -103,7 +104,7 @@ export default {
             }, 800);
         },
         searchReview() { //검색
-            if (!this.searchedHashtag) { //해쉬태그검색 아닐때
+            if (!this.searchHashtag) { //해쉬태그검색 아닐때
                 this.$inertia.get(
                     `/review?searchWay=keyWord&search=${this.searchInput}`, { preserveScroll: false }
                 );
@@ -115,11 +116,14 @@ export default {
         },
         onInputSearchInput() { //해시태그 검색할때 클래스 바꿔 줌
             if(this.searchInput.startsWith('#')) {
-                this.searchedHashtag = true;
+                this.searchHashtag = true;
             } else {
-                this.searchedHashtag = false;
+                this.searchHashtag = false;
             }
         }
     },
+    mounted() {
+        console.log('마운트 됨');
+    }
 }
 </script>

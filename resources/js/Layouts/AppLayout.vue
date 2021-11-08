@@ -8,7 +8,7 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex flex-row-reverse h-10">
 
-                        <div class="hidden sm:flex sm:items-center sm:ml-6">
+                        <div>
 
                             <!-- Settings Dropdown -->
                             <div class="ml-3 relative" v-if="$page.props.user">
@@ -78,13 +78,13 @@
             </div>
             <nav class="bg-white px-8 pt-2 shadow-md">
                 <div class="-mb-px flex justify-around">
-                    <Link class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" :href="route('covid.index')" :class="{ 'border-b-4' : $page.url === '/' }">
+                    <Link class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-lg hover:text-gray-800" :href="route('covid.index')" :class="{ 'border-b-4' : $page.url === '/' }">
                         코로나 정보
                     </Link>
-                    <Link class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" :href="route('travel.index', { searchWay: 'keyWord'  })" :class="{ 'border-b-4' : $page.url.startsWith('/travel') }">
+                    <Link class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-lg hover:text-gray-800" :href="route('travel.index', { searchWay: 'keyWord'  })" :class="{ 'border-b-4' : $page.url.startsWith('/travel') }">
                         여행지 검색
                     </Link>
-                    <Link class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800" :href="route('review.index', { searchWay: 'keyWord' })" :class="{ 'border-b-4' : $page.url.startsWith('/review') }">
+                    <Link class="text-gray-600 tracking-wide font-semibold py-3 mr-8 text-lg hover:text-gray-800" :href="route('review.index', { searchWay: 'keyWord' })" :class="{ 'border-b-4' : $page.url.startsWith('/review') }">
                         여행 후기
                     </Link>
                 </div>

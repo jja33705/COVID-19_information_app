@@ -1,5 +1,5 @@
 <template>
-    <app-layout :title="covid19_TRAVEL">
+    <app-layout title="covid19">
         <div class="flex justify-center py-10 p-14">
 
             <!-- 확진자 정보 -->

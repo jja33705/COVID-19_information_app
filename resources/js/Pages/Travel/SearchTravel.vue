@@ -1,5 +1,5 @@
 <template>
-    <app-layout :title="Tour">
+    <app-layout title="Travel">
         <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="pt-2 relative mx-auto text-gray-600">

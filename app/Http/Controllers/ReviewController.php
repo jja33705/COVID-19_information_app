@@ -25,8 +25,22 @@ class ReviewController extends Controller
         if ($searchWay == 'keyWord') {
             return Review::where('title', 'like', '%' . $search . '%')->latest()->paginate(9)->withQueryString();
         } else if ($searchWay == 'hashtag') {
-            $hashtag = Hashtag::where('contents', $search)->first();
-            return $hashtag->reviews()->paginate(9);
+            return Hashtag::where('contents', $search)->first()->reviews()->paginate(9)->withQueryString();
+            // return $hashtag->reviews()->paginate(9);
         }
+    }
+
+    public function create()
+    {
+        return Inertia::render('Review/CreateReview');
+    }
+
+    public function store(Request $request)
+    {
+        // dd($request);
+        dd($request->hashtags);
+
+
+        $review = new Hashtag;
     }
 }
