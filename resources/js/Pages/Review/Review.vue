@@ -2,6 +2,19 @@
     <app-layout title="Review">
         <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <Link :href="route('review.create')" v-if="$page.props.user">
+                <div class="flex-1 h-full my-2">
+                    <div class="flex items-center justify-center flex-1 h-full p-2 bg-yellow-300 text-white shadow rounded-lg">
+                        <div class="relative">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </Link>
+
+
                 <!-- input -->
                 <div class="pt-2 mb-5 relative mx-auto text-gray-600">
                     <input
@@ -46,6 +59,8 @@
                         </svg>
                     </button>
                 </div>
+
+                
                 <!-- 리뷰 리스트 -->
                 <infinite-scroll @infinite-scroll="getReviews" :noResult="noResult" :message="message">
                     <div class="sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 space-y-4 sm:space-y-0 pb-5">
@@ -63,6 +78,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ReviewCard from '@/Components/ReviewCard.vue';
 import InfiniteScroll from 'infinite-loading-vue3';
+import { Link } from "@inertiajs/inertia-vue3";
 export default {
     props: ['searchWay', 'search'],
     data() {
@@ -82,6 +98,7 @@ export default {
         AppLayout,
         ReviewCard,
         InfiniteScroll,
+        Link,
     },
     methods: {
         getReviews() {

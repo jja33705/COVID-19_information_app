@@ -27,7 +27,7 @@ class ReviewController extends Controller
         if ($searchWay == 'keyWord') {
             return Review::where('title', 'like', '%' . $search . '%')->latest()->paginate(9)->withQueryString();
         } else if ($searchWay == 'hashtag') {
-            return Hashtag::where('contents', $search)->first()->reviews()->paginate(9)->withQueryString();
+            return Hashtag::where('contents', $search)->first()->reviews()->latest()->paginate(9)->withQueryString();
             // return $hashtag->reviews()->paginate(9);
         }
     }

@@ -17,10 +17,15 @@ class Review extends Model
         'viewCount'
     ];
 
-    protected $with = ['hashtags'];
+    protected $with = ['hashtags', 'user'];
 
     public function hashtags()
     {
         return $this->belongsToMany(Hashtag::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
