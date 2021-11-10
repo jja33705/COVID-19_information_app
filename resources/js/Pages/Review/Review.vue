@@ -129,7 +129,7 @@ export default {
         searchReview() { //검색
             if (!this.searchHashtag) { //해쉬태그검색 아닐때
                 this.$inertia.get(
-                    `/review?searchWay=keyWord&search=${this.searchInput}`, { preserveScroll: false }
+                    `/review?searchWay=keyword&search=${this.searchInput}`, { preserveScroll: false }
                 );
             } else { //해쉬태그검색할때
                 this.$inertia.get(

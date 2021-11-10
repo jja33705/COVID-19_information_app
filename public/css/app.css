@@ -7285,9 +7285,9 @@ select {
 	margin-left: auto;
 	margin-right: auto;
 }
-.my-3 {
-	margin-top: 0.75rem;
-	margin-bottom: 0.75rem;
+.my-2 {
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
 }
 .my-5 {
 	margin-top: 1.25rem;
@@ -7301,13 +7301,17 @@ select {
 	margin-top: 1rem;
 	margin-bottom: 1rem;
 }
+.mx-2 {
+	margin-left: 0.5rem;
+	margin-right: 0.5rem;
+}
 .my-7 {
 	margin-top: 1.75rem;
 	margin-bottom: 1.75rem;
 }
-.my-2 {
-	margin-top: 0.5rem;
-	margin-bottom: 0.5rem;
+.my-3 {
+	margin-top: 0.75rem;
+	margin-bottom: 0.75rem;
 }
 .ml-3 {
 	margin-left: 0.75rem;
@@ -7462,26 +7466,14 @@ select {
 .h-20 {
 	height: 5rem;
 }
-.h-80 {
-	height: 20rem;
-}
 .h-full {
 	height: 100%;
 }
+.h-80 {
+	height: 20rem;
+}
 .h-48 {
 	height: 12rem;
-}
-.h-auto {
-	height: auto;
-}
-.h-52 {
-	height: 13rem;
-}
-.h-1\/2 {
-	height: 50%;
-}
-.h-60 {
-	height: 15rem;
 }
 .min-h-screen {
 	min-height: 100vh;
@@ -7676,9 +7668,6 @@ select {
 	--tw-space-y-reverse: 0;
 	margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
 	margin-bottom: calc(1rem * var(--tw-space-y-reverse));
-}
-.justify-self-center {
-	justify-self: center;
 }
 .overflow-hidden {
 	overflow: hidden;
@@ -7881,29 +7870,13 @@ select {
 	--tw-bg-opacity: 1;
 	background-color: rgba(209, 250, 229, var(--tw-bg-opacity));
 }
-.bg-purple-50 {
-	--tw-bg-opacity: 1;
-	background-color: rgba(245, 243, 255, var(--tw-bg-opacity));
-}
-.bg-blue-800 {
-	--tw-bg-opacity: 1;
-	background-color: rgba(30, 64, 175, var(--tw-bg-opacity));
-}
-.bg-blue-200 {
-	--tw-bg-opacity: 1;
-	background-color: rgba(191, 219, 254, var(--tw-bg-opacity));
-}
-.bg-yellow-500 {
-	--tw-bg-opacity: 1;
-	background-color: rgba(245, 158, 11, var(--tw-bg-opacity));
-}
-.bg-yellow-400 {
-	--tw-bg-opacity: 1;
-	background-color: rgba(251, 191, 36, var(--tw-bg-opacity));
-}
 .bg-yellow-300 {
 	--tw-bg-opacity: 1;
 	background-color: rgba(252, 211, 77, var(--tw-bg-opacity));
+}
+.bg-purple-50 {
+	--tw-bg-opacity: 1;
+	background-color: rgba(245, 243, 255, var(--tw-bg-opacity));
 }
 .bg-opacity-25 {
 	--tw-bg-opacity: 0.25;
@@ -8774,21 +8747,6 @@ select {
 	.sm\:text-left {
 		text-align: left;
 	}
-
-	.sm\:text-lg {
-		font-size: 1.125rem;
-		line-height: 1.75rem;
-	}
-
-	.sm\:text-xl {
-		font-size: 1.25rem;
-		line-height: 1.75rem;
-	}
-
-	.sm\:text-base {
-		font-size: 1rem;
-		line-height: 1.5rem;
-	}
 }
 @media (min-width: 768px) {
 
@@ -8838,12 +8796,12 @@ select {
 		grid-column: span 4 / span 4;
 	}
 
-	.lg\:h-44 {
-		height: 11rem;
-	}
-
 	.lg\:h-48 {
 		height: 12rem;
+	}
+
+	.lg\:h-44 {
+		height: 11rem;
 	}
 
 	.lg\:grid-cols-3 {

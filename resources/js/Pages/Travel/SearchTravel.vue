@@ -66,18 +66,37 @@
                     >
                         주변 관광지 보기
                     </button>
+                    
+                    <label class="mx-2">시도:</label>
+                    <select v-model="selectedAreaCode" @change="onChangeAreaCode">
+                        <option value="" selected>-- 선택 없음 --</option>
+                        <option :value="area.code" v-for="area in areas" :key="area.rnum">{{ area.name }}</option>
+                    </select>
+
+                    <label class="mx-2">시군구:</label>
+                    <select v-model="selectedSigunguCode">
+                        <option value="" selected>-- 선택 없음 --</option>
+                        <option :value="sigungu.code" v-for="sigungu in sigungus" :key="sigungu.rnum">{{ sigungu.name }}</option>
+                    </select>
+
+
                 </div>
+                
+                
+                <!-- 지도 -->
                 <naver-map
-                    :searchResult="searchResult"
+                    :travelSpots="travelSpots"
                     :searchWay="searchWay"
                     :lat="lat"
                     :lng="lng"
                     :selectedTravelSpot="selectedTravelSpot"
-                    :localData="localData"
+                    :localCovidData="localCovidData"
                 />
+
+                <!-- 여행지 목록 -->
                 <div class="mt-6 grid md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8">
                     <travel-spot-card
-                        v-for="travelSpot in searchResult"
+                        v-for="travelSpot in travelSpots"
                         :key="travelSpot.contentid"
                         :travelSpot="travelSpot"
                         @click="onClickTravelSpot(travelSpot)"
@@ -227,19 +246,25 @@ export default {
         NaverMap,
     },
     props: [
-        "localData",
-        "searchResult",
+        "localCovidData",
         "page",
         "search",
-        "totalCount",
         "searchWay",
         "lat",
         "lng",
+        "areaCode",
+        "sigunguCode",
     ],
     data() {
         return {
             searchInput: this.search ? decodeURIComponent(this.search) : "",
             selectedTravelSpot: null,
+            selectedAreaCode: this.areaCode == null ? '' : this.areaCode,
+            selectedSigunguCode: '',
+            travelSpots: [],
+            totalCount: 0,
+            areas: [],
+            sigungus: [],
         };
     },
     methods: {
@@ -266,7 +291,7 @@ export default {
         },
         searchTravelSpots() {
             this.$inertia.get(
-                `/travel?searchWay=keyWord&search=${this.searchInput}`, { preserveScroll: false }
+                `/travel?searchWay=keyword&search=${this.searchInput}`, { preserveScroll: false }
             );
         },
         onClickTravelSpot(travelSpot) {
@@ -274,13 +299,83 @@ export default {
         },
         newDefCntOfSpot(areaCode) {
             //해당 지역 확진자수
-            const local = this.localData.find((e) => {
-                if (AREA_CODE[areaCode] === e.gubun) {
+            console.log(this.areas);
+            console.log(this.localCovidData);
+            const areaName = AREA_CODE[areaCode];
+            const local = this.localCovidData.find((e) => {
+                if (areaName === e.gubun) {
                     return true;
                 }
             });
             return local.newDefCnt;
         },
+        onChangeAreaCode() { //지역 선택했을때
+            if (!this.selectedAreaCode) {
+                this.sigungus = [];
+                return;
+            } else {
+                if (this.sigungus.length == 0) {
+                    axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/sigungus?areaCode=${this.selectedAreaCode}`)
+                    .then((res) => {
+                        console.log(res);
+                        this.sigungus = res.data.response.body.items.item;
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+                }
+            }
+        },
+        async initializeData() {
+            try {
+                //지역분류 불러오기
+                const areaResponse = await axios.get('https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/areas')
+                console.log(areaResponse);
+                this.areas = areaResponse.data.response.body.items.item;
+
+                if (this.sigunguCode) {
+                    const sigunguResponse = await axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/sigungus?areaCode=${this.selectedAreaCode}`);
+                    this.sigungus = res.data.response.body.items.item;
+                    this.selectedSigunguCode = this.sigunguCode === null ? '' : this.sigunguCode;
+                }
+
+                //검색방법에 따라 분기처리
+                switch(this.searchWay) {  //검색방법에 따라 분기처리
+                    case 'near': //주변 관광지 데이터터
+                        const nearResponse = await axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/nearTravelSpots?lng=${this.lng}&lat=${this.lat}&page=${this.page}`);
+                        console.log(nearResponse);
+                        this.totalCount = nearResponse.data.response.body.totalCount;
+                        if (this.totalCount > 0) {
+                            if (nearResponse.data.response.body.items.item.length > 1) {
+                                this.travelSpots = nearResponse.data.response.body.items.item;
+                            } else {
+                                this.travelSpots.push(nearResponse.data.response.body.items.item);
+                            }
+                        }
+                        break;
+                    case 'keyword': //키워드로 검색
+                        const keywordResponse = await axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/keywordTravelSpots?page=${this.page}&search=${this.search}`);
+                        console.log(keywordResponse);
+                        this.totalCount = keywordResponse.data.response.body.totalCount;
+                        if (this.totalCount > 0) {
+                            if (keywordResponse.data.response.body.items.item.length > 1) {
+                                this.travelSpots = keywordResponse.data.response.body.items.item;
+                            } else {
+                                this.travelSpots.push(keywordResponse.data.response.body.items.item);
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            } catch (err) {
+                console.log(err);
+            }
+
+        },
     },
+    mounted() {
+        this.initializeData();
+    }
 };
 </script>

@@ -59,7 +59,7 @@ const regionGeoJson = [
 
 import $ from 'jquery';
 export default {
-    props: ['searchWay', 'lat', 'lng', 'searchResult', 'selectedTravelSpot', 'localData'],
+    props: ['searchWay', 'lat', 'lng', 'travelSpots', 'selectedTravelSpot', 'localCovidData'],
     data() {
         return {
             map: null,
@@ -122,7 +122,7 @@ export default {
             this.map.data.addListener('mouseover', (e) => {
                 const feature = e.feature;
                 const regionName = feature.getProperty('CTP_KOR_NM');
-                const regionData = this.localData.find((e) => {
+                const regionData = this.localCovidData.find((e) => {
                     if (feature.getProperty('CTP_KOR_NM') === e.gubun) {
                         return true;
                     }
@@ -182,49 +182,14 @@ export default {
             this.startDataLayer();
         })
         
-        this.searchResult.map((v) => { //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시
-            const spot = new naver.maps.LatLng(v.mapy, v.mapx);
-            const marker = new naver.maps.Marker({
-                map: this.map,
-                position: spot,
-            });
-            this.markers.push(marker);
-
-            var contentString = [
-                '<div>',
-                `   <div class="font-bold">${v.title}</div>`,
-                `</div>`,
-            ].join("");
-            const infoWindow = new naver.maps.InfoWindow({
-                content: contentString,
-                borderWidth: 0,
-                disableAnchor: true,
-                backgroundColor: "transparent",
-            });
-            this.infoWindows.push(infoWindow);
-
-            //마커 클릭시 정보창 보여줌
-            naver.maps.Event.addListener(marker, "click", (e) => {
-                if (infoWindow.getMap()) {
-                    infoWindow.close();
-                } else {
-                    infoWindow.open(this.map, marker);
-                }
-            });
-            if (this.$parent.$page.component === 'Travel/ShowTravel') { //여행지 상세정보의 지도일때는 오픈시켜놓음
-                infoWindow.open(this.map, marker);
-                this.map.setCenter(spot);
-                this.map.setOptions("zoom", 12);
-            }
-        });
     },
     watch: {
         selectedTravelSpot: function (newSelectedTravelSpot) { //선택된 여행지가 바뀌면 그곳을 줌하고 정보창을 펼쳐준다.
-            for (let i = 0; i < this.searchResult.length; i++) {
-                if (newSelectedTravelSpot.contentid === this.searchResult[i].contentid) {
+            for (let i = 0; i < this.travelSpots.length; i++) {
+                if (newSelectedTravelSpot.contentid === this.travelSpots[i].contentid) {
                     const spot = new naver.maps.LatLng(
-                        this.searchResult[i].mapy,
-                        this.searchResult[i].mapx
+                        this.travelSpots[i].mapy,
+                        this.travelSpots[i].mapx
                     );
                     this.map.setCenter(spot);
                     this.map.setOptions("zoom", 15);
@@ -233,6 +198,44 @@ export default {
                 }
             }
         },
+        travelSpots: function (newTravelSpots) {
+            console.log('불림');
+            newTravelSpots.map((v) => { //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시
+                const spot = new naver.maps.LatLng(v.mapy, v.mapx);
+                const marker = new naver.maps.Marker({
+                    map: this.map,
+                    position: spot,
+                });
+                this.markers.push(marker);
+
+                var contentString = [
+                    '<div>',
+                    `   <div class="font-bold">${v.title}</div>`,
+                    `</div>`,
+                ].join("");
+                const infoWindow = new naver.maps.InfoWindow({
+                    content: contentString,
+                    borderWidth: 0,
+                    disableAnchor: true,
+                    backgroundColor: "transparent",
+                });
+                this.infoWindows.push(infoWindow);
+
+                //마커 클릭시 정보창 보여줌
+                naver.maps.Event.addListener(marker, "click", (e) => {
+                    if (infoWindow.getMap()) {
+                        infoWindow.close();
+                    } else {
+                        infoWindow.open(this.map, marker);
+                    }
+                });
+                if (this.$parent.$page.component === 'Travel/ShowTravel') { //여행지 상세정보의 지도일때는 오픈시켜놓음
+                    infoWindow.open(this.map, marker);
+                    this.map.setCenter(spot);
+                    this.map.setOptions("zoom", 12);
+                }
+            });
+        }
     },
 }
 </script>

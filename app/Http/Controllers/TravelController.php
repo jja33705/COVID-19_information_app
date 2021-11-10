@@ -20,46 +20,55 @@ class TravelController extends Controller
         $lng = $request->lng;
         $lat = $request->lat;
 
-        if ($searchWay == 'near') { //주변위치 검색
-            $client = new Client();
-            $res = $client->request('GET', 'http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=' . env('DATA_PORTAL_KEY') . '&numOfRows=12&pageNo=' . $page . '&MobileOS=ETC&MobileApp=AppTest&arrange=B&contentTypeId=12&mapX=' . $lng . '&mapY=' . $lat . '&radius=10000&listYN=Y');
-            $xml = simplexml_load_string($res->getBody());
-            $json = json_encode($xml);
-            $data = json_decode($json, true);
-            $totalCount = $data['body']['totalCount'];
-            if ($totalCount == 0) {
-                $searchResult = $data['body']['items'];
-            } else if ($totalCount == 1) {
-                $searchResult = array();
-                $searchResult[0] = $data['body']['items']['item'];
-            } else {
-                $searchResult = $data['body']['items']['item'];
-            }
-        } elseif ($searchWay == 'keyWord') {  //키워드 검색
-            $client = new Client();
-            $res = $client->request('GET', 'http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword?serviceKey=' . env('DATA_PORTAL_KEY') . '&MobileApp=AppTest&MobileOS=ETC&pageNo=' . $page . '&numOfRows=12&listYN=Y&arrange=B&contentTypeId=12&keyword=' . $search);
-            $xml = simplexml_load_string($res->getBody());
-            $json = json_encode($xml);
-            $data = json_decode($json, true);
-            $totalCount = $data['body']['totalCount'];
-            if ($totalCount == 0) {
-                $searchResult = $data['body']['items'];
-            } else if ($totalCount == 1) {
-                $searchResult = array();
-                $searchResult[0] = $data['body']['items']['item'];
-            } else {
-                $searchResult = $data['body']['items']['item'];
-            }
-        }
+        // if ($searchWay == 'near') { //주변위치 검색
+        //     $client = new Client();
+        //     $res = $client->request('GET', 'http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=' . env('DATA_PORTAL_KEY') . '&numOfRows=12&pageNo=' . $page . '&MobileOS=ETC&MobileApp=AppTest&arrange=B&contentTypeId=12&mapX=' . $lng . '&mapY=' . $lat . '&radius=10000&listYN=Y');
+        //     $xml = simplexml_load_string($res->getBody());
+        //     $json = json_encode($xml);
+        //     $data = json_decode($json, true);
+        //     $totalCount = $data['body']['totalCount'];
+        //     if ($totalCount == 0) {
+        //         $searchResult = $data['body']['items'];
+        //     } else if ($totalCount == 1) {
+        //         $searchResult = array();
+        //         $searchResult[0] = $data['body']['items']['item'];
+        //     } else {
+        //         $searchResult = $data['body']['items']['item'];
+        //     }
+        // } elseif ($searchWay == 'keyWord') {  //키워드 검색
+        //     $client = new Client();
+        //     $res = $client->request('GET', 'http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword?serviceKey=' . env('DATA_PORTAL_KEY') . '&MobileApp=AppTest&MobileOS=ETC&pageNo=' . $page . '&numOfRows=12&listYN=Y&arrange=B&contentTypeId=12&keyword=' . $search);
+        //     $xml = simplexml_load_string($res->getBody());
+        //     $json = json_encode($xml);
+        //     $data = json_decode($json, true);
+        //     $totalCount = $data['body']['totalCount'];
+        //     if ($totalCount == 0) {
+        //         $searchResult = $data['body']['items'];
+        //     } else if ($totalCount == 1) {
+        //         $searchResult = array();
+        //         $searchResult[0] = $data['body']['items']['item'];
+        //     } else {
+        //         $searchResult = $data['body']['items']['item'];
+        //     }
+        // }
+
+        // $client = new Client(); //시군구 코드 가져옴
+        // $res = $client->request('GET', 'http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaCode?serviceKey=' . env('DATA_PORTAL_KEY') . '&MobileApp=AppTest&MobileOS=ETC&pageNo=' . $page . 'numOfRows=100&pageNo=1&MobileOS=ETC&MobileApp=AppTest');
+        // $xml = simplexml_load_string($res->getBody());
+        // $json = json_encode($xml);
+        // $data = json_decode($json, true);
+        // $areas = $data['body']['items']['item'];
+
         return Inertia::render('Travel/SearchTravel', [
-            'localData' => Covid::selectRaw('gubun, localOccCnt + overFlowCnt as newDefCnt')->where([['stdDay', Covid::max('stdDay')], ['gubun', 'not like', '합계'], ['gubun', 'not like', '검역']])->get(),
-            'searchResult' => $searchResult,
+            'localCovidData' => Covid::selectRaw('gubun, localOccCnt + overFlowCnt as newDefCnt')->where([['stdDay', Covid::max('stdDay')], ['gubun', 'not like', '합계'], ['gubun', 'not like', '검역']])->get(),
+            // 'searchResult' => $searchResult,
             'page' => $page,
             'search' => $search,
             'searchWay' => $searchWay,
-            'totalCount' => $totalCount,
+            // 'totalCount' => $totalCount,
             'lat' => $lat,
             'lng' => $lng,
+            // 'areas' => $areas,
         ]);
     }
 
