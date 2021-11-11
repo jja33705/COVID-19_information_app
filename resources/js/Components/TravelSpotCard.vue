@@ -5,25 +5,19 @@
         </div>
         <div class="px-3 py-4">
             <h3 class="text-sm text-gray-500 pb-2">
-                <a class="bg-indigo-600 py-1 px-2 text-white rounded-lg" href="#">
+                <span class="bg-indigo-600 py-1 px-2 text-white rounded-lg" href="#">
                     <span class="inset-0"></span>
                     지역 신규 확진자 수: {{ newDefCnt }}명
-                </a>
+                </span>
             </h3>
             <h3 class="tracking-widest text-indigo-500 text-xs font-medium title-font">
                 {{ travelSpot.addr1 }}
             </h3>
-            <p class="text-base font-semibold text-gray-900 group-hover:text-indigo-600">
-                <Link :href="route('travel.show', {
-                    'id': travelSpot.contentid,
-                    'page': page,
-                    'search': search,
-                    'searchWay': searchWay,
-                    'lat': lat,
-                    'lng': lng                
-                })">{{ travelSpot.title }}
-                </Link>
-            </p>
+            <button class="text-base font-semibold text-gray-900 group-hover:text-indigo-600" @click="$emit('onClickTitle', travelSpot.contentid)">
+                <!-- <Link :href="`/travel/${travelSpot.contentid}?page=${page}${addPresentValueToQueryString}`">{{ travelSpot.title }}
+                </Link> -->
+                {{ travelSpot.title }}
+            </button>
         </div>
     </article>
 </template>
@@ -35,6 +29,6 @@ export default {
     components: {
         Link,
     },
-    props: ['travelSpot', 'page', 'search', 'searchWay', 'lat', 'lng', 'newDefCnt'],
+    props: ['travelSpot', 'newDefCnt'],
 };
 </script>

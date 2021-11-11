@@ -19998,7 +19998,7 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_0__.Link
   },
-  props: ['travelSpot', 'page', 'search', 'searchWay', 'lat', 'lng', 'newDefCnt']
+  props: ['travelSpot', 'newDefCnt']
 });
 
 /***/ }),
@@ -22290,17 +22290,23 @@ var AREA_CODE = {
     TravelSpotCard: _Components_TravelSpotCard_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
     NaverMap: _Components_NaverMap_vue__WEBPACK_IMPORTED_MODULE_5__["default"]
   },
-  props: ["localCovidData", "page", "search", "searchWay", "lat", "lng", "areaCode", "sigunguCode"],
+  props: ["localCovidData", "page", "search", "searchWay", "lat", "lng", "areaCode", "sigunguCode", "cat1", "cat2", "cat3"],
   data: function data() {
     return {
       searchInput: this.search ? decodeURIComponent(this.search) : "",
       selectedTravelSpot: null,
       selectedAreaCode: this.areaCode == null ? '' : this.areaCode,
       selectedSigunguCode: '',
+      selectedLargeCategoryCode: this.cat1 == null ? '' : this.cat1,
+      selectedMediumCategoryCode: '',
+      selectedSmallCategoryCode: '',
       travelSpots: [],
       totalCount: 0,
       areas: [],
-      sigungus: []
+      sigungus: [],
+      largeCategorys: [],
+      mediumCategorys: [],
+      smallCategorys: []
     };
   },
   methods: {
@@ -22321,17 +22327,23 @@ var AREA_CODE = {
       }
     },
     searchTravelSpots: function searchTravelSpots() {
-      this.$inertia.get("/travel?searchWay=keyword&search=".concat(this.searchInput), {
-        preserveScroll: false
-      });
+      var keyWord = this.searchInput.trim();
+
+      if (!keyWord) {
+        this.$inertia.get("/travel?searchWay=category".concat(this.addSelectedValueToQueryString()), {
+          preserveScroll: true
+        });
+      } else {
+        this.$inertia.get("/travel?searchWay=keyword&search=".concat(keyWord).concat(this.addSelectedValueToQueryString()), {
+          preserveScroll: true
+        });
+      }
     },
     onClickTravelSpot: function onClickTravelSpot(travelSpot) {
       this.selectedTravelSpot = travelSpot;
     },
     newDefCntOfSpot: function newDefCntOfSpot(areaCode) {
       //해당 지역 확진자수
-      console.log(this.areas);
-      console.log(this.localCovidData);
       var areaName = AREA_CODE[areaCode];
       var local = this.localCovidData.find(function (e) {
         if (areaName === e.gubun) {
@@ -22344,25 +22356,133 @@ var AREA_CODE = {
       var _this = this;
 
       //지역 선택했을때
+      this.selectedSigunguCode = '';
+
       if (!this.selectedAreaCode) {
         this.sigungus = [];
         return;
       } else {
-        if (this.sigungus.length == 0) {
-          axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/sigungus?areaCode=".concat(this.selectedAreaCode)).then(function (res) {
-            console.log(res);
-            _this.sigungus = res.data.response.body.items.item;
-          })["catch"](function (err) {
-            console.log(err);
-          });
-        }
+        axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/areas?areaCode=".concat(this.selectedAreaCode)).then(function (res) {
+          console.log(res);
+          _this.sigungus = res.data.response.body.items.item;
+        })["catch"](function (err) {
+          console.log(err);
+        });
       }
     },
-    initializeData: function initializeData() {
+    onChangeLargeCategoryCode: function onChangeLargeCategoryCode() {
       var _this2 = this;
 
+      //대분류 선택했을때
+      this.selectedMediumCategoryCode = '';
+      this.selectedSmallCategoryCode = '';
+
+      if (!this.selectedLargeCategoryCode) {
+        this.mediumCategorys = [];
+        this.smallCategorys = [];
+        return;
+      } else {
+        axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys?cat1=".concat(this.selectedLargeCategoryCode)).then(function (res) {
+          console.log(res);
+          _this2.mediumCategorys = res.data.response.body.items.item;
+        })["catch"](function (err) {
+          console.log(err);
+        });
+      }
+    },
+    onChangeMediumCategoryCode: function onChangeMediumCategoryCode() {
+      var _this3 = this;
+
+      this.selectedSmallCategoryCode = '';
+
+      if (!this.selectedMediumCategoryCode) {
+        this.smallCategorys = [];
+        return;
+      } else {
+        axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys?cat1=".concat(this.selectedLargeCategoryCode, "&cat2=").concat(this.selectedMediumCategoryCode)).then(function (res) {
+          console.log(res);
+          _this3.smallCategorys = res.data.response.body.items.item;
+        })["catch"](function (err) {
+          console.log(err);
+        });
+      }
+    },
+    addSelectedValueToQueryString: function addSelectedValueToQueryString() {
+      //백엔드 호출할때 쿼리스트링 추가해줌...
+      var queryString = '';
+
+      if (this.selectedAreaCode) {
+        queryString += "&areaCode=".concat(this.selectedAreaCode);
+
+        if (this.selectedSigunguCode) {
+          queryString += "&sigunguCode=".concat(this.selectedSigunguCode);
+        }
+      }
+
+      if (this.selectedLargeCategoryCode) {
+        queryString += "&cat1=".concat(this.selectedLargeCategoryCode);
+
+        if (this.selectedMediumCategoryCode) {
+          queryString += "&cat2=".concat(this.selectedMediumCategoryCode);
+
+          if (this.selectedSmallCategoryCode) {
+            queryString += "&cat3=".concat(this.selectedSmallCategoryCode);
+          }
+        }
+      }
+
+      return queryString;
+    },
+    addPresentValueToQueryString: function addPresentValueToQueryString() {
+      //람다나 페이지네이션 호출할때 쿼리스트링 추가해줌...
+      var queryString = '';
+
+      if (this.search) {
+        queryString += "&search=".concat(this.search);
+      }
+
+      if (this.lat) {
+        queryString += "&lat=".concat(this.lat);
+      }
+
+      if (this.lng) {
+        queryString += "&lng=".concat(this.lng);
+      }
+
+      if (this.areaCode) {
+        queryString += "&areaCode=".concat(this.areaCode);
+
+        if (this.sigunguCode) {
+          queryString += "&sigunguCode=".concat(this.sigunguCode);
+        }
+      }
+
+      if (this.cat1) {
+        queryString += "&cat1=".concat(this.cat1);
+
+        if (this.cat2) {
+          queryString += "&cat2=".concat(this.cat2);
+
+          if (this.cat3) {
+            queryString += "&cat3=".concat(this.cat3);
+          }
+        }
+      }
+
+      return queryString;
+    },
+    onClickTitle: function onClickTitle(id) {
+      console.log('불림', id);
+      this.$inertia.get("/travel/".concat(id, "?searchWay=").concat(this.searchWay, "&page=").concat(this.page, "&").concat(this.addPresentValueToQueryString()), {
+        preserveScroll: true
+      });
+    },
+    initializeData: function initializeData() {
+      var _this4 = this;
+
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        var areaResponse, sigunguResponse, nearResponse, keywordResponse;
+        var areaResponse, sigunguResponse, largeCategoryResponse, mediumCategoryResponse, smallCategoryResponse, nearResponse, keywordResponse, _largeCategoryResponse;
+
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -22374,82 +22494,136 @@ var AREA_CODE = {
               case 3:
                 areaResponse = _context.sent;
                 console.log(areaResponse);
-                _this2.areas = areaResponse.data.response.body.items.item;
+                _this4.areas = areaResponse.data.response.body.items.item;
 
-                if (!_this2.sigunguCode) {
+                if (!_this4.areaCode) {
                   _context.next = 12;
                   break;
                 }
 
                 _context.next = 9;
-                return axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/sigungus?areaCode=".concat(_this2.selectedAreaCode));
+                return axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/areas?areaCode=".concat(_this4.selectedAreaCode));
 
               case 9:
                 sigunguResponse = _context.sent;
-                _this2.sigungus = res.data.response.body.items.item;
-                _this2.selectedSigunguCode = _this2.sigunguCode === null ? '' : _this2.sigunguCode;
+                _this4.sigungus = sigunguResponse.data.response.body.items.item;
+                _this4.selectedSigunguCode = _this4.sigunguCode === null ? '' : _this4.sigunguCode;
 
               case 12:
-                _context.t0 = _this2.searchWay;
-                _context.next = _context.t0 === 'near' ? 15 : _context.t0 === 'keyword' ? 22 : 29;
-                break;
+                _context.next = 14;
+                return axios.get('https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys');
 
-              case 15:
-                _context.next = 17;
-                return axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/nearTravelSpots?lng=".concat(_this2.lng, "&lat=").concat(_this2.lat, "&page=").concat(_this2.page));
+              case 14:
+                largeCategoryResponse = _context.sent;
+                console.log(largeCategoryResponse);
+                _this4.largeCategorys = largeCategoryResponse.data.response.body.items.item;
 
-              case 17:
-                nearResponse = _context.sent;
-                console.log(nearResponse);
-                _this2.totalCount = nearResponse.data.response.body.totalCount;
-
-                if (_this2.totalCount > 0) {
-                  if (nearResponse.data.response.body.items.item.length > 1) {
-                    _this2.travelSpots = nearResponse.data.response.body.items.item;
-                  } else {
-                    _this2.travelSpots.push(nearResponse.data.response.body.items.item);
-                  }
+                if (!_this4.cat1) {
+                  _context.next = 29;
+                  break;
                 }
 
-                return _context.abrupt("break", 30);
+                _context.next = 20;
+                return axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys?cat1=".concat(_this4.cat1));
 
-              case 22:
-                _context.next = 24;
-                return axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/keywordTravelSpots?page=".concat(_this2.page, "&search=").concat(_this2.search));
+              case 20:
+                mediumCategoryResponse = _context.sent;
+                _this4.mediumCategorys = mediumCategoryResponse.data.response.body.items.item;
+                _this4.selectedMediumCategoryCode = _this4.cat2 === null ? '' : _this4.cat2;
 
-              case 24:
-                keywordResponse = _context.sent;
-                console.log(keywordResponse);
-                _this2.totalCount = keywordResponse.data.response.body.totalCount;
-
-                if (_this2.totalCount > 0) {
-                  if (keywordResponse.data.response.body.items.item.length > 1) {
-                    _this2.travelSpots = keywordResponse.data.response.body.items.item;
-                  } else {
-                    _this2.travelSpots.push(keywordResponse.data.response.body.items.item);
-                  }
+                if (!_this4.cat2) {
+                  _context.next = 29;
+                  break;
                 }
 
-                return _context.abrupt("break", 30);
+                _context.next = 26;
+                return axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys?cat1=".concat(_this4.cat1, "&cat2=").concat(_this4.cat2));
+
+              case 26:
+                smallCategoryResponse = _context.sent;
+                _this4.smallCategorys = smallCategoryResponse.data.response.body.items.item;
+                _this4.selectedSmallCategoryCode = _this4.cat3 === null ? '' : _this4.cat3;
 
               case 29:
-                return _context.abrupt("break", 30);
-
-              case 30:
-                _context.next = 35;
+                _context.t0 = _this4.searchWay;
+                _context.next = _context.t0 === 'near' ? 32 : _context.t0 === 'keyword' ? 39 : _context.t0 === 'category' ? 46 : 53;
                 break;
 
               case 32:
-                _context.prev = 32;
+                _context.next = 34;
+                return axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/nearTravelSpots?lng=".concat(_this4.lng, "&lat=").concat(_this4.lat, "&page=").concat(_this4.page));
+
+              case 34:
+                nearResponse = _context.sent;
+                console.log(nearResponse);
+                _this4.totalCount = nearResponse.data.response.body.totalCount;
+
+                if (_this4.totalCount > 0) {
+                  if (nearResponse.data.response.body.items.item.length > 1) {
+                    _this4.travelSpots = nearResponse.data.response.body.items.item;
+                  } else {
+                    _this4.travelSpots = [nearResponse.data.response.body.items.item];
+                  }
+                }
+
+                return _context.abrupt("break", 54);
+
+              case 39:
+                _context.next = 41;
+                return axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/keywordTravelSpots?page=".concat(_this4.page).concat(_this4.addPresentValueToQueryString()));
+
+              case 41:
+                keywordResponse = _context.sent;
+                console.log(keywordResponse);
+                _this4.totalCount = keywordResponse.data.response.body.totalCount;
+
+                if (_this4.totalCount > 0) {
+                  if (keywordResponse.data.response.body.items.item.length > 1) {
+                    _this4.travelSpots = keywordResponse.data.response.body.items.item;
+                  } else {
+                    _this4.travelSpots = [keywordResponse.data.response.body.items.item];
+                  }
+                }
+
+                return _context.abrupt("break", 54);
+
+              case 46:
+                _context.next = 48;
+                return axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categoryTravelSpots?page=".concat(_this4.page).concat(_this4.addPresentValueToQueryString()));
+
+              case 48:
+                _largeCategoryResponse = _context.sent;
+                console.log(_largeCategoryResponse);
+                _this4.totalCount = _largeCategoryResponse.data.response.body.totalCount;
+
+                if (_this4.totalCount > 0) {
+                  if (_largeCategoryResponse.data.response.body.items.item.length > 1) {
+                    _this4.travelSpots = _largeCategoryResponse.data.response.body.items.item;
+                  } else {
+                    _this4.travelSpots = [_largeCategoryResponse.data.response.body.items.item];
+                  }
+                }
+
+                return _context.abrupt("break", 54);
+
+              case 53:
+                return _context.abrupt("break", 54);
+
+              case 54:
+                _context.next = 59;
+                break;
+
+              case 56:
+                _context.prev = 56;
                 _context.t1 = _context["catch"](0);
                 console.log(_context.t1);
 
-              case 35:
+              case 59:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, null, [[0, 32]]);
+        }, _callee, null, [[0, 56]]);
       }))();
     }
   },
@@ -22478,7 +22652,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['searchWay', 'page', 'search', 'lat', 'lng', 'content', 'images', 'localData'],
+  props: ['searchWay', 'page', 'search', 'lat', 'lng', 'content', 'images', 'localCovidData', "areaCode", "sigunguCode", "cat1", "cat2", "cat3"],
   components: {
     AppLayout: _Layouts_AppLayout_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__.Link,
@@ -22503,6 +22677,44 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       this.imageIndex += 1;
+    },
+    addPresentValueToQueryString: function addPresentValueToQueryString() {
+      //쿼리스트링 추가
+      var queryString = '';
+
+      if (this.search) {
+        queryString += "&search=".concat(this.search);
+      }
+
+      if (this.lat) {
+        queryString += "&lat=".concat(this.lat);
+      }
+
+      if (this.lng) {
+        queryString += "&lng=".concat(this.lng);
+      }
+
+      if (this.areaCode) {
+        queryString += "&areaCode=".concat(this.areaCode);
+
+        if (this.sigunguCode) {
+          queryString += "&sigunguCode=".concat(this.sigunguCode);
+        }
+      }
+
+      if (this.cat1) {
+        queryString += "&cat1=".concat(this.cat1);
+
+        if (this.cat2) {
+          queryString += "&cat2=".concat(this.cat2);
+
+          if (this.cat3) {
+            queryString += "&cat3=".concat(this.cat3);
+          }
+        }
+      }
+
+      return queryString;
     }
   }
 });
@@ -22732,43 +22944,25 @@ var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 var _hoisted_8 = {
   "class": "tracking-widest text-indigo-500 text-xs font-medium title-font"
 };
-var _hoisted_9 = {
-  "class": "text-base font-semibold text-gray-900 group-hover:text-indigo-600"
-};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  var _component_Link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Link");
-
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("article", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     src: $props.travelSpot.firstimage ? $props.travelSpot.firstimage : 'http://localhost:8000/storage/images/no_image.png',
     alt: $props.travelSpot.title,
     "class": "w-full h-full object-center object-cover"
   }, null, 8
   /* PROPS */
-  , _hoisted_3)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", _hoisted_6, [_hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 지역 신규 확진자 수: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.newDefCnt) + "명 ", 1
+  , _hoisted_3)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_6, [_hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 지역 신규 확진자 수: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.newDefCnt) + "명 ", 1
   /* TEXT */
   )])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.travelSpot.addr1), 1
   /* TEXT */
-  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
-    href: _ctx.route('travel.show', {
-      'id': $props.travelSpot.contentid,
-      'page': $props.page,
-      'search': $props.search,
-      'searchWay': $props.searchWay,
-      'lat': $props.lat,
-      'lng': $props.lng
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    "class": "text-base font-semibold text-gray-900 group-hover:text-indigo-600",
+    onClick: _cache[0] || (_cache[0] = function ($event) {
+      return _ctx.$emit('onClickTitle', $props.travelSpot.contentid);
     })
-  }, {
-    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.travelSpot.title), 1
-      /* TEXT */
-      )];
-    }),
-    _: 1
-    /* STABLE */
-
-  }, 8
-  /* PROPS */
-  , ["href"])])])]);
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <Link :href=\"`/travel/${travelSpot.contentid}?page=${page}${addPresentValueToQueryString}`\">{{ travelSpot.title }}\r\n                </Link> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.travelSpot.title), 1
+  /* TEXT */
+  )])])]);
 }
 
 /***/ }),
@@ -24101,7 +24295,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       'border-b-4': _ctx.$page.url.startsWith('/travel')
     }]),
     href: _ctx.route('travel.index', {
-      searchWay: 'keyword'
+      searchWay: 'category'
     })
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -27315,31 +27509,16 @@ var _hoisted_2 = {
   "class": "max-w-7xl mx-auto sm:px-6 lg:px-8"
 };
 var _hoisted_3 = {
-  "class": "pt-2 relative mx-auto text-gray-600"
+  "class": "mb-2"
 };
 
-var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
-  "class": "text-gray-600 h-4 w-4 fill-current",
-  xmlns: "http://www.w3.org/2000/svg",
-  "xmlns:xlink": "http://www.w3.org/1999/xlink",
-  version: "1.1",
-  id: "Capa_1",
-  x: "0px",
-  y: "0px",
-  viewBox: "0 0 56.966 56.966",
-  style: {
-    "enable-background": "new 0 0 56.966 56.966"
-  },
-  "xml:space": "preserve",
-  width: "512px",
-  height: "512px"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
-  d: "M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z"
-})], -1
+var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("hr", null, null, -1
 /* HOISTED */
 );
 
-var _hoisted_5 = [_hoisted_4];
+var _hoisted_5 = {
+  "class": "my-2"
+};
 
 var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
   "class": "mx-2"
@@ -27370,14 +27549,93 @@ var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 );
 
 var _hoisted_11 = ["value"];
-var _hoisted_12 = {
+
+var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("hr", null, null, -1
+/* HOISTED */
+);
+
+var _hoisted_13 = {
+  "class": "mt-2"
+};
+
+var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "class": "mx-2"
+}, "대분류:", -1
+/* HOISTED */
+);
+
+var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+  value: "",
+  selected: ""
+}, "-- 선택 없음 --", -1
+/* HOISTED */
+);
+
+var _hoisted_16 = ["value"];
+
+var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "class": "mx-2"
+}, "중분류:", -1
+/* HOISTED */
+);
+
+var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+  value: "",
+  selected: ""
+}, "-- 선택 없음 --", -1
+/* HOISTED */
+);
+
+var _hoisted_19 = ["value"];
+
+var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "class": "mx-2"
+}, "소분류:", -1
+/* HOISTED */
+);
+
+var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+  value: "",
+  selected: ""
+}, "-- 선택 없음 --", -1
+/* HOISTED */
+);
+
+var _hoisted_22 = ["value"];
+var _hoisted_23 = {
+  "class": "pt-2 relative mx-auto text-gray-600"
+};
+
+var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+  "class": "text-gray-600 h-4 w-4 fill-current",
+  xmlns: "http://www.w3.org/2000/svg",
+  "xmlns:xlink": "http://www.w3.org/1999/xlink",
+  version: "1.1",
+  id: "Capa_1",
+  x: "0px",
+  y: "0px",
+  viewBox: "0 0 56.966 56.966",
+  style: {
+    "enable-background": "new 0 0 56.966 56.966"
+  },
+  "xml:space": "preserve",
+  width: "512px",
+  height: "512px"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
+  d: "M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z"
+})], -1
+/* HOISTED */
+);
+
+var _hoisted_25 = [_hoisted_24];
+var _hoisted_26 = {
   "class": "mt-6 grid md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8"
 };
-var _hoisted_13 = {
+var _hoisted_27 = {
   "class": "flex justify-center py-8"
 };
 
-var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+var _hoisted_28 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   "class": "border border-black text-black block rounded-sm font-bold py-4 px-6 mr-2 flex items-center hover:bg-black hover:text-white"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
   "class": "h-5 w-5 mr-2 fill-current",
@@ -27399,7 +27657,7 @@ var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 /* HOISTED */
 );
 
-var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+var _hoisted_29 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   "class": "border border-black text-black block rounded-sm font-bold py-4 px-6 ml-2 flex items-center hover:bg-black hover:text-white"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Next page "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
   "class": "h-5 w-5 ml-2 fill-current",
@@ -27434,36 +27692,17 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     title: "Travel"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-        "class": "border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-base focus:outline-none w-full",
-        type: "search",
-        name: "search",
-        placeholder: "Search",
-        "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
-          return $data.searchInput = $event;
-        }),
-        required: "",
-        onKeyup: _cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withKeys)(function () {
-          return $options.searchTravelSpots && $options.searchTravelSpots.apply($options, arguments);
-        }, ["enter"]))
-      }, null, 544
-      /* HYDRATE_EVENTS, NEED_PATCH */
-      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.searchInput]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-        "class": "absolute right-0 top-0 mt-5 mr-4",
-        onClick: _cache[2] || (_cache[2] = function () {
-          return $options.searchTravelSpots && $options.searchTravelSpots.apply($options, arguments);
-        })
-      }, _hoisted_5)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-        onClick: _cache[3] || (_cache[3] = function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+        onClick: _cache[0] || (_cache[0] = function () {
           return $options.onClickNearButton && $options.onClickNearButton.apply($options, arguments);
         }),
         "class": "px-4 py-2 rounded-md font-semibold text-sm font-medium border-0 focus:outline-none focus:ring transition text-black-600 bg-purple-50 hover:text-black-800 hover:bg-purple-100 active:bg-purple-200 focus:ring-purple-300",
         type: "submit"
-      }, " 주변 관광지 보기 "), _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
-        "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
+      }, " 주변 관광지 보기 ")]), _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+        "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
           return $data.selectedAreaCode = $event;
         }),
-        onChange: _cache[5] || (_cache[5] = function () {
+        onChange: _cache[2] || (_cache[2] = function () {
           return $options.onChangeAreaCode && $options.onChangeAreaCode.apply($options, arguments);
         })
       }, [_hoisted_7, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.areas, function (area) {
@@ -27478,7 +27717,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       ))], 544
       /* HYDRATE_EVENTS, NEED_PATCH */
       ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.selectedAreaCode]]), _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
-        "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
+        "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
           return $data.selectedSigunguCode = $event;
         })
       }, [_hoisted_10, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.sigungus, function (sigungu) {
@@ -27492,7 +27731,77 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       /* KEYED_FRAGMENT */
       ))], 512
       /* NEED_PATCH */
-      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.selectedSigunguCode]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 지도 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_naver_map, {
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.selectedSigunguCode]])]), _hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [_hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+        "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
+          return $data.selectedLargeCategoryCode = $event;
+        }),
+        onChange: _cache[5] || (_cache[5] = function () {
+          return $options.onChangeLargeCategoryCode && $options.onChangeLargeCategoryCode.apply($options, arguments);
+        })
+      }, [_hoisted_15, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.largeCategorys, function (category) {
+        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
+          value: category.code,
+          key: category.rnum
+        }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(category.name), 9
+        /* TEXT, PROPS */
+        , _hoisted_16);
+      }), 128
+      /* KEYED_FRAGMENT */
+      ))], 544
+      /* HYDRATE_EVENTS, NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.selectedLargeCategoryCode]]), _hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+        "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
+          return $data.selectedMediumCategoryCode = $event;
+        }),
+        onChange: _cache[7] || (_cache[7] = function () {
+          return $options.onChangeMediumCategoryCode && $options.onChangeMediumCategoryCode.apply($options, arguments);
+        })
+      }, [_hoisted_18, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.mediumCategorys, function (category) {
+        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
+          value: category.code,
+          key: category.rnum
+        }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(category.name), 9
+        /* TEXT, PROPS */
+        , _hoisted_19);
+      }), 128
+      /* KEYED_FRAGMENT */
+      ))], 544
+      /* HYDRATE_EVENTS, NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.selectedMediumCategoryCode]]), _hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+        "onUpdate:modelValue": _cache[8] || (_cache[8] = function ($event) {
+          return $data.selectedSmallCategoryCode = $event;
+        })
+      }, [_hoisted_21, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.smallCategorys, function (category) {
+        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
+          value: category.code,
+          key: category.rnum
+        }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(category.name), 9
+        /* TEXT, PROPS */
+        , _hoisted_22);
+      }), 128
+      /* KEYED_FRAGMENT */
+      ))], 512
+      /* NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.selectedSmallCategoryCode]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        "class": "border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-base focus:outline-none w-full",
+        type: "search",
+        name: "search",
+        placeholder: "Search",
+        "onUpdate:modelValue": _cache[9] || (_cache[9] = function ($event) {
+          return $data.searchInput = $event;
+        }),
+        required: "",
+        onKeyup: _cache[10] || (_cache[10] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withKeys)(function () {
+          return $options.searchTravelSpots && $options.searchTravelSpots.apply($options, arguments);
+        }, ["enter"]))
+      }, null, 544
+      /* HYDRATE_EVENTS, NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.searchInput]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+        "class": "absolute right-0 top-0 mt-5 mr-4",
+        onClick: _cache[11] || (_cache[11] = function () {
+          return $options.searchTravelSpots && $options.searchTravelSpots.apply($options, arguments);
+        })
+      }, _hoisted_25)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 지도 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_naver_map, {
         travelSpots: $data.travelSpots,
         searchWay: $props.searchWay,
         lat: $props.lat,
@@ -27501,37 +27810,27 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         localCovidData: $props.localCovidData
       }, null, 8
       /* PROPS */
-      , ["travelSpots", "searchWay", "lat", "lng", "selectedTravelSpot", "localCovidData"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 여행지 목록 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.travelSpots, function (travelSpot) {
+      , ["travelSpots", "searchWay", "lat", "lng", "selectedTravelSpot", "localCovidData"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 여행지 목록 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_26, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.travelSpots, function (travelSpot) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_travel_spot_card, {
           key: travelSpot.contentid,
           travelSpot: travelSpot,
           onClick: function onClick($event) {
             return $options.onClickTravelSpot(travelSpot);
           },
-          searchWay: $props.searchWay,
-          search: $props.search,
-          lat: $props.lat,
-          lng: $props.lng,
-          page: $props.page,
-          newDefCnt: $options.newDefCntOfSpot(travelSpot.areacode)
+          newDefCnt: $options.newDefCntOfSpot(travelSpot.areacode),
+          onOnClickTitle: $options.onClickTitle
         }, null, 8
         /* PROPS */
-        , ["travelSpot", "onClick", "searchWay", "search", "lat", "lng", "page", "newDefCnt"]);
+        , ["travelSpot", "onClick", "newDefCnt", "onOnClickTitle"]);
       }), 128
       /* KEYED_FRAGMENT */
-      ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [$props.page > 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Link, {
+      ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_27, [$props.page > 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Link, {
         key: 0,
-        href: _ctx.route('travel.index', {
-          searchWay: $props.searchWay,
-          search: $props.search,
-          page: Number($props.page) - 1,
-          lat: $props.lat,
-          lng: $props.lng
-        }),
+        href: "/travel?searchWay=".concat($props.searchWay, "&page=").concat(Number($props.page) - 1).concat($options.addPresentValueToQueryString()),
         "preserve-scroll": ""
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_14];
+          return [_hoisted_28];
         }),
         _: 1
         /* STABLE */
@@ -27540,17 +27839,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       /* PROPS */
       , ["href"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $props.page * 12 < $data.totalCount ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Link, {
         key: 1,
-        href: _ctx.route('travel.index', {
-          searchWay: $props.searchWay,
-          search: $props.search,
-          page: Number($props.page) + 1,
-          lat: $props.lat,
-          lng: $props.lng
-        }),
+        href: "/travel?searchWay=".concat($props.searchWay, "&page=").concat(Number($props.page) + 1).concat($options.addPresentValueToQueryString()),
         "preserve-scroll": ""
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_15];
+          return [_hoisted_29];
         }),
         _: 1
         /* STABLE */
@@ -27633,13 +27926,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
-        href: _ctx.route('travel.index', {
-          searchWay: $props.searchWay,
-          search: $props.search,
-          page: $props.page,
-          lat: $props.lat,
-          lng: $props.lng
-        })
+        href: "/travel?searchWay=".concat($props.searchWay, "&page=").concat($props.page).concat($options.addPresentValueToQueryString())
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
           return [_hoisted_4];
@@ -27673,10 +27960,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         searchWay: $props.searchWay,
         lat: $props.lat,
         lng: $props.lng,
-        localData: $props.localData
+        localCovidData: $props.localCovidData
       }, null, 8
       /* PROPS */
-      , ["searchResult", "searchWay", "lat", "lng", "localData"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "주소: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.content.addr1), 1
+      , ["searchResult", "searchWay", "lat", "lng", "localCovidData"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "주소: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.content.addr1), 1
       /* TEXT */
       ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.content.addr2), 1
       /* TEXT */

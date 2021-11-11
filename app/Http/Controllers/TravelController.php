@@ -19,62 +19,36 @@ class TravelController extends Controller
         $search = $request->search; //검색어
         $lng = $request->lng;
         $lat = $request->lat;
-
-        // if ($searchWay == 'near') { //주변위치 검색
-        //     $client = new Client();
-        //     $res = $client->request('GET', 'http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=' . env('DATA_PORTAL_KEY') . '&numOfRows=12&pageNo=' . $page . '&MobileOS=ETC&MobileApp=AppTest&arrange=B&contentTypeId=12&mapX=' . $lng . '&mapY=' . $lat . '&radius=10000&listYN=Y');
-        //     $xml = simplexml_load_string($res->getBody());
-        //     $json = json_encode($xml);
-        //     $data = json_decode($json, true);
-        //     $totalCount = $data['body']['totalCount'];
-        //     if ($totalCount == 0) {
-        //         $searchResult = $data['body']['items'];
-        //     } else if ($totalCount == 1) {
-        //         $searchResult = array();
-        //         $searchResult[0] = $data['body']['items']['item'];
-        //     } else {
-        //         $searchResult = $data['body']['items']['item'];
-        //     }
-        // } elseif ($searchWay == 'keyWord') {  //키워드 검색
-        //     $client = new Client();
-        //     $res = $client->request('GET', 'http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword?serviceKey=' . env('DATA_PORTAL_KEY') . '&MobileApp=AppTest&MobileOS=ETC&pageNo=' . $page . '&numOfRows=12&listYN=Y&arrange=B&contentTypeId=12&keyword=' . $search);
-        //     $xml = simplexml_load_string($res->getBody());
-        //     $json = json_encode($xml);
-        //     $data = json_decode($json, true);
-        //     $totalCount = $data['body']['totalCount'];
-        //     if ($totalCount == 0) {
-        //         $searchResult = $data['body']['items'];
-        //     } else if ($totalCount == 1) {
-        //         $searchResult = array();
-        //         $searchResult[0] = $data['body']['items']['item'];
-        //     } else {
-        //         $searchResult = $data['body']['items']['item'];
-        //     }
-        // }
-
-        // $client = new Client(); //시군구 코드 가져옴
-        // $res = $client->request('GET', 'http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaCode?serviceKey=' . env('DATA_PORTAL_KEY') . '&MobileApp=AppTest&MobileOS=ETC&pageNo=' . $page . 'numOfRows=100&pageNo=1&MobileOS=ETC&MobileApp=AppTest');
-        // $xml = simplexml_load_string($res->getBody());
-        // $json = json_encode($xml);
-        // $data = json_decode($json, true);
-        // $areas = $data['body']['items']['item'];
+        $areaCode = $request->areaCode;
+        $sigunguCode = $request->sigunguCode;
+        $cat1 = $request->cat1;
+        $cat2 = $request->cat2;
+        $cat3 = $request->cat3;
 
         return Inertia::render('Travel/SearchTravel', [
             'localCovidData' => Covid::selectRaw('gubun, localOccCnt + overFlowCnt as newDefCnt')->where([['stdDay', Covid::max('stdDay')], ['gubun', 'not like', '합계'], ['gubun', 'not like', '검역']])->get(),
-            // 'searchResult' => $searchResult,
             'page' => $page,
             'search' => $search,
             'searchWay' => $searchWay,
-            // 'totalCount' => $totalCount,
             'lat' => $lat,
             'lng' => $lng,
-            // 'areas' => $areas,
+            'areaCode' => $areaCode,
+            'sigunguCode' => $sigunguCode,
+            'cat1' => $cat1,
+            'cat2' => $cat2,
+            'cat3' => $cat3,
         ]);
     }
 
     public function show(Request $request, $id)
     {
         $contentId = $id;
+
+        $areaCode = $request->areaCode;
+        $sigunguCode = $request->sigunguCode;
+        $cat1 = $request->cat1;
+        $cat2 = $request->cat2;
+        $cat3 = $request->cat3;
 
         $client = new Client(); //관광지 세부정보
         $res = $client->request('GET', 'http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailCommon?serviceKey=' . env('DATA_PORTAL_KEY') . '&numOfRows=100&pageNo=1&MobileOS=ETC&MobileApp=AppTest&contentId=' . $contentId . '&contentTypeId=12&defaultYN=Y&firstImageYN=Y&areacodeYN=Y&catcodeYN=N&addrinfoYN=Y&mapinfoYN=Y&overviewYN=Y');
@@ -99,7 +73,7 @@ class TravelController extends Controller
         }
 
         return Inertia::render('Travel/ShowTravel', [
-            'localData' => Covid::selectRaw('gubun, localOccCnt + overFlowCnt as newDefCnt')->where([['stdDay', Covid::max('stdDay')], ['gubun', 'not like', '합계'], ['gubun', 'not like', '검역']])->get(),
+            'localCovidData' => Covid::selectRaw('gubun, localOccCnt + overFlowCnt as newDefCnt')->where([['stdDay', Covid::max('stdDay')], ['gubun', 'not like', '합계'], ['gubun', 'not like', '검역']])->get(),
             'content' => $content,
             'images' => $images,
             'page' => $request->page,
@@ -107,6 +81,11 @@ class TravelController extends Controller
             'search' => $request->search,
             'lat' => $request->lat,
             'lng' => $request->lng,
+            'areaCode' => $areaCode,
+            'sigunguCode' => $sigunguCode,
+            'cat1' => $cat1,
+            'cat2' => $cat2,
+            'cat3' => $cat3,
         ]);
     }
 }

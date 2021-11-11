@@ -2,6 +2,78 @@
     <app-layout title="Travel">
         <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+                <div class="mb-2">
+                    <button
+                        @click="onClickNearButton"
+                        class="
+                            px-4
+                            py-2
+                            rounded-md
+                            font-semibold
+                            text-sm
+                            font-medium
+                            border-0
+                            focus:outline-none focus:ring
+                            transition
+                            text-black-600
+                            bg-purple-50
+                            hover:text-black-800 hover:bg-purple-100
+                            active:bg-purple-200
+                            focus:ring-purple-300
+                        "
+                        type="submit"
+                    >
+                        주변 관광지 보기
+                    </button>
+                </div>
+
+                <hr>
+
+                <div class="my-2">
+                    
+                    
+                    <label class="mx-2">시도:</label>
+                    <select v-model="selectedAreaCode" @change="onChangeAreaCode">
+                        <option value="" selected>-- 선택 없음 --</option>
+                        <option :value="area.code" v-for="area in areas" :key="area.rnum">{{ area.name }}</option>
+                    </select>
+
+                    <label class="mx-2">시군구:</label>
+                    <select v-model="selectedSigunguCode">
+                        <option value="" selected>-- 선택 없음 --</option>
+                        <option :value="sigungu.code" v-for="sigungu in sigungus" :key="sigungu.rnum">{{ sigungu.name }}</option>
+                    </select>
+
+
+                </div>
+
+                <hr>
+
+
+                <div class="mt-2">
+                    <label class="mx-2">대분류:</label>
+                    <select v-model="selectedLargeCategoryCode" @change="onChangeLargeCategoryCode">
+                        <option value="" selected>-- 선택 없음 --</option>
+                        <option :value="category.code" v-for="category in largeCategorys" :key="category.rnum">{{ category.name }}</option>
+                    </select>
+
+                    <label class="mx-2">중분류:</label>
+                    <select v-model="selectedMediumCategoryCode" @change="onChangeMediumCategoryCode">
+                        <option value="" selected>-- 선택 없음 --</option>
+                        <option :value="category.code" v-for="category in mediumCategorys" :key="category.rnum">{{ category.name }}</option>
+                    </select>
+
+                    <label class="mx-2">소분류:</label>
+                    <select v-model="selectedSmallCategoryCode">
+                        <option value="" selected>-- 선택 없음 --</option>
+                        <option :value="category.code" v-for="category in smallCategorys" :key="category.rnum">{{ category.name }}</option>
+                    </select>
+
+                </div>
+
+
+
                 <div class="pt-2 relative mx-auto text-gray-600">
                     <input
                         class="
@@ -43,44 +115,6 @@
                         </svg>
                     </button>
                 </div>
-                <div>
-                    <button
-                        @click="onClickNearButton"
-                        class="
-                            px-4
-                            py-2
-                            rounded-md
-                            font-semibold
-                            text-sm
-                            font-medium
-                            border-0
-                            focus:outline-none focus:ring
-                            transition
-                            text-black-600
-                            bg-purple-50
-                            hover:text-black-800 hover:bg-purple-100
-                            active:bg-purple-200
-                            focus:ring-purple-300
-                        "
-                        type="submit"
-                    >
-                        주변 관광지 보기
-                    </button>
-                    
-                    <label class="mx-2">시도:</label>
-                    <select v-model="selectedAreaCode" @change="onChangeAreaCode">
-                        <option value="" selected>-- 선택 없음 --</option>
-                        <option :value="area.code" v-for="area in areas" :key="area.rnum">{{ area.name }}</option>
-                    </select>
-
-                    <label class="mx-2">시군구:</label>
-                    <select v-model="selectedSigunguCode">
-                        <option value="" selected>-- 선택 없음 --</option>
-                        <option :value="sigungu.code" v-for="sigungu in sigungus" :key="sigungu.rnum">{{ sigungu.name }}</option>
-                    </select>
-
-
-                </div>
                 
                 
                 <!-- 지도 -->
@@ -100,25 +134,13 @@
                         :key="travelSpot.contentid"
                         :travelSpot="travelSpot"
                         @click="onClickTravelSpot(travelSpot)"
-                        :searchWay="searchWay"
-                        :search="search"
-                        :lat="lat"
-                        :lng="lng"
-                        :page="page"
                         :newDefCnt="newDefCntOfSpot(travelSpot.areacode)"
+                        @on-click-title="onClickTitle"
                     />
                 </div>
                 <div class="flex justify-center py-8">
                     <Link
-                        :href="
-                            route('travel.index', {
-                                searchWay: searchWay,
-                                search: search,
-                                page: Number(page) - 1,
-                                lat: lat,
-                                lng: lng,
-                            })
-                        "
+                        :href="`/travel?searchWay=${searchWay}&page=${Number(page) - 1}${addPresentValueToQueryString()}`"
                         v-if="page > 1" preserve-scroll
                     >
                         <button
@@ -158,15 +180,7 @@
                     </Link>
                     <Link
                         v-if="page * 12 < totalCount"
-                        :href="
-                            route('travel.index', {
-                                searchWay: searchWay,
-                                search: search,
-                                page: Number(page) + 1,
-                                lat: lat,
-                                lng: lng,
-                            })
-                        " preserve-scroll
+                        :href="`/travel?searchWay=${searchWay}&page=${Number(page) +1}${addPresentValueToQueryString()}`" preserve-scroll
                     >
                         <button
                             class="
@@ -254,17 +268,32 @@ export default {
         "lng",
         "areaCode",
         "sigunguCode",
+        "cat1",
+        "cat2",
+        "cat3",
     ],
     data() {
         return {
             searchInput: this.search ? decodeURIComponent(this.search) : "",
             selectedTravelSpot: null,
+            
+            
             selectedAreaCode: this.areaCode == null ? '' : this.areaCode,
             selectedSigunguCode: '',
+            selectedLargeCategoryCode: this.cat1 == null ? '' : this.cat1,
+            selectedMediumCategoryCode: '',
+            selectedSmallCategoryCode: '',
+            
+            
             travelSpots: [],
             totalCount: 0,
+            
+            
             areas: [],
             sigungus: [],
+            largeCategorys: [],
+            mediumCategorys: [],
+            smallCategorys: [],
         };
     },
     methods: {
@@ -290,17 +319,22 @@ export default {
             }
         },
         searchTravelSpots() {
-            this.$inertia.get(
-                `/travel?searchWay=keyword&search=${this.searchInput}`, { preserveScroll: false }
-            );
+            let keyWord = this.searchInput.trim();
+            if (!keyWord) {
+                this.$inertia.get(
+                    `/travel?searchWay=category${this.addSelectedValueToQueryString()}`, { preserveScroll: true }
+                );
+            } else {
+                this.$inertia.get(
+                    `/travel?searchWay=keyword&search=${keyWord}${this.addSelectedValueToQueryString()}`, { preserveScroll: true }
+                );
+            }
         },
         onClickTravelSpot(travelSpot) {
             this.selectedTravelSpot = travelSpot;
         },
         newDefCntOfSpot(areaCode) {
             //해당 지역 확진자수
-            console.log(this.areas);
-            console.log(this.localCovidData);
             const areaName = AREA_CODE[areaCode];
             const local = this.localCovidData.find((e) => {
                 if (areaName === e.gubun) {
@@ -310,21 +344,109 @@ export default {
             return local.newDefCnt;
         },
         onChangeAreaCode() { //지역 선택했을때
+            this.selectedSigunguCode = '';
             if (!this.selectedAreaCode) {
                 this.sigungus = [];
                 return;
             } else {
-                if (this.sigungus.length == 0) {
-                    axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/sigungus?areaCode=${this.selectedAreaCode}`)
-                    .then((res) => {
-                        console.log(res);
-                        this.sigungus = res.data.response.body.items.item;
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
+                axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/areas?areaCode=${this.selectedAreaCode}`)
+                .then((res) => {
+                    console.log(res);
+                    this.sigungus = res.data.response.body.items.item;
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+            }
+        },
+
+        onChangeLargeCategoryCode() { //대분류 선택했을때
+            this.selectedMediumCategoryCode = '';
+            this.selectedSmallCategoryCode = '';
+            if (!this.selectedLargeCategoryCode) {
+                this.mediumCategorys = [];
+                this.smallCategorys = [];
+                return;
+            } else {
+                axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys?cat1=${this.selectedLargeCategoryCode}`)
+                .then((res) => {
+                    console.log(res);
+                    this.mediumCategorys = res.data.response.body.items.item;
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+            }
+        },
+        onChangeMediumCategoryCode() {
+            this.selectedSmallCategoryCode = '';
+            if (!this.selectedMediumCategoryCode) {
+                this.smallCategorys = [];
+                return;
+            } else {
+                axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys?cat1=${this.selectedLargeCategoryCode}&cat2=${this.selectedMediumCategoryCode}`)
+                .then((res) => {
+                    console.log(res);
+                    this.smallCategorys = res.data.response.body.items.item;
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+            }
+        },
+        addSelectedValueToQueryString() { //백엔드 호출할때 쿼리스트링 추가해줌...
+            let queryString = '';
+            if (this.selectedAreaCode) {
+                queryString += `&areaCode=${this.selectedAreaCode}`;
+                if (this.selectedSigunguCode) {
+                    queryString += `&sigunguCode=${this.selectedSigunguCode}`;
                 }
             }
+            if (this.selectedLargeCategoryCode) {
+                queryString += `&cat1=${this.selectedLargeCategoryCode}`;
+                if (this.selectedMediumCategoryCode) {
+                    queryString += `&cat2=${this.selectedMediumCategoryCode}`;
+                    if (this.selectedSmallCategoryCode) {
+                        queryString += `&cat3=${this.selectedSmallCategoryCode}`;
+                    }
+                }
+            }
+            return queryString;
+        },
+        addPresentValueToQueryString() { //람다나 페이지네이션 호출할때 쿼리스트링 추가해줌...
+            let queryString = '';
+            if (this.search) {
+                queryString += `&search=${this.search}`;
+            }
+            if (this.lat) {
+                queryString += `&lat=${this.lat}`;
+            }
+            if (this.lng) {
+                queryString += `&lng=${this.lng}`;
+            }
+            if (this.areaCode) {
+                queryString += `&areaCode=${this.areaCode}`;
+                if (this.sigunguCode) {
+                    queryString += `&sigunguCode=${this.sigunguCode}`;
+                }
+            }
+            if (this.cat1) {
+                queryString += `&cat1=${this.cat1}`;
+                if (this.cat2) {
+                    queryString += `&cat2=${this.cat2}`;
+                    if (this.cat3) {
+                        queryString += `&cat3=${this.cat3}`;
+                    }
+                }
+            }
+            return queryString;
+        },
+
+        onClickTitle(id) {
+            console.log('불림', id);
+            this.$inertia.get(
+                `/travel/${id}?searchWay=${this.searchWay}&page=${this.page}&${this.addPresentValueToQueryString()}`, { preserveScroll: true }
+            );
         },
         async initializeData() {
             try {
@@ -333,10 +455,27 @@ export default {
                 console.log(areaResponse);
                 this.areas = areaResponse.data.response.body.items.item;
 
-                if (this.sigunguCode) {
-                    const sigunguResponse = await axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/sigungus?areaCode=${this.selectedAreaCode}`);
-                    this.sigungus = res.data.response.body.items.item;
+                if (this.areaCode) { //지역코드가 선택돼 있으면 시군구코드도 불러옴
+                    const sigunguResponse = await axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/areas?areaCode=${this.selectedAreaCode}`);
+                    this.sigungus = sigunguResponse.data.response.body.items.item;
                     this.selectedSigunguCode = this.sigunguCode === null ? '' : this.sigunguCode;
+                }
+
+                //카테고리분류 불러오기
+                const largeCategoryResponse = await axios.get('https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys');
+                console.log(largeCategoryResponse);
+                this.largeCategorys = largeCategoryResponse.data.response.body.items.item;
+
+                if (this.cat1) { //대분류 있으면 중분류도 불러옴
+                    const mediumCategoryResponse = await axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys?cat1=${this.cat1}`);
+                    this.mediumCategorys = mediumCategoryResponse.data.response.body.items.item;
+                    this.selectedMediumCategoryCode = this.cat2 === null ? '' : this.cat2;
+
+                    if (this.cat2) { //중분류 있으면 소분류도 가져옴
+                        const smallCategoryResponse = await axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys?cat1=${this.cat1}&cat2=${this.cat2}`);
+                        this.smallCategorys = smallCategoryResponse.data.response.body.items.item;
+                        this.selectedSmallCategoryCode = this.cat3 === null ? '' : this.cat3;
+                    }
                 }
 
                 //검색방법에 따라 분기처리
@@ -349,19 +488,31 @@ export default {
                             if (nearResponse.data.response.body.items.item.length > 1) {
                                 this.travelSpots = nearResponse.data.response.body.items.item;
                             } else {
-                                this.travelSpots.push(nearResponse.data.response.body.items.item);
+                                this.travelSpots = [nearResponse.data.response.body.items.item];
                             }
                         }
                         break;
                     case 'keyword': //키워드로 검색
-                        const keywordResponse = await axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/keywordTravelSpots?page=${this.page}&search=${this.search}`);
+                        const keywordResponse = await axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/keywordTravelSpots?page=${this.page}${this.addPresentValueToQueryString()}`);
                         console.log(keywordResponse);
                         this.totalCount = keywordResponse.data.response.body.totalCount;
                         if (this.totalCount > 0) {
                             if (keywordResponse.data.response.body.items.item.length > 1) {
                                 this.travelSpots = keywordResponse.data.response.body.items.item;
                             } else {
-                                this.travelSpots.push(keywordResponse.data.response.body.items.item);
+                                this.travelSpots = [keywordResponse.data.response.body.items.item];
+                            }
+                        }
+                        break;
+                    case 'category': //카테고리만 선택하고 검색어 없이 검색할떄
+                        const largeCategoryResponse = await axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categoryTravelSpots?page=${this.page}${this.addPresentValueToQueryString()}`)
+                        console.log(largeCategoryResponse);
+                        this.totalCount = largeCategoryResponse.data.response.body.totalCount;
+                        if (this.totalCount > 0) {
+                            if (largeCategoryResponse.data.response.body.items.item.length > 1) {
+                                this.travelSpots = largeCategoryResponse.data.response.body.items.item;
+                            } else {
+                                this.travelSpots = [largeCategoryResponse.data.response.body.items.item];
                             }
                         }
                         break;

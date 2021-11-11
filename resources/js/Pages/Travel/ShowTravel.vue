@@ -3,7 +3,7 @@
         <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="flex justify-end">
-                    <Link :href="route('travel.index', { searchWay: searchWay, search: search, page: page, lat: lat, lng: lng })">
+                    <Link :href="`/travel?searchWay=${searchWay}&page=${page}${addPresentValueToQueryString()}`">
                         <button class="px-4 py-2 rounded-md font-semibold text-sm font-medium border-0 focus:outline-none focus:ring transition text-black-600 bg-purple-50 hover:text-black-800 hover:bg-purple-100 active:bg-purple-200 focus:ring-purple-300" type="submit">목록으로</button>
                     </Link>
                 </div>
@@ -18,7 +18,7 @@
                     </div>
                 </section>
 
-                <naver-map :searchResult="[content]" :searchWay="searchWay" :lat="lat" :lng="lng" :localData="localData" />
+                <naver-map :searchResult="[content]" :searchWay="searchWay" :lat="lat" :lng="lng" :localCovidData="localCovidData" />
                 <div class="my-3">
                     <span>주소: {{ content.addr1 }}</span>
                     <span>{{ content.addr2 }}</span>
@@ -41,7 +41,7 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import { Link } from "@inertiajs/inertia-vue3";
 import NaverMap from '@/Components/NaverMap';
 export default {
-    props: ['searchWay', 'page', 'search', 'lat', 'lng', 'content', 'images', 'localData'],
+    props: ['searchWay', 'page', 'search', 'lat', 'lng', 'content', 'images', 'localCovidData', "areaCode", "sigunguCode", "cat1", "cat2", "cat3",],
     components: {
         AppLayout,
         Link,
@@ -64,7 +64,35 @@ export default {
                 return;
             }
             this.imageIndex += 1;
-        }
+        },
+        addPresentValueToQueryString() { //쿼리스트링 추가
+            let queryString = '';
+            if (this.search) {
+                queryString += `&search=${this.search}`;
+            }
+            if (this.lat) {
+                queryString += `&lat=${this.lat}`;
+            }
+            if (this.lng) {
+                queryString += `&lng=${this.lng}`;
+            }
+            if (this.areaCode) {
+                queryString += `&areaCode=${this.areaCode}`;
+                if (this.sigunguCode) {
+                    queryString += `&sigunguCode=${this.sigunguCode}`;
+                }
+            }
+            if (this.cat1) {
+                queryString += `&cat1=${this.cat1}`;
+                if (this.cat2) {
+                    queryString += `&cat2=${this.cat2}`;
+                    if (this.cat3) {
+                        queryString += `&cat3=${this.cat3}`;
+                    }
+                }
+            }
+            return queryString;
+        },
     }
 };
 </script>
