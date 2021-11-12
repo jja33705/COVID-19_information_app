@@ -229,11 +229,11 @@ export default {
                         infoWindow.open(this.map, marker);
                     }
                 });
-                if (this.$parent.$page.component === 'Travel/ShowTravel') { //여행지 상세정보의 지도일때는 오픈시켜놓음
-                    infoWindow.open(this.map, marker);
-                    this.map.setCenter(spot);
-                    this.map.setOptions("zoom", 12);
-                }
+                // if (this.$parent.$page.component === 'Travel/ShowTravel') { //여행지 상세정보의 지도일때는 오픈시켜놓음
+                //     infoWindow.open(this.map, marker);
+                //     this.map.setCenter(spot);
+                //     this.map.setOptions("zoom", 12);
+                // }
             });
         }
     },

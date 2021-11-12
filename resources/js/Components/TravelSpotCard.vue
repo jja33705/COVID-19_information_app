@@ -14,8 +14,6 @@
                 {{ travelSpot.addr1 }}
             </h3>
             <button class="text-base font-semibold text-gray-900 group-hover:text-indigo-600" @click="$emit('onClickTitle', travelSpot.contentid)">
-                <!-- <Link :href="`/travel/${travelSpot.contentid}?page=${page}${addPresentValueToQueryString}`">{{ travelSpot.title }}
-                </Link> -->
                 {{ travelSpot.title }}
             </button>
         </div>

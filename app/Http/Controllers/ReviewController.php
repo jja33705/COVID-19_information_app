@@ -24,7 +24,7 @@ class ReviewController extends Controller
     {
         $searchWay = $request->searchWay;
         $search = $request->search;
-        if ($searchWay == 'keyWord') {
+        if ($searchWay == 'keyword') {
             return Review::where('title', 'like', '%' . $search . '%')->latest()->paginate(9)->withQueryString();
         } else if ($searchWay == 'hashtag') {
             return Hashtag::where('contents', $search)->first()->reviews()->latest()->paginate(9)->withQueryString();

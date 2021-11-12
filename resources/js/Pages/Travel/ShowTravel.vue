@@ -3,12 +3,12 @@
         <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="flex justify-end">
-                    <Link :href="`/travel?searchWay=${searchWay}&page=${page}${addPresentValueToQueryString()}`">
+                    <!-- <Link :href="`/travel?searchWay=${searchWay}&page=${page}${addPresentValueToQueryString()}`">
                         <button class="px-4 py-2 rounded-md font-semibold text-sm font-medium border-0 focus:outline-none focus:ring transition text-black-600 bg-purple-50 hover:text-black-800 hover:bg-purple-100 active:bg-purple-200 focus:ring-purple-300" type="submit">목록으로</button>
-                    </Link>
+                    </Link> -->
                 </div>
-                <div class="flex justify-center text-4xl mt-7 font-semibold">{{ content.title }}</div>
-                <section class="mx-auto max-w-2xl my-7">
+                <div class="flex justify-center text-4xl my-7 font-semibold">{{ travelSpot.title }}</div>
+                <section class="mx-auto max-w-2xl my-7" v-if="images.length > 0">
                     <div class="shadow-2xl relative">
                         <div>
                             <img class="w-full object-cover" :src="images[imageIndex].originimgurl"/>
@@ -18,16 +18,16 @@
                     </div>
                 </section>
 
-                <naver-map :searchResult="[content]" :searchWay="searchWay" :lat="lat" :lng="lng" :localCovidData="localCovidData" />
+                <naver-map :travelSpots="[travelSpot]" :selectedTravelSpot="selectedTravelSpot" :localCovidData="localCovidData" />
                 <div class="my-3">
-                    <span>주소: {{ content.addr1 }}</span>
-                    <span>{{ content.addr2 }}</span>
+                    <span>주소: {{ travelSpot.addr1 }}</span>
+                    <span>{{ travelSpot.addr2 }}</span>
                 </div>
-                <div class="my-3" v-if="content.homepage">
+                <div class="my-3" v-if="travelSpot.homepage">
                     <span>홈페이지: </span>
-                    <span v-html="content.homepage"></span>
+                    <span v-html="travelSpot.homepage"></span>
                 </div>
-                <div v-html="content.overview" class="text-lg"></div>
+                <div v-html="travelSpot.overview" class="text-lg"></div>
             </div>
         </div>
     </app-layout>
@@ -41,7 +41,7 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import { Link } from "@inertiajs/inertia-vue3";
 import NaverMap from '@/Components/NaverMap';
 export default {
-    props: ['searchWay', 'page', 'search', 'lat', 'lng', 'content', 'images', 'localCovidData', "areaCode", "sigunguCode", "cat1", "cat2", "cat3",],
+    props: ['contentId', 'localCovidData'],
     components: {
         AppLayout,
         Link,
@@ -50,6 +50,9 @@ export default {
     data() {
         return {
             imageIndex: 0,
+            travelSpot: {},
+            selectedTravelSpot: {},
+            images: []
         }
     },
     methods: {
@@ -65,34 +68,69 @@ export default {
             }
             this.imageIndex += 1;
         },
-        addPresentValueToQueryString() { //쿼리스트링 추가
-            let queryString = '';
-            if (this.search) {
-                queryString += `&search=${this.search}`;
-            }
-            if (this.lat) {
-                queryString += `&lat=${this.lat}`;
-            }
-            if (this.lng) {
-                queryString += `&lng=${this.lng}`;
-            }
-            if (this.areaCode) {
-                queryString += `&areaCode=${this.areaCode}`;
-                if (this.sigunguCode) {
-                    queryString += `&sigunguCode=${this.sigunguCode}`;
+        // addPresentValueToQueryString() { //쿼리스트링 추가
+        //     let queryString = '';
+        //     if (this.search) {
+        //         queryString += `&search=${this.search}`;
+        //     }
+        //     if (this.lat) {
+        //         queryString += `&lat=${this.lat}`;
+        //     }
+        //     if (this.lng) {
+        //         queryString += `&lng=${this.lng}`;
+        //     }
+        //     if (this.areaCode) {
+        //         queryString += `&areaCode=${this.areaCode}`;
+        //         if (this.sigunguCode) {
+        //             queryString += `&sigunguCode=${this.sigunguCode}`;
+        //         }
+        //     }
+        //     if (this.cat1) {
+        //         queryString += `&cat1=${this.cat1}`;
+        //         if (this.cat2) {
+        //             queryString += `&cat2=${this.cat2}`;
+        //             if (this.cat3) {
+        //                 queryString += `&cat3=${this.cat3}`;
+        //             }
+        //         }
+        //     }
+        //     return queryString;
+        // },
+    },
+    mounted() {
+        //이미지 불러오기
+        axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/images?id=${this.contentId}`)
+        .then((res) => {
+            console.log(res);
+            if (res.data.response.body.totalCount > 1) {
+                if (res.data.response.body.items.item.length > 1) {
+                    this.images = res.data.response.body.items.item;
+                } else {
+                    this.images = [res.data.response.body.items.item];
                 }
             }
-            if (this.cat1) {
-                queryString += `&cat1=${this.cat1}`;
-                if (this.cat2) {
-                    queryString += `&cat2=${this.cat2}`;
-                    if (this.cat3) {
-                        queryString += `&cat3=${this.cat3}`;
-                    }
-                }
-            }
-            return queryString;
-        },
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+
+        //상세정보 불러오기
+        axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/travelSpot?id=${this.contentId}`)
+        .then((res) => {
+            console.log(res);
+            this.travelSpot = res.data.response.body.items.item;
+            this.selectedTravelSpot = res.data.response.body.items.item; //이게 더 늦게 바껴야 하므로 따로 뺌
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+        
+
+        // if (this.areaCode) { //지역코드가 선택돼 있으면 시군구코드도 불러옴
+        //     const sigunguResponse = await axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/areas?areaCode=${this.selectedAreaCode}`);
+        //     this.sigungus = sigunguResponse.data.response.body.items.item;
+        //     this.selectedSigunguCode = this.sigunguCode === null ? '' : this.sigunguCode;
+        // }
     }
 };
 </script>

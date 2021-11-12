@@ -445,7 +445,7 @@ export default {
         onClickTitle(id) {
             console.log('불림', id);
             this.$inertia.get(
-                `/travel/${id}?searchWay=${this.searchWay}&page=${this.page}&${this.addPresentValueToQueryString()}`, { preserveScroll: true }
+                `/travel/${id}`, { preserveScroll: true }
             );
         },
         async initializeData() {
