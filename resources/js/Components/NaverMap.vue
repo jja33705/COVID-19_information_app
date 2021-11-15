@@ -1,5 +1,8 @@
 <template>
-    <div id="map" style="width: 100%; height: 600px"></div>
+    <div class="mt-3">
+        <i>*지도위에 마우스를 올리면 해당 지역의 신규 확진자 수를 볼 수 있습니다.</i>
+        <div id="map" style="width: 100%; height: 600px"></div>
+    </div>
 </template>
 
 <script>
@@ -59,12 +62,10 @@ const regionGeoJson = [
 
 import $ from 'jquery';
 export default {
-    props: ['searchWay', 'lat', 'lng', 'travelSpots', 'selectedTravelSpot', 'localCovidData'],
+    props: ['searchWay', 'lat', 'lng', 'travelSpots', 'localCovidData'],
     data() {
         return {
             map: null,
-            markers: [],
-            infoWindows: [],
             myLocationMarker: null,
         };
     },
@@ -136,9 +137,9 @@ export default {
                 }).text(regionText);
 
                 this.map.data.overrideStyle(feature, {
-                    fillOpacity: 0.1,
+                    fillOpacity: 0.05,
                     strokeWeight: 1,
-                    strokeOpacity: 1,
+                    strokeOpacity: 0.5,
                 });
             });
 
@@ -201,39 +202,32 @@ export default {
         travelSpots: function (newTravelSpots) {
             console.log('불림');
             newTravelSpots.map((v) => { //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시
-                const spot = new naver.maps.LatLng(v.mapy, v.mapx);
-                const marker = new naver.maps.Marker({
+
+                const markerContent = [
+                    '<div style="position:absolute;">',
+                        '<div class="infowindow" style="display:none;position:absolute;width:120px;height:20px;top:-15px;left:-50px;z-index:1;margin:0;padding:0;font-weight:bold;text-align:center;font-size:6px">',
+                            `<div>${v.title}</div>`,
+                        '</div>',
+                        '<div class="pin_s" style="cursor: pointer; width: 22px; height: 30px;">',
+                            '<img src="/storage/images/Map-marker-02.png" alt="" style="margin: 0px; padding: 0px; border: 0px solid transparent; display: block; max-width: none; max-height: none; -webkit-user-select: none; position: absolute; width: 22px; left: 0px; top: 0px;">',
+                        '</div>',
+                    '</div>'
+                ].join('');
+                const htmlMarker = new naver.maps.Marker({
+                    position: new naver.maps.LatLng(v.mapy, v.mapx),
                     map: this.map,
-                    position: spot,
-                });
-                this.markers.push(marker);
-
-                var contentString = [
-                    '<div>',
-                    `   <div class="font-bold">${v.title}</div>`,
-                    `</div>`,
-                ].join("");
-                const infoWindow = new naver.maps.InfoWindow({
-                    content: contentString,
-                    borderWidth: 0,
-                    disableAnchor: true,
-                    backgroundColor: "transparent",
-                });
-                this.infoWindows.push(infoWindow);
-
-                //마커 클릭시 정보창 보여줌
-                naver.maps.Event.addListener(marker, "click", (e) => {
-                    if (infoWindow.getMap()) {
-                        infoWindow.close();
-                    } else {
-                        infoWindow.open(this.map, marker);
+                    icon: {
+                        content: markerContent,
+                        size: new naver.maps.Size(22, 30),
+                        anchor: new naver.maps.Point(11, 30)
                     }
+                }),
+                elHtmlMarker = htmlMarker.getElement();
+                $(elHtmlMarker).find('.infowindow').show();
+
+                $(elHtmlMarker).on('click', 'img', function(e) {
+                    $(elHtmlMarker).find('.infowindow').toggle();
                 });
-                // if (this.$parent.$page.component === 'Travel/ShowTravel') { //여행지 상세정보의 지도일때는 오픈시켜놓음
-                //     infoWindow.open(this.map, marker);
-                //     this.map.setCenter(spot);
-                //     this.map.setOptions("zoom", 12);
-                // }
             });
         }
     },

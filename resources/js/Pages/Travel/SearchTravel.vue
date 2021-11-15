@@ -1,7 +1,7 @@
 <template>
     <app-layout title="Travel">
         <div class="py-8">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
 
                 <div class="mb-2">
                     <button
@@ -123,7 +123,6 @@
                     :searchWay="searchWay"
                     :lat="lat"
                     :lng="lng"
-                    :selectedTravelSpot="selectedTravelSpot"
                     :localCovidData="localCovidData"
                 />
 
@@ -133,11 +132,15 @@
                         v-for="travelSpot in travelSpots"
                         :key="travelSpot.contentid"
                         :travelSpot="travelSpot"
-                        @click="onClickTravelSpot(travelSpot)"
                         :newDefCnt="newDefCntOfSpot(travelSpot.areacode)"
-                        @on-click-title="onClickTitle"
+                        @on-click-travel-spot="onClickTravelSpot"
                     />
                 </div>
+                <!-- 로딩 -->
+                <div class="flex justify-center py-5">
+                    <pulse-loader :loading="loading" />
+                </div>
+                
                 <div class="flex justify-center py-8">
                     <Link
                         :href="`/travel?searchWay=${searchWay}&page=${Number(page) - 1}${addPresentValueToQueryString()}`"
@@ -275,7 +278,6 @@ export default {
     data() {
         return {
             searchInput: this.search ? decodeURIComponent(this.search) : "",
-            selectedTravelSpot: null,
             
             
             selectedAreaCode: this.areaCode == null ? '' : this.areaCode,
@@ -294,6 +296,8 @@ export default {
             largeCategorys: [],
             mediumCategorys: [],
             smallCategorys: [],
+
+            loading: true,
         };
     },
     methods: {
@@ -329,9 +333,6 @@ export default {
                     `/travel?searchWay=keyword&search=${keyWord}${this.addSelectedValueToQueryString()}`, { preserveScroll: true }
                 );
             }
-        },
-        onClickTravelSpot(travelSpot) {
-            this.selectedTravelSpot = travelSpot;
         },
         newDefCntOfSpot(areaCode) {
             //해당 지역 확진자수
@@ -442,13 +443,14 @@ export default {
             return queryString;
         },
 
-        onClickTitle(id) {
+        onClickTravelSpot(id) {
             console.log('불림', id);
             this.$inertia.get(
                 `/travel/${id}`, { preserveScroll: true }
             );
         },
         async initializeData() {
+            this.loading = true;
             try {
                 //지역분류 불러오기
                 const areaResponse = await axios.get('https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/areas')
@@ -519,8 +521,10 @@ export default {
                     default:
                         break;
                 }
+                this.loading = false;
             } catch (err) {
                 console.log(err);
+                this.loading = false;
             }
 
         },

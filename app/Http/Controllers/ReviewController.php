@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Hashtag;
 use App\Models\Review;
 use Illuminate\Http\Request;
@@ -25,23 +26,35 @@ class ReviewController extends Controller
         $searchWay = $request->searchWay;
         $search = $request->search;
         if ($searchWay == 'keyword') {
-            return Review::where('title', 'like', '%' . $search . '%')->latest()->paginate(9)->withQueryString();
+            return Review::where('title', 'like', '%' . $search . '%')->orderByDesc('viewCount')->paginate(9)->withQueryString();
         } else if ($searchWay == 'hashtag') {
-            return Hashtag::where('contents', $search)->first()->reviews()->latest()->paginate(9)->withQueryString();
-            // return $hashtag->reviews()->paginate(9);
+            return Hashtag::where('contents', $search)->first()->reviews()->orderByDesc('viewCount')->paginate(9)->withQueryString();
+        } else if ($searchWay == 'place') {
+            return Review::where('place', $search)->orderByDesc('viewCount')->paginate(9)->withQueryString();
         }
     }
 
-    public function create()
+    public function show($id)
     {
-        return Inertia::render('Review/CreateReview');
+        $review = Review::find($id);
+        $review->viewCount += 1;
+        $review->save();
+        return Inertia::render('Review/ShowReview', [
+            'review' => $review,
+            'comments' => Comment::where('review_id', $review->id)->latest()->get(),
+        ]);
     }
 
-    public function store(Request $request)
+    public function create(Request $request, $id)
     {
-        // dd($request);
-        // dd($request->hashtags);
-        // $hashtag_array = json_encode($request->$hashtags);
+        return Inertia::render('Review/CreateReview', [
+            'contentId' => $id,
+            'place' => $request->place,
+        ]);
+    }
+
+    public function store(Request $request, $id)
+    {
         $hashtags = array();
         foreach ($request->hashtags as $key => $hashtag) {
             $hashtags[$key] = Hashtag::firstOrCreate([
@@ -54,6 +67,7 @@ class ReviewController extends Controller
         $review->title = $request->title;
         $review->place = $request->place;
         $review->contents = $request->contents;
+        $review->contentId = $id;
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -66,8 +80,18 @@ class ReviewController extends Controller
         foreach ($hashtags as $hashtag) {
             $review->hashtags()->toggle([$hashtag->id]);
         }
-        return Redirect::route('review.index', [
-            'searchWay' => 'keyWord'
+        return Redirect::route('review.show', [
+            'id' => $review->id
         ]);
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $review = Review::find($id);
+        if ($request->user()->cannot('delete', $review)) {
+            abort(403);
+        }
+        $review->delete();
+        return Redirect()->back()->back();
     }
 }

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Covid;
+use App\Models\Review;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-// use GuzzleHttp\Client;
 
 class TravelController extends Controller
 {
@@ -42,11 +42,12 @@ class TravelController extends Controller
 
     public function show($id)
     {
-        $contentId = $id;
 
         return Inertia::render('Travel/ShowTravel', [
             'localCovidData' => Covid::selectRaw('gubun, localOccCnt + overFlowCnt as newDefCnt')->where([['stdDay', Covid::max('stdDay')], ['gubun', 'not like', '합계'], ['gubun', 'not like', '검역']])->get(),
-            'contentId' => $contentId,
+            'contentId' => $id,
+            'reviews' => Review::where('contentId', $id)->orderByDesc('viewCount')->take(2)->get(),
+            'reviewCount' => Review::where('contentId', $id)->count(),
         ]);
     }
 }

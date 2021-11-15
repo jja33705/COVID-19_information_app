@@ -1,22 +1,17 @@
 <template>
     <app-layout title="Review">
         <div class="py-8">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
                 <div class="py-12">
                     <h1 class="text-3xl font-bold text-center">후기 작성</h1>
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                             <div class="p-6 bg-white border-b border-gray-200">
-                                <form @submit.prevent="submit" @keydown.enter.prevent>
+                                <form @submit.prevent="form.post(`/review/${this.contentId}?place=${this.place}`)" @keydown.enter.prevent>
                                     <div class="mb-4">
                                         <label class="text-xl text-gray-600">제목</label>
                                         <br>
                                         <input type="text" class="border-2 border-gray-300 p-2 w-full" required v-model="form.title">
-                                    </div>
-                                    <div class="mb-4">
-                                        <label class="text-xl text-gray-600">장소</label>
-                                        <br>
-                                        <input type="text" class="border-2 border-gray-300 p-2 w-full" v-model="form.place">
                                     </div>
 
                                     <div class="mb-8">
@@ -55,7 +50,7 @@
                                                 </svg>
                                             </button>
                                         </div>
-                                        <div class="m-3">
+                                        <!-- <div class="m-3">
                                             <Link :href="route('review.index', { searchWay: 'keyWord' })">
                                                 <button class="bg-red-100 text-gray-800 font-bold rounded border-b-2 border-red-500 hover:border-red-600 hover:bg-red-500 hover:text-white shadow-md py-2 px-6 inline-flex items-center" type="button">
                                                     <span class="mr-2">취소</span>
@@ -64,7 +59,7 @@
                                                     </svg>
                                                 </button>
                                             </Link>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </form>
                             </div>
@@ -77,23 +72,18 @@
 </template>
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { useForm } from '@inertiajs/inertia-vue3';
-import { Link } from "@inertiajs/inertia-vue3";
+import { useForm ,Link } from '@inertiajs/inertia-vue3';
 export default {
+    props: ['contentId', 'place'],
     setup() {
         const form = useForm({
             title: null,
-            place: null,
             contents: null,
             hashtags: [],
             image: null,
         });
 
-        function submit() {
-            form.post('/review/store');
-        }
-
-        return { form, submit }
+        return { form }
     },
     components: {
         AppLayout,
@@ -106,10 +96,12 @@ export default {
     },
     methods: {
         onClickAddHashtag() { //해쉬태그 추가
-            if (this.form.hashtags.includes(this.hashtagInput) || !this.hashtagInput.trim()) {
+            let hashtag = this.hashtagInput.replace(/#/gi, '').trim();
+            console.log(hashtag);
+            if (this.form.hashtags.includes(hashtag) || !hashtag) {
                 return;
             }
-            this.form.hashtags.push(this.hashtagInput.trim());
+            this.form.hashtags.push(hashtag);
             this.hashtagInput = '';
             this.$refs.hashtagInput.focus();
         },

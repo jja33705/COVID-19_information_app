@@ -14,7 +14,8 @@ class Review extends Model
         'place',
         'title',
         'contents',
-        'viewCount'
+        'viewCount',
+        'contentId',
     ];
 
     protected $with = ['hashtags', 'user'];
@@ -27,5 +28,10 @@ class Review extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 }

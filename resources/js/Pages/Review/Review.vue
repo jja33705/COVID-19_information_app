@@ -2,21 +2,9 @@
     <app-layout title="Review">
         <div class="py-8">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <Link :href="route('review.create')" v-if="$page.props.user">
-                <div class="flex-1 h-full my-2">
-                    <div class="flex items-center justify-center flex-1 h-full p-2 bg-yellow-300 text-white shadow rounded-lg">
-                        <div class="relative">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </Link>
-
 
                 <!-- input -->
-                <div class="pt-2 mb-5 relative mx-auto text-gray-600">
+                <div class="pt-2 mb-5 relative mx-auto text-gray-600" v-if="searchWay !== 'place'">
                     <input
                         class="
                             border-2 border-gray-300
@@ -58,6 +46,15 @@
                             />
                         </svg>
                     </button>
+                </div>
+
+                <!-- 장소로 검색할때 -->
+                <div v-else>  
+                    <div class="flex my-3 justify-center">
+                        <div class="text-2xl font-semibold text-green-600">{{ search }}</div>
+                        <div class="mx-4 text-2xl font-semibold">검색결과</div>
+                        <div class="text-2xl text-green-700 font-bold mx-2">{{ reviewCount }}</div>
+                    </div>
                 </div>
 
                 
@@ -114,8 +111,12 @@ export default {
                     axios.get(this.reviews.next_page_url)
                     .then((res) => {
                         console.log(res);
-                        res.data.data = [...this.reviews.data, ...res.data.data];
-                        this.reviews = res.data;
+                        if (res.data.data) {
+                            res.data.data = [...this.reviews.data, ...res.data.data];
+                            this.reviews = res.data;
+                        } else {
+                            this.noResult = true;
+                        }
                     })
                     .catch((err) => {
                         console.log(err);
