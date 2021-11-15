@@ -42,6 +42,8 @@ Route::get('/getReviews', [ReviewController::class, 'getReviews'])->name('review
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/review/create/{id}', [ReviewController::class, 'create'])->name('review.create');  //리뷰 작성 페이지
     Route::post('/review/{id}', [ReviewController::class, 'store'])->name('review.store');  //리뷰 작성
+    Route::get('/review/edit/{id}', [ReviewController::class, 'edit'])->name('review.edit'); //리뷰 수정 페이지
+    Route::patch('/review/{id}', [ReviewController::class, 'update'])->name('review.update'); //리뷰 수정
     Route::delete('/review/{id}', [ReviewController::class, 'destroy'])->name('review.destroy');  //리뷰 삭제
     Route::post('/comment/{id}', [CommentController::class, 'store'])->name('comment.store'); //댓글 작성
     Route::delete('/comment/{id}', [CommentController::class, 'destroy'])->name('comment.destroy'); //댓글 삭제

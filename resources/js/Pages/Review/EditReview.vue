@@ -3,11 +3,11 @@
         <div class="py-8">
             <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
                 <div class="py-12">
-                    <h1 class="text-3xl font-bold text-center">후기 작성</h1>
+                    <h1 class="text-3xl font-bold text-center">후기 수정</h1>
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                             <div class="p-6 bg-white border-b border-gray-200">
-                                <form @submit.prevent="form.post(`/review/${this.contentId}?place=${this.place}`)" @keydown.enter.prevent>
+                                <form @submit.prevent="form.post(`/review/${this.review.id}`)" @keydown.enter.prevent>
                                     <div class="mb-4">
                                         <label class="text-xl text-gray-600">제목</label>
                                         <br>
@@ -27,10 +27,10 @@
                                             이미지 업로드
                                         </button>
                                         <br>
-                                        <input type="file" class="hidden" ref="image" @input="inputImage" />
+                                        <input class="hidden" ref="image" type="file" @input="inputImage" />
+                                        <div class="text-red-500" v-if="errors.image">{{ errors.image }}</div>
                                         <img v-if="form.image" :src="previewImageSrc" alt="preview">
                                         <button v-if="form.image" @click.prevent="onClickDeleteImage" class="py-3 px-6 text-white rounded-lg bg-red-500 shadow-lg block md:inline-block">선택취소</button>
-                                        <div class="text-red-500" v-if="errors.image">{{ errors.image }}</div>
                                     </div>
 
                                     <div class="my-6">
@@ -69,27 +69,23 @@
 </template>
 <script>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { useForm } from '@inertiajs/inertia-vue3';
 export default {
-    props: ['contentId', 'place', 'errors'],
-    setup() {
-        const form = useForm({
-            title: null,
-            contents: null,
-            hashtags: [],
-            image: null,
-        });
-
-        return { form }
-    },
+    props: ['review', 'errors'],
     components: {
         AppLayout,
     },
     data() {
         return {
             hashtagInput: '',
+            form: this.$inertia.form({
+                _method: 'patch',
+                title: null,
+                contents: null,
+                hashtags: [],
+                image: null,
+            }),
             previewImageSrc: '',
-        }
+        };
     },
     methods: {
         onClickAddHashtag() { //해쉬태그 추가
@@ -101,13 +97,8 @@ export default {
             this.form.hashtags.push(hashtag);
             this.hashtagInput = '';
         },
-
         onClickDeleteHahtag(hashtag) { //해쉬태그 삭제
             this.form.hashtags.splice(this.form.hashtags.indexOf(hashtag), 1);
-        },
-        onClickDeleteImage() {
-            this.form.image = null;
-            this.previewImageSrc = '';
         },
         inputImage(e) {
             if (e.target.files[0]) {
@@ -118,7 +109,22 @@ export default {
                 this.form.image = null;
                 this.previewImageSrc = '';
             }
+        },
+        onClickDeleteImage() {
+            this.form.image = null,
+            this.previewImageSrc = '';
         }
-    }
+    },
+    mounted() {
+        this.form.title = this.review.title;
+        this.form.contents = this.review.contents;
+        this.review.hashtags.map((v) => {
+            this.form.hashtags.push(v.contents);
+        });
+        if (this.review.image) {
+            this.form.image = this.review.image;
+            this.previewImageSrc = `http://localhost:8000/storage/images/${this.review.image}`;
+        }
+    },
 }
 </script>

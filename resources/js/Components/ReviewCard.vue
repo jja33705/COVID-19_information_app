@@ -1,6 +1,6 @@
 <template>
     <div class="bg-white">
-        <div class="shadow-lg hover:shadow-xl transform transition duration-500 hover:scale-105">
+        <div class="shadow-lg hover:shadow-xl">
             <img class="w-full h-full sm:h-80 lg:h-48 object-contain bg-gray-100" :src="review.image ? `http://127.0.0.1:8000/storage/images/${review.image}` : 'http://127.0.0.1:8000/storage/images/no_image.png'" />
             <div class="px-4 py-2">
                 <Link :href="`/review/${review.id}`">

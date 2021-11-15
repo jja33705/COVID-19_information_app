@@ -84,7 +84,7 @@
                     password: '',
                     remember: false
                 }),
-                googleOAuthImage: "http://localhost:8000/images/btn_google_signin_dark_normal_web.png",
+                googleOAuthImage: "http://localhost:8000/storage/images/btn_google_signin_dark_normal_web.png",
             }
         },
 
@@ -100,16 +100,16 @@
                     })
             },
             onMouseDownGoogleOAuthImage() {
-                this.googleOAuthImage = "http://localhost:8000/images/btn_google_signin_dark_pressed_web.png";
+                this.googleOAuthImage = "http://localhost:8000/storage/images/btn_google_signin_dark_pressed_web.png";
             },
             onMouseUpGoogleOAuthImage() {
-                this.googleOAuthImage = "http://localhost:8000/images/btn_google_signin_dark_normal_web.png";
+                this.googleOAuthImage = "http://localhost:8000/storage/images/btn_google_signin_dark_normal_web.png";
             },
             onMouseOverGoogleOAuthImage() {
-                this.googleOAuthImage = "http://localhost:8000/images/btn_google_signin_dark_focus_web.png";
+                this.googleOAuthImage = "http://localhost:8000/storage/images/btn_google_signin_dark_focus_web.png";
             },
             onMouseOutGoogleOAuthImage() {
-                this.googleOAuthImage = "http://localhost:8000/images/btn_google_signin_dark_normal_web.png";
+                this.googleOAuthImage = "http://localhost:8000/storage/images/btn_google_signin_dark_normal_web.png";
             }
         }
     })

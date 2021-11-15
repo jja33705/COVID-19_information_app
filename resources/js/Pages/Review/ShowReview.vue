@@ -3,8 +3,8 @@
         <div class="py-8">
             <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
                 <div class="flex justify-end">
-                    <button v-if="$page.props.user && $page.props.user.id == review.user.id" @click="onClickDelete">삭제</button>
-                    <button v-if="$page.props.user && $page.props.user.id == review.user.id" @click="onClickDelete">수정</button>
+                    <button class="text-gray-500 hover:text-black" v-if="$page.props.user && $page.props.user.id == review.user.id" @click="onClickUpdate">수정</button>
+                    <button class="ml-2 text-gray-500 hover:text-black" v-if="$page.props.user && $page.props.user.id == review.user.id" @click="onClickDelete">삭제</button>
                 </div>
                 <h1 class="font-semibold mb-4 text-3xl">{{ review.title }}</h1>
                 <div class="mb-1 text-gray-500">작성자: {{ review.user.name }}</div>
@@ -13,7 +13,7 @@
                     <div>조회수: {{ review.viewCount }}</div>
                 </div>
                 <div class="mb-3 text-gray-500">위치: <Link :href="`/travel/${review.contentId}`">{{ review.place }}</Link></div>
-                <img class="mb-4" :src="`/storage/images/${review.image}`" >
+                <img v-if="review.image" class="mb-4" :src="`/storage/images/${review.image}`" >
                 <div class="mb-6 text-lg">{{ review.contents }}</div>
                 <div class="mb-3 flex -m-1 flex-wrap">
                     <hashtag v-for="hashtag in review.hashtags" :key="hashtag.id" :hashtag="hashtag" />
@@ -25,11 +25,13 @@
                 </div>
                 <div>
                     <form @submit.prevent="onSubmitComment" v-if="$page.props.user">
-                        <textarea v-model="form.contents" class="w-full shadow-inner p-4 border-0 rounded-lg focus:shadow-outline text-lg" placeholder="댓글을 입력하세요" required cols="6" rows="3"></textarea>
+                        <textarea v-model="form.contents" class="w-full shadow-inner p-4 border-0 rounded-lg focus:shadow-outline text-lg" placeholder="댓글을 입력하세요" cols="6" rows="3"></textarea>
+                        <div class="text-red-500" v-if="errors.contents">{{ errors.contents }}</div>
                         <button type="submit" class="font-bold py-2 px-4 w-full bg-green-400 text-lg text-white shadow-md rounded-lg ">댓글 작성 </button>
                     </form>
+                    
 
-                    <Comment class="pt-4" v-for="comment in comments" :key="comment.id" :comment="comment" @on-delete-comment="onDeleteComment" @on-update-comment="onUpdateComment" />
+                    <Comment class="pt-4" v-for="comment in comments" :key="comment.id" :comment="comment" @on-delete-comment="onDeleteComment" @on-update-comment="onUpdateComment" :errors="errors"/>
                 </div>
             </div>
         </div>
@@ -44,7 +46,7 @@ import Hashtag from '@/Components/Hashtag.vue';
 import dayjs from 'dayjs';
 import { Link, useForm } from "@inertiajs/inertia-vue3";
 export default {
-    props: ['review', 'comments'],
+    props: ['review', 'comments', 'errors'],
     components: {
         AppLayout,
         Link,
@@ -60,15 +62,17 @@ export default {
     },
     methods: {
         onClickDelete() {
-            this.$inertia.delete(`/review/${this.review.id}`);
+            if (confirm('정말로 삭제하시겠습니까?')) {
+                this.$inertia.delete(`/review/${this.review.id}`);
+            }
+        },
+        onClickUpdate() {
+            this.$inertia.get(`/review/edit/${this.review.id}`);
         },
         dateFormat(date) {
             return dayjs(date).format('YYYY년 MM월 DD일 HH:mm:ss');
         },
         onSubmitComment() {
-            if(!this.form.contents) {
-                return;
-            }
             this.form.post(`/comment/${this.review.id}`, { preserveScroll: true });
             this.form.contents = '';
         },
@@ -77,9 +81,9 @@ export default {
                 this.$inertia.delete(`/comment/${id}`, { preserveScroll: true });
             }
         },
-        onUpdateComment({ id, contents }) {
-            this.$inertia.patch(`/comment/${id}`, { contents: contents }, { preserveScroll: true });
-        }
+        onUpdateComment({ id, updateContents }) {
+            this.$inertia.patch(`/comment/${id}`, { updateContents: updateContents }, { preserveScroll: true });
+        },
     },
 }
 </script>

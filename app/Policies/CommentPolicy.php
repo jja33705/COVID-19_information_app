@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Review;
+use App\Models\Comment;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ReviewPolicy
+class CommentPolicy
 {
     use HandlesAuthorization;
 
@@ -25,10 +25,10 @@ class ReviewPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Review  $review
+     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Review $review)
+    public function view(User $user, Comment $comment)
     {
         //
     }
@@ -48,34 +48,34 @@ class ReviewPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Review  $review
+     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, Review $review)
+    public function update(User $user, Comment $comment)
     {
-        return $user->id == $review->user_id;
+        return $user->id == $comment->user_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Review  $review
+     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Review $review)
+    public function delete(User $user, Comment $comment)
     {
-        return $user->id == $review->user_id;
+        return $user->id == $comment->user_id;
     }
 
     /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Review  $review
+     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Review $review)
+    public function restore(User $user, Comment $comment)
     {
         //
     }
@@ -84,10 +84,10 @@ class ReviewPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Review  $review
+     * @param  \App\Models\Comment  $comment
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Review $review)
+    public function forceDelete(User $user, Comment $comment)
     {
         //
     }
