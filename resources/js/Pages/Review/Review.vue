@@ -111,7 +111,7 @@ export default {
                     axios.get(this.reviews.next_page_url)
                     .then((res) => {
                         console.log(res);
-                        if (res.data.data) {
+                        if (res.data.data.length !== 0) {
                             res.data.data = [...this.reviews.data, ...res.data.data];
                             this.reviews = res.data;
                         } else {

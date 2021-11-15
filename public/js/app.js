@@ -22279,7 +22279,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           axios.get(_this.reviews.next_page_url).then(function (res) {
             console.log(res);
 
-            if (res.data.data) {
+            if (res.data.data.length !== 0) {
               res.data.data = [].concat(_toConsumableArray(_this.reviews.data), _toConsumableArray(res.data.data));
               _this.reviews = res.data;
             } else {
@@ -23108,23 +23108,26 @@ var _hoisted_4 = {
   "class": "px-4 py-2"
 };
 var _hoisted_5 = {
-  "class": "text-xl font-gray-700 font-bold truncate ..."
+  "class": "text-xl font-gray-700 font-bold truncate ... mb-1"
 };
 var _hoisted_6 = {
-  "class": "text-sm tracking-normal"
+  "class": "text-sm tracking-normal mb-1 font-gray-600"
+};
+var _hoisted_7 = {
+  "class": "text-sm tracking-normal font-semibold"
 };
 
-var _hoisted_7 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_8 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("hr", null, null, -1
   /* HOISTED */
   );
 });
 
-var _hoisted_8 = {
+var _hoisted_9 = {
   "class": "px-5 py-3"
 };
 
-var _hoisted_9 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_10 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", {
     "class": "font-bold text-xs"
   }, "TAGS", -1
@@ -23138,7 +23141,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_hashtag = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("hashtag");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
-    "class": "w-full h-full sm:h-80 lg:h-48 object-contain bg-gray-100",
+    "class": "w-full h-72 sm:h-60 lg:h-48 object-contain bg-gray-200",
     src: $props.review.image ? "http://127.0.0.1:8000/storage/images/".concat($props.review.image) : 'http://127.0.0.1:8000/storage/images/no_image.png'
   }, null, 8
   /* PROPS */
@@ -23155,9 +23158,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["href"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.review.user.name), 1
+  , ["href"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.review.place), 1
   /* TEXT */
-  )]), _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [_hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.review.user.name), 1
+  /* TEXT */
+  )]), _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [_hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["my-2 flex -m-1 flex-nowrap overflow-x-scroll hide-scroll-bar", "hashtag-".concat($props.review.id)]),
     onWheel: _cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
       return $options.hashtagWheelEvent && $options.hashtagWheelEvent.apply($options, arguments);
@@ -24429,10 +24434,12 @@ var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNo
 var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Register ");
 
 var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "my-5"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
-  "class": "text-6xl font-bold text-center"
-}, "??????????")], -1
+  "class": "my-5 flex justify-center"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+  "class": "text-6xl font-bold text-center mr-2"
+}, "TRAVEL"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+  "class": "text-6xl font-bold text-center text-green-500"
+}, "LIVE")], -1
 /* HOISTED */
 );
 

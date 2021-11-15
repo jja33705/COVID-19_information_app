@@ -1,12 +1,13 @@
 <template>
     <div class="bg-white">
         <div class="shadow-lg hover:shadow-xl">
-            <img class="w-full h-full sm:h-80 lg:h-48 object-contain bg-gray-100" :src="review.image ? `http://127.0.0.1:8000/storage/images/${review.image}` : 'http://127.0.0.1:8000/storage/images/no_image.png'" />
+            <img class="w-full h-72 sm:h-60 lg:h-48 object-contain bg-gray-200" :src="review.image ? `http://127.0.0.1:8000/storage/images/${review.image}` : 'http://127.0.0.1:8000/storage/images/no_image.png'" />
             <div class="px-4 py-2">
                 <Link :href="`/review/${review.id}`">
-                    <h1 class="text-xl font-gray-700 font-bold truncate ...">{{ review.title }}</h1>
+                    <h1 class="text-xl font-gray-700 font-bold truncate ... mb-1">{{ review.title }}</h1>
                 </Link>
-                <p class="text-sm tracking-normal">{{ review.user.name }}</p>
+                <p class="text-sm tracking-normal mb-1 font-gray-600">{{ review.place }}</p>
+                <p class="text-sm tracking-normal font-semibold">{{ review.user.name }}</p>
             </div>
             <hr />
             <div class='px-5 py-3'>
