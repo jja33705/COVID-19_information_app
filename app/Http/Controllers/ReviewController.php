@@ -149,6 +149,7 @@ class ReviewController extends Controller
         ]);
     }
 
+    //리뷰 삭제
     public function destroy(Request $request, $id)
     {
         $review = Review::find($id);
