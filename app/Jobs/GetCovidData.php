@@ -47,7 +47,7 @@ class GetCovidData implements ShouldQueue
             foreach ($lastWeekData as $key => $data) {
                 try {
                     $covidData = Covid::find($key + 1);
-                    // $covidData = new Covid;
+                    //$covidData = new Covid;
 
                     $day = $data['stdDay'];
                     $formattedDay = substr(str_replace(array('년 ', '월 ', '일 ', '시'), '-', $day), 0, -4);

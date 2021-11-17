@@ -40,7 +40,7 @@
                 </jet-button>
             </div>
             <div class="flex items-center justify-end mt-4">
-                <a @mousedown="onMouseDownGoogleOAuthImage" @mouseup="onMouseUpGoogleOAuthImage" @mouseover="onMouseOverGoogleOAuthImage" @mouseout="onMouseOutGoogleOAuthImage" href="http://localhost:8000/auth/google">
+                <a @mousedown="onMouseDownGoogleOAuthImage" @mouseup="onMouseUpGoogleOAuthImage" @mouseover="onMouseOverGoogleOAuthImage" @mouseout="onMouseOutGoogleOAuthImage" href="/auth/google">
                     <img :src="googleOAuthImage" alt="구글 로그인" >
                 </a>
             </div>
@@ -84,7 +84,7 @@
                     password: '',
                     remember: false
                 }),
-                googleOAuthImage: "http://localhost:8000/storage/images/btn_google_signin_dark_normal_web.png",
+                googleOAuthImage: "/storage/images/btn_google_signin_dark_normal_web.png",
             }
         },
 
@@ -100,16 +100,16 @@
                     })
             },
             onMouseDownGoogleOAuthImage() {
-                this.googleOAuthImage = "http://localhost:8000/storage/images/btn_google_signin_dark_pressed_web.png";
+                this.googleOAuthImage = "/storage/images/btn_google_signin_dark_pressed_web.png";
             },
             onMouseUpGoogleOAuthImage() {
-                this.googleOAuthImage = "http://localhost:8000/storage/images/btn_google_signin_dark_normal_web.png";
+                this.googleOAuthImage = "/storage/images/btn_google_signin_dark_normal_web.png";
             },
             onMouseOverGoogleOAuthImage() {
-                this.googleOAuthImage = "http://localhost:8000/storage/images/btn_google_signin_dark_focus_web.png";
+                this.googleOAuthImage = "/storage/images/btn_google_signin_dark_focus_web.png";
             },
             onMouseOutGoogleOAuthImage() {
-                this.googleOAuthImage = "http://localhost:8000/storage/images/btn_google_signin_dark_normal_web.png";
+                this.googleOAuthImage = "/storage/images/btn_google_signin_dark_normal_web.png";
             }
         }
     })

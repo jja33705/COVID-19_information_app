@@ -81,7 +81,7 @@ export default {
     data() {
         return {
             reviews: {
-                next_page_url: `http://localhost:8000/getReviews?searchWay=${this.searchWay}&search=${this.search ? this.search : ''}`,
+                next_page_url: `/getReviews?searchWay=${this.searchWay}&search=${this.search ? this.search : ''}`,
                 data: [],
             },
             searchInput: this.search ? (this.searchWay === 'hashtag' ? '#' + this.search : this.search) : '', //초기화할때 null이면 공백으로. 공백아니면서 해쉬태그면 # 붙여줌.

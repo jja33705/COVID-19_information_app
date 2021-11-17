@@ -4,7 +4,7 @@
             <div clss="flex">
                 <span class="text-black font-semibold text-lg text-center md:text-left ">{{ comment.user.name }}</span>
                 <span class="ml-3 text-gray-500">{{ dateFormat(comment.updated_at) }}</span>
-                <button v-if="$page.props.user" @click="onClickUpdate" class="ml-4 text-gray-500 hover:text-black">수정</button>
+                <button v-if="$page.props.user && $page.props.user.id == comment.user.id" @click="onClickUpdate" class="ml-4 text-gray-500 hover:text-black">수정</button>
                 <button v-if="$page.props.user && $page.props.user.id == comment.user.id" @Click="$emit('onDeleteComment', comment.id)" class="ml-1 text-gray-500 hover:text-black">삭제</button>
             </div>
             <p style="width: 90%" class="text-gray-600 text-lg text-center md:text-left ">{{ comment.contents }}</p>
