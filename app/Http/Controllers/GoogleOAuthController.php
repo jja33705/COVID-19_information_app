@@ -15,7 +15,7 @@ class GoogleOAuthController extends Controller
 
     public function handleGoogleCallback()
     {
-        $user = Socialite::driver('google')->user();
+        $user = Socialite::driver('google')->stateless()->user();
         $findUser = User::where('google_id', $user->id)->first();
         if ($findUser) {
             Auth::login($findUser);
