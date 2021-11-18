@@ -7,6 +7,7 @@ window._ = require('lodash');
  */
 
 window.axios = require('axios');
+window.axios.defaults.headers.common['x-api-key'] = '9KorL7HCCU7nK3Dj00HSMJYNImXysGT9a6gwnGna';
 
 // window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
