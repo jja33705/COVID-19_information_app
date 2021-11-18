@@ -53,7 +53,6 @@
                     <div class="flex my-3 justify-center">
                         <div class="text-2xl font-semibold text-green-600">{{ search }}</div>
                         <div class="mx-4 text-2xl font-semibold">검색결과</div>
-                        <div class="text-2xl text-green-700 font-bold mx-2">{{ reviewCount }}</div>
                     </div>
                 </div>
 

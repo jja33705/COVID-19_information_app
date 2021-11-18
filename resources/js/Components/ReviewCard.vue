@@ -12,7 +12,7 @@
             <hr />
             <div class='px-5 py-3'>
                 <h3 class="font-bold text-xs">TAGS</h3>
-                <div class="my-2 flex -m-1 flex-nowrap overflow-x-scroll hide-scroll-bar" :class="`hashtag-${review.id}`" @wheel.prevent="hashtagWheelEvent">
+                <div class="my-2 flex -m-1 flex-wrap">
                     <hashtag v-for="hashtag in review.hashtags" :key="hashtag.id" :hashtag="hashtag" />
                 </div>
             </div>
