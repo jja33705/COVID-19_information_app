@@ -23144,7 +23144,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_hashtag = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("hashtag");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
-    "class": "w-full h-72 sm:h-60 lg:h-48 object-contain bg-gray-200",
+    "class": "w-full h-72 sm:h-60 lg:h-48 object-cover bg-gray-200",
     src: $props.review.image ? "/storage/images/".concat($props.review.image) : '/storage/images/no_image.png'
   }, null, 8
   /* PROPS */
