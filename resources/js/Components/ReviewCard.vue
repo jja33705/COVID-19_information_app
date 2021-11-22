@@ -1,7 +1,7 @@
 <template>
     <div class="bg-white">
         <div class="shadow-lg hover:shadow-xl">
-            <img class="w-full h-72 sm:h-60 lg:h-48 object-contain bg-gray-200" :src="review.image ? `/storage/images/${review.image}` : '/storage/images/no_image.png'" />
+            <img class="w-full h-72 sm:h-60 lg:h-48 object-cover bg-gray-200" :src="review.image ? `/storage/images/${review.image}` : '/storage/images/no_image.png'" />
             <div class="px-4 py-2">
                 <Link :href="`/review/${review.id}`">
                     <h1 class="text-xl font-gray-700 font-bold truncate ... mb-1">{{ review.title }}</h1>
