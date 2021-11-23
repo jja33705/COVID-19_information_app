@@ -12,7 +12,7 @@
                     <div>게시일: {{ dateFormat(review.updated_at) }}</div>
                     <div>조회수: {{ review.viewCount }}</div>
                 </div>
-                <div class="mb-3 text-gray-500">위치: <Link :href="`/travel/${review.contentId}`">{{ review.place }}</Link></div>
+                <div class="mb-3 text-gray-500">위치: <Link class="font-bold" :href="`/travel/${review.contentId}`">{{ review.place }}</Link></div>
                 <img v-if="review.image" class="mb-4" :src="`/storage/images/${review.image}`" >
                 <div class="mb-6 text-lg">{{ review.contents }}</div>
                 <div class="mb-3 flex -m-1 flex-wrap">
