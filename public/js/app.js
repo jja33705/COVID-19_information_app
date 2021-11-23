@@ -19567,6 +19567,717 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+var MarkerClustering = function MarkerClustering(options) {
+  // 기본 값입니다.
+  this.DEFAULT_OPTIONS = {
+    // 클러스터 마커를 올릴 지도입니다.
+    map: null,
+    // 클러스터 마커를 구성할 마커입니다.
+    markers: [],
+    // 클러스터 마커 클릭 시 줌 동작 여부입니다.
+    disableClickZoom: true,
+    // 클러스터를 구성할 최소 마커 수입니다.
+    minClusterSize: 2,
+    // 클러스터 마커로 표현할 최대 줌 레벨입니다. 해당 줌 레벨보다 높으면, 클러스터를 구성하고 있는 마커를 노출합니다.
+    maxZoom: 13,
+    // 클러스터를 구성할 그리드 크기입니다. 단위는 픽셀입니다.
+    gridSize: 100,
+    // 클러스터 마커의 아이콘입니다. NAVER Maps JavaScript API v3에서 제공하는 아이콘, 심볼, HTML 마커 유형을 모두 사용할 수 있습니다.
+    icons: [],
+    // 클러스터 마커의 아이콘 배열에서 어떤 아이콘을 선택할 것인지 인덱스를 결정합니다.
+    indexGenerator: [10, 100, 200, 500, 1000],
+    // 클러스터 마커의 위치를 클러스터를 구성하고 있는 마커의 평균 좌표로 할 것인지 여부입니다.
+    averageCenter: false,
+    // 클러스터 마커를 갱신할 때 호출하는 콜백함수입니다. 이 함수를 통해 클러스터 마커에 개수를 표현하는 등의 엘리먼트를 조작할 수 있습니다.
+    stylingFunction: function stylingFunction() {}
+  };
+  this._clusters = [];
+  this._mapRelations = null;
+  this._markerRelations = [];
+  this.setOptions(naver.maps.Util.extend({}, this.DEFAULT_OPTIONS, options), true);
+  this.setMap(options.map || null);
+};
+
+naver.maps.Util.ClassExtend(MarkerClustering, naver.maps.OverlayView, {
+  onAdd: function onAdd() {
+    var map = this.getMap();
+    this._mapRelations = naver.maps.Event.addListener(map, 'idle', naver.maps.Util.bind(this._onIdle, this));
+
+    if (this.getMarkers().length > 0) {
+      this._createClusters();
+
+      this._updateClusters();
+    }
+  },
+  draw: naver.maps.Util.noop,
+  onRemove: function onRemove() {
+    naver.maps.Event.removeListener(this._mapRelation);
+
+    this._clearClusters();
+
+    this._geoTree = null;
+    this._mapRelation = null;
+  },
+
+  /**
+   * 마커 클러스터링 옵션을 설정합니다. 설정한 옵션만 반영됩니다.
+   * @param {Object | string} newOptions 옵션
+   */
+  setOptions: function setOptions(newOptions) {
+    var _this = this;
+
+    if (typeof newOptions === 'string') {
+      var key = newOptions,
+          value = arguments[1];
+
+      _this.set(key, value);
+    } else {
+      var isFirst = arguments[1];
+      naver.maps.Util.forEach(newOptions, function (value, key) {
+        if (key !== 'map') {
+          _this.set(key, value);
+        }
+      });
+
+      if (newOptions.map && !isFirst) {
+        _this.setMap(newOptions.map);
+      }
+    }
+  },
+
+  /**
+   * 마커 클러스터링 옵션을 반환합니다. 특정 옵션 이름을 지정하지 않으면, 모든 옵션을 반환합니다.
+   * @param {string} key 반환받을 옵션 이름
+   * @return {Any} 옵션
+   */
+  getOptions: function getOptions(key) {
+    var _this = this,
+        options = {};
+
+    if (key !== undefined) {
+      return _this.get(key);
+    } else {
+      naver.maps.Util.forEach(_this.DEFAULT_OPTIONS, function (value, key) {
+        options[key] = _this.get(key);
+      });
+      return options;
+    }
+  },
+
+  /**
+   * 클러스터를 구성하는 최소 마커 수를 반환합니다.
+   * @return {number} 클러스터를 구성하는 최소 마커 수
+   */
+  getMinClusterSize: function getMinClusterSize() {
+    return this.getOptions('minClusterSize');
+  },
+
+  /**
+   * 클러스터를 구성하는 최소 마커 수를 설정합니다.
+   * @param {number} size 클러스터를 구성하는 최소 마커 수
+   */
+  setMinClusterSize: function setMinClusterSize(size) {
+    this.setOptions('minClusterSize', size);
+  },
+
+  /**
+   * 클러스터 마커를 노출할 최대 줌 레벨을 반환합니다.
+   * @return {number} 클러스터 마커를 노출할 최대 줌 레벨
+   */
+  getMaxZoom: function getMaxZoom() {
+    return this.getOptions('maxZoom');
+  },
+
+  /**
+   * 클러스터 마커를 노출할 최대 줌 레벨을 설정합니다.
+   * @param {number} zoom 클러스터 마커를 노출할 최대 줌 레벨
+   */
+  setMaxZoom: function setMaxZoom(zoom) {
+    this.setOptions('maxZoom', zoom);
+  },
+
+  /**
+   * 클러스터를 구성할 그리드 크기를 반환합니다. 단위는 픽셀입니다.
+   * @return {number} 클러스터를 구성할 그리드 크기
+   */
+  getGridSize: function getGridSize() {
+    return this.getOptions('gridSize');
+  },
+
+  /**
+   * 클러스터를 구성할 그리드 크기를 설정합니다. 단위는 픽셀입니다.
+   * @param {number} size 클러스터를 구성할 그리드 크기
+   */
+  setGridSize: function setGridSize(size) {
+    this.setOptions('gridSize', size);
+  },
+
+  /**
+   * 클러스터 마커의 아이콘을 결정하는 인덱스 생성기를 반환합니다.
+   * @return {Array | Function} 인덱스 생성기
+   */
+  getIndexGenerator: function getIndexGenerator() {
+    return this.getOptions('indexGenerator');
+  },
+
+  /**
+   * 클러스터 마커의 아이콘을 결정하는 인덱스 생성기를 설정합니다.
+   * @param {Array | Function} indexGenerator 인덱스 생성기
+   */
+  setIndexGenerator: function setIndexGenerator(indexGenerator) {
+    this.setOptions('indexGenerator', indexGenerator);
+  },
+
+  /**
+   * 클러스터로 구성할 마커를 반환합니다.
+   * @return {Array.<naver.maps.Marker>} 클러스터로 구성할 마커
+   */
+  getMarkers: function getMarkers() {
+    return this.getOptions('markers');
+  },
+
+  /**
+   * 클러스터로 구성할 마커를 설정합니다.
+   * @param {Array.<naver.maps.Marker>} markers 클러스터로 구성할 마커
+   */
+  setMarkers: function setMarkers(markers) {
+    this.setOptions('markers', markers);
+  },
+
+  /**
+   * 클러스터 마커 아이콘을 반환합니다.
+   * @return {Array.<naver.maps.Marker~ImageIcon | naver.maps.Marker~SymbolIcon | naver.maps.Marker~HtmlIcon>} 클러스터 마커 아이콘
+   */
+  getIcons: function getIcons() {
+    return this.getOptions('icons');
+  },
+
+  /**
+   * 클러스터 마커 아이콘을 설정합니다.
+   * @param {Array.<naver.maps.Marker~ImageIcon | naver.maps.Marker~SymbolIcon | naver.maps.Marker~HtmlIcon>} icons 클러스터 마커 아이콘
+   */
+  setIcons: function setIcons(icons) {
+    this.setOptions('icons', icons);
+  },
+
+  /**
+   * 클러스터 마커의 엘리먼트를 조작할 수 있는 스타일링 함수를 반환합니다.
+   * @return {Funxtion} 콜백함수
+   */
+  getStylingFunction: function getStylingFunction() {
+    return this.getOptions('stylingFunction');
+  },
+
+  /**
+   * 클러스터 마커의 엘리먼트를 조작할 수 있는 스타일링 함수를 설정합니다.
+   * @param {Function} func 콜백함수
+   */
+  setStylingFunction: function setStylingFunction(func) {
+    this.setOptions('stylingFunction', func);
+  },
+
+  /**
+   * 클러스터 마커를 클릭했을 때 줌 동작 수행 여부를 반환합니다.
+   * @return {boolean} 줌 동작 수행 여부
+   */
+  getDisableClickZoom: function getDisableClickZoom() {
+    return this.getOptions('disableClickZoom');
+  },
+
+  /**
+   * 클러스터 마커를 클릭했을 때 줌 동작 수행 여부를 설정합니다.
+   * @param {boolean} flag 줌 동작 수행 여부
+   */
+  setDisableClickZoom: function setDisableClickZoom(flag) {
+    this.setOptions('disableClickZoom', flag);
+  },
+
+  /**
+   * 클러스터 마커의 위치를 클러스터를 구성하고 있는 마커의 평균 좌표로 할 것인지 여부를 반환합니다.
+   * @return {boolean} 평균 좌표로 클러스터링 여부
+   */
+  getAverageCenter: function getAverageCenter() {
+    return this.getOptions('averageCenter');
+  },
+
+  /**
+   * 클러스터 마커의 위치를 클러스터를 구성하고 있는 마커의 평균 좌표로 할 것인지 여부를 설정합니다.
+   * @param {boolean} averageCenter 평균 좌표로 클러스터링 여부
+   */
+  setAverageCenter: function setAverageCenter(averageCenter) {
+    this.setOptions('averageCenter', averageCenter);
+  },
+  // KVO 이벤트 핸들러
+  changed: function changed(key, value) {
+    if (!this.getMap()) return;
+
+    switch (key) {
+      case 'marker':
+      case 'minClusterSize':
+      case 'gridSize':
+      case 'averageCenter':
+        this._redraw();
+
+        break;
+
+      case 'indexGenerator':
+      case 'icons':
+        this._clusters.forEach(function (cluster) {
+          cluster.updateIcon();
+        });
+
+        break;
+
+      case 'maxZoom':
+        this._clusters.forEach(function (cluster) {
+          if (cluster.getCount() > 1) {
+            cluster.checkByZoomAndMinClusterSize();
+          }
+        });
+
+        break;
+
+      case 'stylingFunction':
+        this._clusters.forEach(function (cluster) {
+          cluster.updateCount();
+        });
+
+        break;
+
+      case 'disableClickZoom':
+        var exec = 'enableClickZoom';
+
+        if (value) {
+          exec = 'disableClickZoom';
+        }
+
+        this._clusters.forEach(function (cluster) {
+          cluster[exec]();
+        });
+
+        break;
+    }
+  },
+
+  /**
+   * 현재 지도 경계 영역 내의 마커에 대해 클러스터를 생성합니다.
+   * @private
+   */
+  _createClusters: function _createClusters() {
+    var map = this.getMap();
+    if (!map) return;
+    var bounds = map.getBounds(),
+        markers = this.getMarkers();
+
+    for (var i = 0, ii = markers.length; i < ii; i++) {
+      var marker = markers[i],
+          position = marker.getPosition();
+      if (!bounds.hasLatLng(position)) continue;
+
+      var closestCluster = this._getClosestCluster(position);
+
+      closestCluster.addMarker(marker);
+
+      this._markerRelations.push(naver.maps.Event.addListener(marker, 'dragend', naver.maps.Util.bind(this._onDragEnd, this)));
+    }
+  },
+
+  /**
+   * 클러스터의 아이콘, 텍스트를 갱신합니다.
+   * @private
+   */
+  _updateClusters: function _updateClusters() {
+    var clusters = this._clusters;
+
+    for (var i = 0, ii = clusters.length; i < ii; i++) {
+      clusters[i].updateCluster();
+    }
+  },
+
+  /**
+   * 클러스터를 모두 제거합니다.
+   * @private
+   */
+  _clearClusters: function _clearClusters() {
+    var clusters = this._clusters;
+
+    for (var i = 0, ii = clusters.length; i < ii; i++) {
+      clusters[i].destroy();
+    }
+
+    naver.maps.Event.removeListener(this._markerRelations);
+    this._markerRelations = [];
+    this._clusters = [];
+  },
+
+  /**
+   * 생성된 클러스터를 모두 제거하고, 다시 생성합니다.
+   * @private
+   */
+  _redraw: function _redraw() {
+    this._clearClusters();
+
+    this._createClusters();
+
+    this._updateClusters();
+  },
+
+  /**
+   * 전달된 위/경도에서 가장 가까운 클러스터를 반환합니다. 없으면 새로 클러스터를 생성해 반환합니다.
+   * @param {naver.maps.LatLng} position 위/경도
+   * @return {Cluster} 클러스터
+   */
+  _getClosestCluster: function _getClosestCluster(position) {
+    var proj = this.getProjection(),
+        clusters = this._clusters,
+        closestCluster = null,
+        distance = Infinity;
+
+    for (var i = 0, ii = clusters.length; i < ii; i++) {
+      var cluster = clusters[i],
+          center = cluster.getCenter();
+
+      if (cluster.isInBounds(position)) {
+        var delta = proj.getDistance(center, position);
+
+        if (delta < distance) {
+          distance = delta;
+          closestCluster = cluster;
+        }
+      }
+    }
+
+    if (!closestCluster) {
+      closestCluster = new Cluster(this);
+
+      this._clusters.push(closestCluster);
+    }
+
+    return closestCluster;
+  },
+
+  /**
+   * 지도의 Idle 상태 이벤트 핸들러입니다.
+   */
+  _onIdle: function _onIdle() {
+    this._redraw();
+  },
+
+  /**
+   * 각 마커의 드래그 종료 이벤트 핸들러입니다.
+   */
+  _onDragEnd: function _onDragEnd() {
+    this._redraw();
+  }
+});
+/**
+ * 마커를 가지고 있는 클러스터를 정의합니다.
+ * @param {MarkerClustering} markerClusterer
+ */
+
+var Cluster = function Cluster(markerClusterer) {
+  this._clusterCenter = null;
+  this._clusterBounds = null;
+  this._clusterMarker = null;
+  this._relation = null;
+  this._clusterMember = [];
+  this._markerClusterer = markerClusterer;
+};
+
+Cluster.prototype = {
+  constructor: Cluster,
+
+  /**
+   * 클러스터에 마커를 추가합니다.
+   * @param {naver.maps.Marker} marker 클러스터에 추가할 마커
+   */
+  addMarker: function addMarker(marker) {
+    if (this._isMember(marker)) return;
+
+    if (!this._clusterCenter) {
+      var position = marker.getPosition();
+      this._clusterCenter = position;
+      this._clusterBounds = this._calcBounds(position);
+    }
+
+    this._clusterMember.push(marker);
+  },
+
+  /**
+   * 클러스터를 제거합니다.
+   */
+  destroy: function destroy() {
+    naver.maps.Event.removeListener(this._relation);
+    var members = this._clusterMember;
+
+    for (var i = 0, ii = members.length; i < ii; i++) {
+      members[i].setMap(null);
+    }
+
+    this._clusterMarker.setMap(null);
+
+    this._clusterMarker = null;
+    this._clusterCenter = null;
+    this._clusterBounds = null;
+    this._relation = null;
+    this._clusterMember = [];
+  },
+
+  /**
+   * 클러스터 중심점을 반환합니다.
+   * @return {naver.maps.LatLng} 클러스터 중심점
+   */
+  getCenter: function getCenter() {
+    return this._clusterCenter;
+  },
+
+  /**
+   * 클러스터 경계 영역을 반환합니다.
+   * @return {naver.maps.LatLngBounds} 클러스터 경계 영역
+   */
+  getBounds: function getBounds() {
+    return this._clusterBounds;
+  },
+
+  /**
+   * 클러스터를 구성하는 마커 수를 반환합니다.
+   * @return {number} 클러스터를 구성하는 마커 수
+   */
+  getCount: function getCount() {
+    return this._clusterMember.length;
+  },
+
+  /**
+  * 현재의 클러스터 멤버 마커 객체를 반환합니다.
+  * @return {naver.maps.Marker[]} 클러스터를 구성하는 마커 객체 집합
+  */
+  getClusterMember: function getClusterMember() {
+    return this._clusterMember;
+  },
+
+  /**
+   * 전달된 위/경도가 클러스터 경계 영역 내에 있는지 여부를 반환합니다.
+   * @param {naver.maps.LatLng} latlng 위/경도
+   * @return {boolean} 클러스터 경계 영역 내의 위치 여부
+   */
+  isInBounds: function isInBounds(latlng) {
+    return this._clusterBounds && this._clusterBounds.hasLatLng(latlng);
+  },
+
+  /**
+   * 클러스터 마커 클릭 시 줌 동작을 수행하도록 합니다.
+   */
+  enableClickZoom: function enableClickZoom() {
+    if (this._relation) return;
+
+    var map = this._markerClusterer.getMap();
+
+    this._relation = naver.maps.Event.addListener(this._clusterMarker, 'click', naver.maps.Util.bind(function (e) {
+      map.morph(e.coord, map.getZoom() + 1);
+    }, this));
+  },
+
+  /**
+   * 클러스터 마커 클릭 시 줌 동작을 수행하지 않도록 합니다.
+   */
+  disableClickZoom: function disableClickZoom() {
+    if (!this._relation) return;
+    naver.maps.Event.removeListener(this._relation);
+    this._relation = null;
+  },
+
+  /**
+   * 클러스터 마커가 없으면 클러스터 마커를 생성하고, 클러스터 마커를 갱신합니다.
+   * - 클러스터 마커 아이콘
+   * - 마커 개수
+   * - 클러스터 마커 노출 여부
+   */
+  updateCluster: function updateCluster() {
+    if (!this._clusterMarker) {
+      var position;
+
+      if (this._markerClusterer.getAverageCenter()) {
+        position = this._calcAverageCenter(this._clusterMember);
+      } else {
+        position = this._clusterCenter;
+      }
+
+      this._clusterMarker = new naver.maps.Marker({
+        position: position,
+        map: this._markerClusterer.getMap()
+      });
+
+      if (!this._markerClusterer.getDisableClickZoom()) {
+        this.enableClickZoom();
+      }
+    }
+
+    this.updateIcon();
+    this.updateCount();
+    this.checkByZoomAndMinClusterSize();
+  },
+
+  /**
+   * 조건에 따라 클러스터 마커를 노출하거나, 노출하지 않습니다.
+   */
+  checkByZoomAndMinClusterSize: function checkByZoomAndMinClusterSize() {
+    var clusterer = this._markerClusterer,
+        minClusterSize = clusterer.getMinClusterSize(),
+        maxZoom = clusterer.getMaxZoom(),
+        currentZoom = clusterer.getMap().getZoom();
+
+    if (this.getCount() < minClusterSize) {
+      this._showMember();
+    } else {
+      this._hideMember();
+
+      if (maxZoom <= currentZoom) {
+        this._showMember();
+      }
+    }
+  },
+
+  /**
+   * 클러스터를 구성하는 마커 수를 갱신합니다.
+   */
+  updateCount: function updateCount() {
+    var stylingFunction = this._markerClusterer.getStylingFunction();
+
+    stylingFunction && stylingFunction(this._clusterMarker, this.getCount());
+  },
+
+  /**
+   * 클러스터 마커 아이콘을 갱신합니다.
+   */
+  updateIcon: function updateIcon() {
+    var count = this.getCount(),
+        index = this._getIndex(count),
+        icons = this._markerClusterer.getIcons();
+
+    index = Math.max(index, 0);
+    index = Math.min(index, icons.length - 1);
+
+    this._clusterMarker.setIcon(icons[index]);
+  },
+
+  /**
+   * 클러스터를 구성하는 마커를 노출합니다. 이때에는 클러스터 마커를 노출하지 않습니다.
+   * @private
+   */
+  _showMember: function _showMember() {
+    var map = this._markerClusterer.getMap(),
+        marker = this._clusterMarker,
+        members = this._clusterMember;
+
+    for (var i = 0, ii = members.length; i < ii; i++) {
+      members[i].setMap(map);
+    }
+
+    if (marker) {
+      marker.setMap(null);
+    }
+  },
+
+  /**
+   * 클러스터를 구성하는 마커를 노출하지 않습니다. 이때에는 클러스터 마커를 노출합니다.
+   * @private
+   */
+  _hideMember: function _hideMember() {
+    var map = this._markerClusterer.getMap(),
+        marker = this._clusterMarker,
+        members = this._clusterMember;
+
+    for (var i = 0, ii = members.length; i < ii; i++) {
+      members[i].setMap(null);
+    }
+
+    if (marker && !marker.getMap()) {
+      marker.setMap(map);
+    }
+  },
+
+  /**
+   * 전달된 위/경도를 중심으로 그리드 크기만큼 확장한 클러스터 경계 영역을 반환합니다.
+   * @param {naver.maps.LatLng} position 위/경도
+   * @return {naver.maps.LatLngBounds} 클러스터 경계 영역
+   * @private
+   */
+  _calcBounds: function _calcBounds(position) {
+    var map = this._markerClusterer.getMap(),
+        bounds = new naver.maps.LatLngBounds(position.clone(), position.clone()),
+        mapBounds = map.getBounds(),
+        proj = map.getProjection(),
+        map_max_px = proj.fromCoordToOffset(mapBounds.getNE()),
+        map_min_px = proj.fromCoordToOffset(mapBounds.getSW()),
+        max_px = proj.fromCoordToOffset(bounds.getNE()),
+        min_px = proj.fromCoordToOffset(bounds.getSW()),
+        gridSize = this._markerClusterer.getGridSize() / 2;
+
+    max_px.add(gridSize, -gridSize);
+    min_px.add(-gridSize, gridSize);
+    var max_px_x = Math.min(map_max_px.x, max_px.x),
+        max_px_y = Math.max(map_max_px.y, max_px.y),
+        min_px_x = Math.max(map_min_px.x, min_px.x),
+        min_px_y = Math.min(map_min_px.y, min_px.y),
+        newMax = proj.fromOffsetToCoord(new naver.maps.Point(max_px_x, max_px_y)),
+        newMin = proj.fromOffsetToCoord(new naver.maps.Point(min_px_x, min_px_y));
+    return new naver.maps.LatLngBounds(newMin, newMax);
+  },
+
+  /**
+   * 클러스터를 구성하는 마커 수에 따라 노출할 아이콘을 결정하기 위한 인덱스를 반환합니다.
+   * @param {number} count 클러스터를 구성하는 마커 수
+   * @return {number} 인덱스
+   * @private
+   */
+  _getIndex: function _getIndex(count) {
+    var indexGenerator = this._markerClusterer.getIndexGenerator();
+
+    if (naver.maps.Util.isFunction(indexGenerator)) {
+      return indexGenerator(count);
+    } else if (naver.maps.Util.isArray(indexGenerator)) {
+      var index = 0;
+
+      for (var i = index, ii = indexGenerator.length; i < ii; i++) {
+        var factor = indexGenerator[i];
+        if (count < factor) break;
+        index++;
+      }
+
+      return index;
+    }
+  },
+
+  /**
+   * 전달된 마커가 이미 클러스터에 속해 있는지 여부를 반환합니다.
+   * @param {naver.maps.Marker} marker 마커
+   * @return {boolean} 클러스터에 속해 있는지 여부
+   * @private
+   */
+  _isMember: function _isMember(marker) {
+    return this._clusterMember.indexOf(marker) !== -1;
+  },
+
+  /**
+   * 전달된 마커들의 중심 좌표를 반환합니다.
+   * @param {Array.<naver.maps.Marker>} markers 마커 배열
+   * @return {naver.maps.Point} 마커들의 중심 좌표
+   * @private
+   */
+  _calcAverageCenter: function _calcAverageCenter(markers) {
+    var numberOfMarkers = markers.length;
+    var averageCenter = [0, 0];
+
+    for (var i = 0; i < numberOfMarkers; i++) {
+      averageCenter[0] += markers[i].position.x;
+      averageCenter[1] += markers[i].position.y;
+    }
+
+    averageCenter[0] /= numberOfMarkers;
+    averageCenter[1] /= numberOfMarkers;
+    return new naver.maps.Point(averageCenter[0], averageCenter[1]);
+  }
+};
 var regionGeoJson = [{
   "type": "FeatureCollection",
   "features": [{
@@ -19812,7 +20523,8 @@ var regionGeoJson = [{
   data: function data() {
     return {
       map: null,
-      myLocationMarker: null
+      myLocationMarker: null,
+      markers: []
     };
   },
   methods: {
@@ -19850,7 +20562,7 @@ var regionGeoJson = [{
       this.drawMyLocation(position.coords.latitude, position.coords.longitude);
     },
     startDataLayer: function startDataLayer() {
-      var _this = this;
+      var _this2 = this;
 
       //가져온 시군구 geoJson데이터 그리고 마우스 이벤트 등록
       var tooltip = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div style="position:absolute;z-index:1000;padding:5px 10px;background-color:#fff;border:solid 2px #000;font-size:14px;pointer-events:none;display:none;"></div>');
@@ -19866,13 +20578,13 @@ var regionGeoJson = [{
         return styleOptions;
       });
       regionGeoJson.forEach(function (geojson) {
-        _this.map.data.addGeoJson(geojson);
+        _this2.map.data.addGeoJson(geojson);
       });
       this.map.data.addListener('mouseover', function (e) {
         var feature = e.feature;
         var regionName = feature.getProperty('CTP_KOR_NM');
 
-        var regionData = _this.localCovidData.find(function (e) {
+        var regionData = _this2.localCovidData.find(function (e) {
           if (feature.getProperty('CTP_KOR_NM') === e.gubun) {
             return true;
           }
@@ -19885,7 +20597,7 @@ var regionGeoJson = [{
           top: e.offset.y
         }).text(regionText);
 
-        _this.map.data.overrideStyle(feature, {
+        _this2.map.data.overrideStyle(feature, {
           fillOpacity: 0.05,
           strokeWeight: 1,
           strokeOpacity: 0.5
@@ -19894,12 +20606,12 @@ var regionGeoJson = [{
       this.map.data.addListener('mouseout', function (e) {
         tooltip.hide().empty();
 
-        _this.map.data.revertStyle();
+        _this2.map.data.revertStyle();
       });
     }
   },
   mounted: function mounted() {
-    var _this2 = this;
+    var _this3 = this;
 
     var mapOptions = {
       //맵 생성
@@ -19920,52 +20632,75 @@ var regionGeoJson = [{
       var customControl = new naver.maps.CustomControl(getLocationBtnHtml, {
         position: naver.maps.Position.TOP_RIGHT
       });
-      customControl.setMap(_this2.map);
+      customControl.setMap(_this3.map);
       naver.maps.Event.addDOMListener(customControl.getElement(), 'click', function () {
         if (!navigator.geolocation) {
           console.log("cant get location in this browser");
         } else {
-          navigator.geolocation.getCurrentPosition(_this2.getCurrentLocationSuccess, _this2.getCurrentLocationError);
+          navigator.geolocation.getCurrentPosition(_this3.getCurrentLocationSuccess, _this3.getCurrentLocationError);
         }
       }); //시군구 그리기 시작
 
-      _this2.startDataLayer();
+      _this3.startDataLayer();
     });
   },
   watch: {
-    selectedTravelSpot: function selectedTravelSpot(newSelectedTravelSpot) {
-      //선택된 여행지가 바뀌면 그곳을 줌하고 정보창을 펼쳐준다.
-      for (var i = 0; i < this.travelSpots.length; i++) {
-        if (newSelectedTravelSpot.contentid === this.travelSpots[i].contentid) {
-          var spot = new naver.maps.LatLng(this.travelSpots[i].mapy, this.travelSpots[i].mapx);
-          this.map.setCenter(spot);
-          this.map.setOptions("zoom", 15);
-          this.infoWindows[i].open(this.map, this.markers[i]);
-          break;
-        }
-      }
-    },
+    // selectedTravelSpot: function (newSelectedTravelSpot) { //선택된 여행지가 바뀌면 그곳을 줌하고 정보창을 펼쳐준다.
+    //     for (let i = 0; i < this.travelSpots.length; i++) {
+    //         if (newSelectedTravelSpot.contentid === this.travelSpots[i].contentid) {
+    //             const spot = new naver.maps.LatLng(
+    //                 this.travelSpots[i].mapy,
+    //                 this.travelSpots[i].mapx
+    //             );
+    //             this.map.setCenter(spot);
+    //             this.map.setOptions("zoom", 15);
+    //             this.infoWindows[i].open(this.map, this.markers[i]);
+    //             break;
+    //         }
+    //     }
+    // },
     travelSpots: function travelSpots(newTravelSpots) {
-      var _this3 = this;
+      var _this4 = this;
 
       console.log('불림');
       newTravelSpots.map(function (v) {
         //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시
-        var markerContent = ['<div style="position:absolute;">', '<div class="infowindow" style="display:none;position:absolute;width:120px;height:20px;top:-15px;left:-50px;z-index:1;margin:0;padding:0;font-weight:bold;text-align:center;font-size:6px">', "<div>".concat(v.title, "</div>"), '</div>', '<div class="pin_s" style="cursor: pointer; width: 22px; height: 30px;">', '<img src="/storage/images/Map-marker-02.png" alt="" style="margin: 0px; padding: 0px; border: 0px solid transparent; display: block; max-width: none; max-height: none; -webkit-user-select: none; position: absolute; width: 22px; left: 0px; top: 0px;">', '</div>', '</div>'].join('');
+        var markerContent = ['<div style="position:absolute;">', '<div class="infowindow" style="display:none;position:absolute;width:140px;height:20px;top:-15px;left:-60px;z-index:1;margin:0;padding:0;font-weight:bold;text-align:center;font-size:12px">', "<div>".concat(v.title, "</div>"), '</div>', '<div class="pin_s" style="cursor: pointer; width: 22px; height: 30px;">', '<img src="/storage/images/Map-marker-02.png" alt="" style="margin: 0px; padding: 0px; border: 0px solid transparent; display: block; max-width: none; max-height: none; -webkit-user-select: none; position: absolute; width: 25px; left: 0px; top: 0px;">', '</div>', '</div>'].join('');
         var htmlMarker = new naver.maps.Marker({
           position: new naver.maps.LatLng(v.mapy, v.mapx),
-          map: _this3.map,
+          map: _this4.map,
           icon: {
             content: markerContent,
             size: new naver.maps.Size(22, 30),
             anchor: new naver.maps.Point(11, 30)
           }
-        }),
-            elHtmlMarker = htmlMarker.getElement();
+        });
+
+        _this4.markers.push(htmlMarker);
+
+        var elHtmlMarker = htmlMarker.getElement();
         jquery__WEBPACK_IMPORTED_MODULE_0___default()(elHtmlMarker).find('.infowindow').show();
         jquery__WEBPACK_IMPORTED_MODULE_0___default()(elHtmlMarker).on('click', 'img', function (e) {
           jquery__WEBPACK_IMPORTED_MODULE_0___default()(elHtmlMarker).find('.infowindow').toggle();
         });
+      });
+      var htmlMarker = {
+        content: '<div style="cursor:pointer;width:40px;height:40px;line-height:42px;font-size:20px;color:black;text-align:center;font-weight:bold;background:url(/storage/images/Map-marker-02.png);background-size:contain;line-height:0.1;vertical-align:top"></div>',
+        size: N.Size(40, 40),
+        anchor: N.Point(20, 20)
+      };
+      new MarkerClustering({
+        minClusterSize: 2,
+        maxZoom: 12,
+        map: this.map,
+        markers: this.markers,
+        disableClickZoom: false,
+        gridSize: 120,
+        icons: [htmlMarker],
+        indexGenerator: [10, 100, 200, 500, 1000],
+        stylingFunction: function stylingFunction(clusterMarker, count) {
+          jquery__WEBPACK_IMPORTED_MODULE_0___default()(clusterMarker.getElement()).find('div:first-child').text(count);
+        }
       });
     }
   }
@@ -28022,6 +28757,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, "조회수: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.review.viewCount), 1
       /* TEXT */
       )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [_hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
+        "class": "font-bold",
         href: "/travel/".concat($props.review.contentId)
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
