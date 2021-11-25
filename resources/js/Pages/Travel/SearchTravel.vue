@@ -17,7 +17,7 @@
                             focus:outline-none focus:ring
                             transition
                             text-black-600
-                            bg-purple-50
+                            bg-blue-50
                             hover:text-black-800 hover:bg-purple-100
                             active:bg-purple-200
                             focus:ring-purple-300
@@ -26,52 +26,30 @@
                     >
                         주변 관광지 보기
                     </button>
+                    <button
+                        @click="showCategoryModal = true"
+                        class="
+                            ml-4
+                            px-4
+                            py-2
+                            rounded-md
+                            font-semibold
+                            text-sm
+                            font-medium
+                            border-0
+                            focus:outline-none focus:ring
+                            transition
+                            text-black-600
+                            bg-purple-50
+                            hover:text-black-800 hover:bg-purple-100
+                            active:bg-purple-200
+                            focus:ring-purple-300
+                        "
+                        type="submit"
+                    >
+                        카테고리 선택
+                    </button>
                 </div>
-
-                <hr>
-
-                <div class="my-2">
-                    
-                    
-                    <label class="mx-2">시도:</label>
-                    <select v-model="selectedAreaCode" @change="onChangeAreaCode">
-                        <option value="" selected>-- 선택 없음 --</option>
-                        <option :value="area.code" v-for="area in areas" :key="area.rnum">{{ area.name }}</option>
-                    </select>
-
-                    <label class="mx-2">시군구:</label>
-                    <select v-model="selectedSigunguCode">
-                        <option value="" selected>-- 선택 없음 --</option>
-                        <option :value="sigungu.code" v-for="sigungu in sigungus" :key="sigungu.rnum">{{ sigungu.name }}</option>
-                    </select>
-
-
-                </div>
-
-                <hr>
-
-
-                <div class="mt-2">
-                    <label class="mx-2">대분류:</label>
-                    <select v-model="selectedLargeCategoryCode" @change="onChangeLargeCategoryCode">
-                        <option value="" selected>-- 선택 없음 --</option>
-                        <option :value="category.code" v-for="category in largeCategorys" :key="category.rnum">{{ category.name }}</option>
-                    </select>
-
-                    <label class="mx-2">중분류:</label>
-                    <select v-model="selectedMediumCategoryCode" @change="onChangeMediumCategoryCode">
-                        <option value="" selected>-- 선택 없음 --</option>
-                        <option :value="category.code" v-for="category in mediumCategorys" :key="category.rnum">{{ category.name }}</option>
-                    </select>
-
-                    <label class="mx-2">소분류:</label>
-                    <select v-model="selectedSmallCategoryCode">
-                        <option value="" selected>-- 선택 없음 --</option>
-                        <option :value="category.code" v-for="category in smallCategorys" :key="category.rnum">{{ category.name }}</option>
-                    </select>
-
-                </div>
-
 
 
                 <div class="pt-2 relative mx-auto text-gray-600">
@@ -224,6 +202,60 @@
                 </div>
             </div>
         </div>
+        
+        <!-- 카테고리 선택 모달 -->
+        <jet-dialog-modal :show="showCategoryModal" @close="showCategoryModal = false">
+            <template #title>
+                카테고리
+            </template>
+            <template #content>
+                <div class="text-md font-semibold">지역</div>
+                <div class="my-2">
+                    <label class="mx-2">시도:</label>
+                    <select v-model="selectedAreaCode" @change="onChangeAreaCode">
+                        <option value="" selected>-- 선택 없음 --</option>
+                        <option :value="area.code" v-for="area in areas" :key="area.rnum">{{ area.name }}</option>
+                    </select>
+                </div>
+                <div class="my-2">
+                    <label class="mx-2">시군구:</label>
+                    <select v-model="selectedSigunguCode">
+                        <option value="" selected>-- 선택 없음 --</option>
+                        <option :value="sigungu.code" v-for="sigungu in sigungus" :key="sigungu.rnum">{{ sigungu.name }}</option>
+                    </select>
+                </div>
+
+                <hr>
+                <div class="text-md font-semibold mt-5">분류</div>
+                <div class="mt-2">
+                    <label class="mx-2">대분류:</label>
+                    <select v-model="selectedLargeCategoryCode" @change="onChangeLargeCategoryCode">
+                        <option value="" selected>-- 선택 없음 --</option>
+                        <option :value="category.code" v-for="category in largeCategorys" :key="category.rnum">{{ category.name }}</option>
+                    </select>
+                </div>
+                <div class="mt-2">
+
+                    <label class="mx-2">중분류:</label>
+                    <select v-model="selectedMediumCategoryCode" @change="onChangeMediumCategoryCode">
+                        <option value="" selected>-- 선택 없음 --</option>
+                        <option :value="category.code" v-for="category in mediumCategorys" :key="category.rnum">{{ category.name }}</option>
+                    </select>
+                </div>
+                <div class="mt-2">
+
+                    <label class="mx-2">소분류:</label>
+                    <select v-model="selectedSmallCategoryCode">
+                        <option value="" selected>-- 선택 없음 --</option>
+                        <option :value="category.code" v-for="category in smallCategorys" :key="category.rnum">{{ category.name }}</option>
+                    </select>
+
+                </div>
+            </template>
+            <template #footer>
+                <jet-danger-button @click="showCategoryModal = false">닫기</jet-danger-button>
+            </template>
+        </jet-dialog-modal>
     </app-layout>
 </template>
 
@@ -253,6 +285,8 @@ import { Link } from "@inertiajs/inertia-vue3";
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 import TravelSpotCard from "@/Components/TravelSpotCard.vue";
 import NaverMap from "@/Components/NaverMap.vue";
+import JetDialogModal from '@/Jetstream/DialogModal';
+import JetDangerButton from '@/Jetstream/DangerButton';
 
 export default {
     components: {
@@ -261,6 +295,8 @@ export default {
         PulseLoader,
         TravelSpotCard,
         NaverMap,
+        JetDialogModal,
+        JetDangerButton,
     },
     props: [
         "localCovidData",
@@ -297,7 +333,9 @@ export default {
             mediumCategorys: [],
             smallCategorys: [],
 
-            loading: true,
+            loading: true,  //로딩 여부
+
+            showCategoryModal: false, //모달 표시여부
         };
     },
     methods: {

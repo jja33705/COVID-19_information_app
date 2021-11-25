@@ -23181,6 +23181,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_spinner_src_PulseLoader_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue-spinner/src/PulseLoader.vue */ "./node_modules/vue-spinner/src/PulseLoader.vue");
 /* harmony import */ var _Components_TravelSpotCard_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Components/TravelSpotCard.vue */ "./resources/js/Components/TravelSpotCard.vue");
 /* harmony import */ var _Components_NaverMap_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/Components/NaverMap.vue */ "./resources/js/Components/NaverMap.vue");
+/* harmony import */ var _Jetstream_DialogModal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/Jetstream/DialogModal */ "./resources/js/Jetstream/DialogModal.vue");
+/* harmony import */ var _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/Jetstream/DangerButton */ "./resources/js/Jetstream/DangerButton.vue");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -23211,13 +23213,17 @@ var AREA_CODE = {
 
 
 
+
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
     AppLayout: _Layouts_AppLayout_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_2__.Link,
     PulseLoader: vue_spinner_src_PulseLoader_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
     TravelSpotCard: _Components_TravelSpotCard_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
-    NaverMap: _Components_NaverMap_vue__WEBPACK_IMPORTED_MODULE_5__["default"]
+    NaverMap: _Components_NaverMap_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
+    JetDialogModal: _Jetstream_DialogModal__WEBPACK_IMPORTED_MODULE_6__["default"],
+    JetDangerButton: _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_7__["default"]
   },
   props: ["localCovidData", "page", "search", "searchWay", "lat", "lng", "areaCode", "sigunguCode", "cat1", "cat2", "cat3"],
   data: function data() {
@@ -23235,7 +23241,10 @@ var AREA_CODE = {
       largeCategorys: [],
       mediumCategorys: [],
       smallCategorys: [],
-      loading: true
+      loading: true,
+      //로딩 여부
+      showCategoryModal: false //모달 표시여부
+
     };
   },
   methods: {
@@ -28893,102 +28902,11 @@ var _hoisted_2 = {
 var _hoisted_3 = {
   "class": "mb-2"
 };
-
-var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("hr", null, null, -1
-/* HOISTED */
-);
-
-var _hoisted_5 = {
-  "class": "my-2"
-};
-
-var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
-  "class": "mx-2"
-}, "시도:", -1
-/* HOISTED */
-);
-
-var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
-  value: "",
-  selected: ""
-}, "-- 선택 없음 --", -1
-/* HOISTED */
-);
-
-var _hoisted_8 = ["value"];
-
-var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
-  "class": "mx-2"
-}, "시군구:", -1
-/* HOISTED */
-);
-
-var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
-  value: "",
-  selected: ""
-}, "-- 선택 없음 --", -1
-/* HOISTED */
-);
-
-var _hoisted_11 = ["value"];
-
-var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("hr", null, null, -1
-/* HOISTED */
-);
-
-var _hoisted_13 = {
-  "class": "mt-2"
-};
-
-var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
-  "class": "mx-2"
-}, "대분류:", -1
-/* HOISTED */
-);
-
-var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
-  value: "",
-  selected: ""
-}, "-- 선택 없음 --", -1
-/* HOISTED */
-);
-
-var _hoisted_16 = ["value"];
-
-var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
-  "class": "mx-2"
-}, "중분류:", -1
-/* HOISTED */
-);
-
-var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
-  value: "",
-  selected: ""
-}, "-- 선택 없음 --", -1
-/* HOISTED */
-);
-
-var _hoisted_19 = ["value"];
-
-var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
-  "class": "mx-2"
-}, "소분류:", -1
-/* HOISTED */
-);
-
-var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
-  value: "",
-  selected: ""
-}, "-- 선택 없음 --", -1
-/* HOISTED */
-);
-
-var _hoisted_22 = ["value"];
-var _hoisted_23 = {
+var _hoisted_4 = {
   "class": "pt-2 relative mx-auto text-gray-600"
 };
 
-var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
   "class": "text-gray-600 h-4 w-4 fill-current",
   xmlns: "http://www.w3.org/2000/svg",
   "xmlns:xlink": "http://www.w3.org/1999/xlink",
@@ -29009,18 +28927,18 @@ var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 /* HOISTED */
 );
 
-var _hoisted_25 = [_hoisted_24];
-var _hoisted_26 = {
+var _hoisted_6 = [_hoisted_5];
+var _hoisted_7 = {
   "class": "mt-6 grid md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8"
 };
-var _hoisted_27 = {
+var _hoisted_8 = {
   "class": "flex justify-center py-5"
 };
-var _hoisted_28 = {
+var _hoisted_9 = {
   "class": "flex justify-center py-8"
 };
 
-var _hoisted_29 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   "class": "border border-black text-black block rounded-sm font-bold py-4 px-6 mr-2 flex items-center hover:bg-black hover:text-white"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
   "class": "h-5 w-5 mr-2 fill-current",
@@ -29042,7 +28960,7 @@ var _hoisted_29 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 /* HOISTED */
 );
 
-var _hoisted_30 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   "class": "border border-black text-black block rounded-sm font-bold py-4 px-6 ml-2 flex items-center hover:bg-black hover:text-white"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Next page "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
   "class": "h-5 w-5 ml-2 fill-current",
@@ -29064,6 +28982,118 @@ var _hoisted_30 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 /* HOISTED */
 );
 
+var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 카테고리 ");
+
+var _hoisted_13 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "text-md font-semibold"
+}, "지역", -1
+/* HOISTED */
+);
+
+var _hoisted_14 = {
+  "class": "my-2"
+};
+
+var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "class": "mx-2"
+}, "시도:", -1
+/* HOISTED */
+);
+
+var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+  value: "",
+  selected: ""
+}, "-- 선택 없음 --", -1
+/* HOISTED */
+);
+
+var _hoisted_17 = ["value"];
+var _hoisted_18 = {
+  "class": "my-2"
+};
+
+var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "class": "mx-2"
+}, "시군구:", -1
+/* HOISTED */
+);
+
+var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+  value: "",
+  selected: ""
+}, "-- 선택 없음 --", -1
+/* HOISTED */
+);
+
+var _hoisted_21 = ["value"];
+
+var _hoisted_22 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("hr", null, null, -1
+/* HOISTED */
+);
+
+var _hoisted_23 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "text-md font-semibold mt-5"
+}, "분류", -1
+/* HOISTED */
+);
+
+var _hoisted_24 = {
+  "class": "mt-2"
+};
+
+var _hoisted_25 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "class": "mx-2"
+}, "대분류:", -1
+/* HOISTED */
+);
+
+var _hoisted_26 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+  value: "",
+  selected: ""
+}, "-- 선택 없음 --", -1
+/* HOISTED */
+);
+
+var _hoisted_27 = ["value"];
+var _hoisted_28 = {
+  "class": "mt-2"
+};
+
+var _hoisted_29 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "class": "mx-2"
+}, "중분류:", -1
+/* HOISTED */
+);
+
+var _hoisted_30 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+  value: "",
+  selected: ""
+}, "-- 선택 없음 --", -1
+/* HOISTED */
+);
+
+var _hoisted_31 = ["value"];
+var _hoisted_32 = {
+  "class": "mt-2"
+};
+
+var _hoisted_33 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "class": "mx-2"
+}, "소분류:", -1
+/* HOISTED */
+);
+
+var _hoisted_34 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+  value: "",
+  selected: ""
+}, "-- 선택 없음 --", -1
+/* HOISTED */
+);
+
+var _hoisted_35 = ["value"];
+
+var _hoisted_36 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("닫기");
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_naver_map = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("naver-map");
 
@@ -29072,6 +29102,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_pulse_loader = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("pulse-loader");
 
   var _component_Link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Link");
+
+  var _component_jet_danger_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("jet-danger-button");
+
+  var _component_jet_dialog_modal = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("jet-dialog-modal");
 
   var _component_app_layout = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("app-layout");
 
@@ -29083,112 +29117,34 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         onClick: _cache[0] || (_cache[0] = function () {
           return $options.onClickNearButton && $options.onClickNearButton.apply($options, arguments);
         }),
-        "class": "px-4 py-2 rounded-md font-semibold text-sm font-medium border-0 focus:outline-none focus:ring transition text-black-600 bg-purple-50 hover:text-black-800 hover:bg-purple-100 active:bg-purple-200 focus:ring-purple-300",
+        "class": "px-4 py-2 rounded-md font-semibold text-sm font-medium border-0 focus:outline-none focus:ring transition text-black-600 bg-blue-50 hover:text-black-800 hover:bg-purple-100 active:bg-purple-200 focus:ring-purple-300",
         type: "submit"
-      }, " 주변 관광지 보기 ")]), _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
-        "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
-          return $data.selectedAreaCode = $event;
+      }, " 주변 관광지 보기 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+        onClick: _cache[1] || (_cache[1] = function ($event) {
+          return $data.showCategoryModal = true;
         }),
-        onChange: _cache[2] || (_cache[2] = function () {
-          return $options.onChangeAreaCode && $options.onChangeAreaCode.apply($options, arguments);
-        })
-      }, [_hoisted_7, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.areas, function (area) {
-        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
-          value: area.code,
-          key: area.rnum
-        }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(area.name), 9
-        /* TEXT, PROPS */
-        , _hoisted_8);
-      }), 128
-      /* KEYED_FRAGMENT */
-      ))], 544
-      /* HYDRATE_EVENTS, NEED_PATCH */
-      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.selectedAreaCode]]), _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
-        "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
-          return $data.selectedSigunguCode = $event;
-        })
-      }, [_hoisted_10, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.sigungus, function (sigungu) {
-        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
-          value: sigungu.code,
-          key: sigungu.rnum
-        }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(sigungu.name), 9
-        /* TEXT, PROPS */
-        , _hoisted_11);
-      }), 128
-      /* KEYED_FRAGMENT */
-      ))], 512
-      /* NEED_PATCH */
-      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.selectedSigunguCode]])]), _hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [_hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
-        "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
-          return $data.selectedLargeCategoryCode = $event;
-        }),
-        onChange: _cache[5] || (_cache[5] = function () {
-          return $options.onChangeLargeCategoryCode && $options.onChangeLargeCategoryCode.apply($options, arguments);
-        })
-      }, [_hoisted_15, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.largeCategorys, function (category) {
-        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
-          value: category.code,
-          key: category.rnum
-        }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(category.name), 9
-        /* TEXT, PROPS */
-        , _hoisted_16);
-      }), 128
-      /* KEYED_FRAGMENT */
-      ))], 544
-      /* HYDRATE_EVENTS, NEED_PATCH */
-      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.selectedLargeCategoryCode]]), _hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
-        "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
-          return $data.selectedMediumCategoryCode = $event;
-        }),
-        onChange: _cache[7] || (_cache[7] = function () {
-          return $options.onChangeMediumCategoryCode && $options.onChangeMediumCategoryCode.apply($options, arguments);
-        })
-      }, [_hoisted_18, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.mediumCategorys, function (category) {
-        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
-          value: category.code,
-          key: category.rnum
-        }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(category.name), 9
-        /* TEXT, PROPS */
-        , _hoisted_19);
-      }), 128
-      /* KEYED_FRAGMENT */
-      ))], 544
-      /* HYDRATE_EVENTS, NEED_PATCH */
-      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.selectedMediumCategoryCode]]), _hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
-        "onUpdate:modelValue": _cache[8] || (_cache[8] = function ($event) {
-          return $data.selectedSmallCategoryCode = $event;
-        })
-      }, [_hoisted_21, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.smallCategorys, function (category) {
-        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
-          value: category.code,
-          key: category.rnum
-        }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(category.name), 9
-        /* TEXT, PROPS */
-        , _hoisted_22);
-      }), 128
-      /* KEYED_FRAGMENT */
-      ))], 512
-      /* NEED_PATCH */
-      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.selectedSmallCategoryCode]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        "class": "ml-4 px-4 py-2 rounded-md font-semibold text-sm font-medium border-0 focus:outline-none focus:ring transition text-black-600 bg-purple-50 hover:text-black-800 hover:bg-purple-100 active:bg-purple-200 focus:ring-purple-300",
+        type: "submit"
+      }, " 카테고리 선택 ")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
         "class": "border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-base focus:outline-none w-full",
         type: "search",
         name: "search",
         placeholder: "Search",
-        "onUpdate:modelValue": _cache[9] || (_cache[9] = function ($event) {
+        "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
           return $data.searchInput = $event;
         }),
         required: "",
-        onKeyup: _cache[10] || (_cache[10] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withKeys)(function () {
+        onKeyup: _cache[3] || (_cache[3] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withKeys)(function () {
           return $options.searchTravelSpots && $options.searchTravelSpots.apply($options, arguments);
         }, ["enter"]))
       }, null, 544
       /* HYDRATE_EVENTS, NEED_PATCH */
       ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.searchInput]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
         "class": "absolute right-0 top-0 mt-5 mr-4",
-        onClick: _cache[11] || (_cache[11] = function () {
+        onClick: _cache[4] || (_cache[4] = function () {
           return $options.searchTravelSpots && $options.searchTravelSpots.apply($options, arguments);
         })
-      }, _hoisted_25)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 지도 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_naver_map, {
+      }, _hoisted_6)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 지도 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_naver_map, {
         travelSpots: $data.travelSpots,
         searchWay: $props.searchWay,
         lat: $props.lat,
@@ -29196,7 +29152,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         localCovidData: $props.localCovidData
       }, null, 8
       /* PROPS */
-      , ["travelSpots", "searchWay", "lat", "lng", "localCovidData"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 여행지 목록 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_26, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.travelSpots, function (travelSpot) {
+      , ["travelSpots", "searchWay", "lat", "lng", "localCovidData"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 여행지 목록 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.travelSpots, function (travelSpot) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_travel_spot_card, {
           key: travelSpot.contentid,
           travelSpot: travelSpot,
@@ -29207,17 +29163,17 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         , ["travelSpot", "newDefCnt", "onOnClickTravelSpot"]);
       }), 128
       /* KEYED_FRAGMENT */
-      ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 로딩 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_27, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_pulse_loader, {
+      ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 로딩 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_pulse_loader, {
         loading: $data.loading
       }, null, 8
       /* PROPS */
-      , ["loading"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_28, [$props.page > 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Link, {
+      , ["loading"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [$props.page > 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Link, {
         key: 0,
         href: "/travel?searchWay=".concat($props.searchWay, "&page=").concat(Number($props.page) - 1).concat($options.addPresentValueToQueryString()),
         "preserve-scroll": ""
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_29];
+          return [_hoisted_10];
         }),
         _: 1
         /* STABLE */
@@ -29230,14 +29186,129 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         "preserve-scroll": ""
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_30];
+          return [_hoisted_11];
         }),
         _: 1
         /* STABLE */
 
       }, 8
       /* PROPS */
-      , ["href"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])])];
+      , ["href"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 카테고리 선택 모달 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_dialog_modal, {
+        show: $data.showCategoryModal,
+        onClose: _cache[14] || (_cache[14] = function ($event) {
+          return $data.showCategoryModal = false;
+        })
+      }, {
+        title: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [_hoisted_12];
+        }),
+        content: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [_hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [_hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+            "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
+              return $data.selectedAreaCode = $event;
+            }),
+            onChange: _cache[6] || (_cache[6] = function () {
+              return $options.onChangeAreaCode && $options.onChangeAreaCode.apply($options, arguments);
+            })
+          }, [_hoisted_16, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.areas, function (area) {
+            return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
+              value: area.code,
+              key: area.rnum
+            }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(area.name), 9
+            /* TEXT, PROPS */
+            , _hoisted_17);
+          }), 128
+          /* KEYED_FRAGMENT */
+          ))], 544
+          /* HYDRATE_EVENTS, NEED_PATCH */
+          ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.selectedAreaCode]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [_hoisted_19, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+            "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
+              return $data.selectedSigunguCode = $event;
+            })
+          }, [_hoisted_20, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.sigungus, function (sigungu) {
+            return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
+              value: sigungu.code,
+              key: sigungu.rnum
+            }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(sigungu.name), 9
+            /* TEXT, PROPS */
+            , _hoisted_21);
+          }), 128
+          /* KEYED_FRAGMENT */
+          ))], 512
+          /* NEED_PATCH */
+          ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.selectedSigunguCode]])]), _hoisted_22, _hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_24, [_hoisted_25, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+            "onUpdate:modelValue": _cache[8] || (_cache[8] = function ($event) {
+              return $data.selectedLargeCategoryCode = $event;
+            }),
+            onChange: _cache[9] || (_cache[9] = function () {
+              return $options.onChangeLargeCategoryCode && $options.onChangeLargeCategoryCode.apply($options, arguments);
+            })
+          }, [_hoisted_26, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.largeCategorys, function (category) {
+            return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
+              value: category.code,
+              key: category.rnum
+            }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(category.name), 9
+            /* TEXT, PROPS */
+            , _hoisted_27);
+          }), 128
+          /* KEYED_FRAGMENT */
+          ))], 544
+          /* HYDRATE_EVENTS, NEED_PATCH */
+          ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.selectedLargeCategoryCode]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_28, [_hoisted_29, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+            "onUpdate:modelValue": _cache[10] || (_cache[10] = function ($event) {
+              return $data.selectedMediumCategoryCode = $event;
+            }),
+            onChange: _cache[11] || (_cache[11] = function () {
+              return $options.onChangeMediumCategoryCode && $options.onChangeMediumCategoryCode.apply($options, arguments);
+            })
+          }, [_hoisted_30, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.mediumCategorys, function (category) {
+            return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
+              value: category.code,
+              key: category.rnum
+            }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(category.name), 9
+            /* TEXT, PROPS */
+            , _hoisted_31);
+          }), 128
+          /* KEYED_FRAGMENT */
+          ))], 544
+          /* HYDRATE_EVENTS, NEED_PATCH */
+          ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.selectedMediumCategoryCode]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_32, [_hoisted_33, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+            "onUpdate:modelValue": _cache[12] || (_cache[12] = function ($event) {
+              return $data.selectedSmallCategoryCode = $event;
+            })
+          }, [_hoisted_34, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.smallCategorys, function (category) {
+            return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
+              value: category.code,
+              key: category.rnum
+            }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(category.name), 9
+            /* TEXT, PROPS */
+            , _hoisted_35);
+          }), 128
+          /* KEYED_FRAGMENT */
+          ))], 512
+          /* NEED_PATCH */
+          ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.selectedSmallCategoryCode]])])];
+        }),
+        footer: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_danger_button, {
+            onClick: _cache[13] || (_cache[13] = function ($event) {
+              return $data.showCategoryModal = false;
+            })
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [_hoisted_36];
+            }),
+            _: 1
+            /* STABLE */
+
+          })];
+        }),
+        _: 1
+        /* STABLE */
+
+      }, 8
+      /* PROPS */
+      , ["show"])];
     }),
     _: 1
     /* STABLE */
