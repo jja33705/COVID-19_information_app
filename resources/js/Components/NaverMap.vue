@@ -926,8 +926,9 @@ export default {
         //         }
         //     }
         // },
-        travelSpots: function (newTravelSpots) {
-            console.log('불림');
+        travelSpots: function (newTravelSpots, travelSpots) {
+            console.log('마커 그리기 불림', this.markers, newTravelSpots, travelSpots);
+			this.markers = [];
             newTravelSpots.map((v) => { //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시
 
                 const markerContent = [

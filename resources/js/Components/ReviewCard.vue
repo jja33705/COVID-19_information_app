@@ -1,11 +1,11 @@
 <template>
     <div class="bg-white">
         <div class="shadow-lg hover:shadow-xl">
+            <Link :href="`/review/${review.id}`">
             <img class="w-full h-72 sm:h-60 lg:h-48 object-cover bg-gray-200" :src="review.image ? `/storage/images/${review.image}` : '/storage/images/no_image.png'" />
+            </Link>
             <div class="px-4 py-2">
-                <Link :href="`/review/${review.id}`">
-                    <h1 class="text-xl font-gray-700 font-bold truncate ... mb-1">{{ review.title }}</h1>
-                </Link>
+                <h1 class="text-xl font-gray-700 font-bold truncate ... mb-1">{{ review.title }}</h1>
                 <p class="text-sm tracking-normal mb-1 font-gray-600">{{ review.place }}</p>
                 <p class="text-sm tracking-normal font-semibold">{{ review.user.name }}</p>
             </div>
@@ -29,11 +29,6 @@ export default {
         Hashtag,
         Link,
     },
-    methods: {
-        hashtagWheelEvent(e) { //해쉬태그칸 가로로 스크롤
-            document.querySelector(`.hashtag-${this.review.id}`).scrollLeft += e.deltaY;
-        }
-    }
 };
 </script>
 

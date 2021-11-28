@@ -88,7 +88,7 @@ export default ({
         const ctx = 'newDefCntChart';
         const newDefCntChartData = [];
         const newDefCntChartLabels = [];
-        [...this.totalData].reverse().map((value) => {
+        [...this.totalData].map((value) => {
             newDefCntChartData.push(value.localOccCnt + value.overFlowCnt);
             newDefCntChartLabels.push(value.stdDay.slice(-5));
         });

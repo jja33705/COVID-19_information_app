@@ -56,14 +56,14 @@
                             </div>
                             <template v-else>
                             <Link
-                                :href="route('login')"
+                                :href="'/login'"
                                 class="text-sm text-gray-700 underline"
                             >
                                 Log in
                             </Link>
 
                             <Link
-                                :href="route('register')"
+                                :href="'/register'"
                                 class="ml-4 text-sm text-gray-700 underline"
                             >
                                 Register

@@ -12,12 +12,18 @@
                         <a v-if="imageIndex < images.length - 1" class="absolute right-0 inset-y-0 flex items-center px-4 text-white hover:text-gray-800 cursor-pointer text-3xl font-extrabold" @click="onClickRightImage">❯</a>
                     </div>
                 </section>
-
+                <div class="text-2xl font-semibold mt-8">지역 신규 확진자</div>
+                <hr />
+                <canvas id="areaNewDefCntChart" class="w-full"></canvas>
+                <div class="text-2xl font-semibold mt-8">위치</div>
+                <hr />
                 <naver-map :travelSpots="[travelSpot]" :localCovidData="localCovidData" />
                 <div class="my-3">
                     <span>주소: {{ travelSpot.addr1 }}</span>
                     <span>{{ travelSpot.addr2 }}</span>
                 </div>
+                <div class="text-2xl font-semibold mt-8">상세정보</div>
+                <hr />
                 <div class="my-3" v-if="travelSpot.homepage">
                     <span>홈페이지: </span>
                     <span v-html="travelSpot.homepage"></span>
@@ -50,12 +56,14 @@
 
 
 <script>
+
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Link } from "@inertiajs/inertia-vue3";
 import NaverMap from '@/Components/NaverMap';
 import ReviewCard from '@/Components/ReviewCard.vue';
+import Chart from 'chart.js/auto';
 export default {
-    props: ['contentId', 'localCovidData', 'reviews', 'reviewCount'],
+    props: ['contentId', 'localCovidData', 'reviews', 'reviewCount', 'areaCovidData', 'gubun'],
     components: {
         AppLayout,
         Link,
@@ -84,6 +92,7 @@ export default {
         },
     },
     mounted() {
+        console.log('마운트 됨');
         //이미지 불러오기
         axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/images?id=${this.contentId}`)
         .then((res) => {
@@ -108,6 +117,34 @@ export default {
         })
         .catch((err) => {
             console.log(err);
+        });
+
+        // 최근 신규 확진자 차트를 그린다.
+        const ctx = 'areaNewDefCntChart';
+        const areaNewDefCntChartData = [];
+        const areaNewDefCntChartLabels = [];
+        [...this.areaCovidData].map((value) => {
+            areaNewDefCntChartData.push(value.newDefCnt);
+            areaNewDefCntChartLabels.push(value.stdDay.slice(-5));
+        });
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: areaNewDefCntChartLabels,
+                datasets: [{
+                    label: `${this.gubun} 신규 확진자`,
+                    data: areaNewDefCntChartData,
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    borderColor: 'rgb(255, 99, 132)',
+                }],
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    },
+                },
+            },
         });
     }
 };

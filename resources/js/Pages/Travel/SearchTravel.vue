@@ -483,8 +483,11 @@ export default {
 
         onClickTravelSpot(id) {
             console.log('불림', id);
+            const travelSpot = this.travelSpots.find((travelSpot) => {
+                return travelSpot.contentid === id;
+            });
             this.$inertia.get(
-                `/travel/${id}`, { preserveScroll: true }
+                `/travel/${id}?gubun=${AREA_CODE[travelSpot.areacode]}`, { preserveScroll: true }
             );
         },
         async initializeData() {
