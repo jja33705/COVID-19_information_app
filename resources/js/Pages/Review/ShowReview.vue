@@ -29,9 +29,8 @@
                         <div class="text-red-500" v-if="errors.contents">{{ errors.contents }}</div>
                         <button type="submit" class="font-bold py-2 px-4 w-full bg-green-400 text-lg text-white shadow-md rounded-lg ">댓글 작성 </button>
                     </form>
-                    
-
-                    <Comment class="pt-4" v-for="comment in comments" :key="comment.id" :comment="comment" @on-delete-comment="onDeleteComment" @on-update-comment="onUpdateComment" :errors="errors"/>
+                    <Comment v-for="comment in comments" :key="comment.id" :comment="comment" @on-delete-comment="onDeleteComment" @on-update-comment="onUpdateComment" @on-submit-reply="onSubmitReply" />
+                    <div class="text-red-500" v-if="errors.updateContents">{{ errors.updateContents }}</div>
                 </div>
             </div>
         </div>
@@ -72,16 +71,24 @@ export default {
         dateFormat(date) {
             return dayjs(date).format('YYYY년 MM월 DD일 HH:mm:ss');
         },
-        onSubmitComment() {
+        onSubmitComment() {  //댓글 작성
             this.form.post(`/comment/${this.review.id}`, { preserveScroll: true });
             this.form.contents = '';
+        },
+        onSubmitReply(parentId, contents) { //답글(대댓글) 작성
+            this.$inertia.post(`/comment/${this.review.id}`, {
+                parentId: parentId,
+                contents: contents,
+            }, {
+                preserveScroll: true,
+            });
         },
         onDeleteComment(id) {
             if(confirm('정말로 삭제하시겠습니까?')) {
                 this.$inertia.delete(`/comment/${id}`, { preserveScroll: true });
             }
         },
-        onUpdateComment({ id, updateContents }) {
+        onUpdateComment(id, updateContents) {
             this.$inertia.patch(`/comment/${id}`, { updateContents: updateContents }, { preserveScroll: true });
         },
     },

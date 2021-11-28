@@ -18,7 +18,13 @@ class CreateCommentsTable extends Migration
             $table->foreignId('review_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->text('contents');
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->unsignedBigInteger('seq')->default(1);
             $table->timestamps();
+        });
+
+        Schema::table('comments', function (Blueprint $table) {
+            $table->foreign('parent_id')->references('id')->on('comments')->onDelete('cascade');
         });
     }
 

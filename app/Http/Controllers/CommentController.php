@@ -19,6 +19,9 @@ class CommentController extends Controller
         $comment->user_id = auth()->user()->id;
         $comment->contents = $request->contents;
         $comment->review_id = $id;
+        if ($request->parentId) {
+            $comment->parent_id = $request->parentId;
+        }
         $comment->save();
 
         return Redirect::route('review.show', [

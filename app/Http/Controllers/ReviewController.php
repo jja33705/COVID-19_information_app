@@ -45,7 +45,7 @@ class ReviewController extends Controller
         $review->save();
         return Inertia::render('Review/ShowReview', [
             'review' => $review,
-            'comments' => Comment::where('review_id', $review->id)->latest()->get(),
+            'comments' => Comment::where('review_id', $review->id)->whereNull('parent_id')->orderBy('created_at', 'asc')->with('replies')->get(),
         ]);
     }
 
