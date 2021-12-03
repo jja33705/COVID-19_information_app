@@ -832,9 +832,17 @@ export default {
             tooltip.appendTo(this.map.getPanes().floatPane);
 
             this.map.data.setStyle((feature) => {
+				console.log(feature);
+				console.log(feature.getProperty('CTP_KOR_NM'));
+				const regionData = this.localCovidData.find((e) => {
+					if (feature.getProperty('CTP_KOR_NM') === e.gubun) {
+                        return true;
+                    }
+				})
+				console.log();
                 const styleOptions = {
                     fillColor: '#0000ff',
-                    fillOpacity: 0,
+                    fillOpacity: regionData['newDefCnt'] / 500,
                     strokeColor: '#000000',
                     strokeWeight: 0,
                     strokeOpacity: 0,

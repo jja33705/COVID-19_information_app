@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="bg-white rounded-lg p-3  flex flex-col justify-center items-center md:items-start shadow-lg mt-4 bg-white" v-if="!updating">
+        <div class="bg-white rounded-lg p-3 flex flex-col justify-center border-dotted border border-gray-400 md:items-start shadow-lg bg-white" v-if="!updating">
             <div>
                 <div class="flex">
                     <span class="text-black font-semibold text-lg text-left ">{{ comment.user.name }}</span>

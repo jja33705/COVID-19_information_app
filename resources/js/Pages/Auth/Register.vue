@@ -42,7 +42,7 @@
             </div>
 
             <div class="flex items-center justify-end mt-4">
-                <Link :href="`/login`" class="underline text-sm text-gray-600 hover:text-gray-900">
+                <Link :href="route('login')" class="underline text-sm text-gray-600 hover:text-gray-900">
                     Already registered?
                 </Link>
 
@@ -92,7 +92,7 @@
 
         methods: {
             submit() {
-                this.form.post('/register', {
+                this.form.post(this.route('register'), {
                     onFinish: () => this.form.reset('password', 'password_confirmation'),
                 })
             }

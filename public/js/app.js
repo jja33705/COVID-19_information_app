@@ -20588,9 +20588,19 @@ var regionGeoJson = [{
       var tooltip = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div style="position:absolute;z-index:1000;padding:5px 10px;background-color:#fff;border:solid 2px #000;font-size:14px;pointer-events:none;display:none;"></div>');
       tooltip.appendTo(this.map.getPanes().floatPane);
       this.map.data.setStyle(function (feature) {
+        console.log(feature);
+        console.log(feature.getProperty('CTP_KOR_NM'));
+
+        var regionData = _this2.localCovidData.find(function (e) {
+          if (feature.getProperty('CTP_KOR_NM') === e.gubun) {
+            return true;
+          }
+        });
+
+        console.log();
         var styleOptions = {
           fillColor: '#0000ff',
-          fillOpacity: 0,
+          fillOpacity: regionData['newDefCnt'] / 500,
           strokeColor: '#000000',
           strokeWeight: 0,
           strokeOpacity: 0
@@ -21999,7 +22009,7 @@ __webpack_require__.r(__webpack_exports__);
     submit: function submit() {
       var _this = this;
 
-      this.form.post('/register', {
+      this.form.post(this.route('register'), {
         onFinish: function onFinish() {
           return _this.form.reset('password', 'password_confirmation');
         }
@@ -22177,7 +22187,8 @@ __webpack_require__.r(__webpack_exports__);
     Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_4__.Link
   },
   props: {
-    status: String
+    status: String,
+    message: String
   },
   data: function data() {
     return {
@@ -23777,7 +23788,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var _hoisted_1 = {
   key: 0,
-  "class": "bg-white rounded-lg p-3 flex flex-col justify-center items-center md:items-start shadow-lg mt-4 bg-white"
+  "class": "bg-white rounded-lg p-3 flex flex-col justify-center border-dotted border border-gray-400 md:items-start shadow-lg bg-white"
 };
 var _hoisted_2 = {
   "class": "flex"
@@ -23987,7 +23998,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var _hoisted_1 = {
   key: 0,
-  "class": "bg-white rounded-lg p-3 flex flex-col justify-center items-center md:items-start shadow-lg pl-8 bg-gray-100"
+  "class": "bg-white rounded-lg p-3 flex flex-col border-dotted border border-gray-400 justify-center items-start shadow-lg pl-8 bg-gray-100"
 };
 var _hoisted_2 = {
   "class": "flex"
@@ -24111,25 +24122,8 @@ var _hoisted_8 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_9 = {
-  "class": "px-5 py-3"
-};
-
-var _hoisted_10 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", {
-    "class": "font-bold text-xs"
-  }, "TAGS", -1
-  /* HOISTED */
-  );
-});
-
-var _hoisted_11 = {
-  "class": "my-2 flex -m-1 flex-wrap"
-};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Link");
-
-  var _component_hashtag = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("hashtag");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
     href: "/review/".concat($props.review.id)
@@ -24153,16 +24147,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* TEXT */
   ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.review.user.name), 1
   /* TEXT */
-  )]), _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [_hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.review.hashtags, function (hashtag) {
-    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_hashtag, {
-      key: hashtag.id,
-      hashtag: hashtag
-    }, null, 8
-    /* PROPS */
-    , ["hashtag"]);
-  }), 128
-  /* KEYED_FRAGMENT */
-  ))])])])]);
+  )]), _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <div class='px-5 py-3'>\r\n                <h3 class=\"font-bold text-xs\">TAGS</h3>\r\n                <div class=\"my-2 flex -m-1 flex-wrap\">\r\n                    <hashtag v-for=\"hashtag in review.hashtags\" :key=\"hashtag.id\" :hashtag=\"hashtag\" />\r\n                </div>\r\n            </div> ")])]);
 }
 
 /***/ }),
@@ -26581,7 +26566,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         /* STABLE */
 
       })])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
-        href: "/login",
+        href: _ctx.route('login'),
         "class": "underline text-sm text-gray-600 hover:text-gray-900"
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -26590,7 +26575,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         _: 1
         /* STABLE */
 
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_button, {
+      }, 8
+      /* PROPS */
+      , ["href"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_button, {
         "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["ml-4", {
           'opacity-25': _ctx.form.processing
         }]),
@@ -26913,15 +26900,19 @@ var _hoisted_1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 
 var _hoisted_2 = {
   key: 0,
-  "class": "mb-4 font-medium text-sm text-green-600"
+  "class": "text-red-500"
 };
 var _hoisted_3 = {
+  key: 1,
+  "class": "mb-4 font-medium text-sm text-green-600"
+};
+var _hoisted_4 = {
   "class": "mt-4 flex items-center justify-between"
 };
 
-var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Resend Verification Email ");
+var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Resend Verification Email ");
 
-var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Log Out");
+var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Log Out");
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Head = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Head");
@@ -26941,18 +26932,20 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_authentication_card_logo)];
     }),
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_1, _ctx.verificationLinkSent ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_2, " A new verification link has been sent to the email address you provided during registration. ")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
+      return [_hoisted_1, _ctx.message ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("i", _hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.message), 1
+      /* TEXT */
+      )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.verificationLinkSent ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_3, " A new verification link has been sent to the email address you provided during registration. ")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
         onSubmit: _cache[0] || (_cache[0] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
           return _ctx.submit && _ctx.submit.apply(_ctx, arguments);
         }, ["prevent"]))
-      }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_button, {
+      }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_button, {
         "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)({
           'opacity-25': _ctx.form.processing
         }),
         disabled: _ctx.form.processing
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_4];
+          return [_hoisted_5];
         }),
         _: 1
         /* STABLE */
@@ -26966,7 +26959,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         "class": "underline text-sm text-gray-600 hover:text-gray-900"
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [_hoisted_5];
+          return [_hoisted_6];
         }),
         _: 1
         /* STABLE */
@@ -28787,7 +28780,7 @@ var _hoisted_1 = {
   "class": "py-8"
 };
 var _hoisted_2 = {
-  "class": "max-w-7xl mx-auto sm:px-6 lg:px-8"
+  "class": "max-w-5xl mx-auto sm:px-6 lg:px-8"
 };
 var _hoisted_3 = {
   key: 0,

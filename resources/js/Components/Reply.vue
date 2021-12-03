@@ -1,13 +1,13 @@
 <template>
     <div>
-        <div class="bg-white rounded-lg p-3  flex flex-col justify-center items-center md:items-start shadow-lg pl-8 bg-gray-100" v-if="!updating">
+        <div class="bg-white rounded-lg p-3 flex flex-col border-dotted border border-gray-400 justify-center items-start shadow-lg pl-8 bg-gray-100" v-if="!updating">
             <div class="flex">
                 <div class="mr-5">
                     L
                 </div>
                 <div>
                     <div class="flex">
-                        <span class="text-black font-semibold text-lg text-left ">{{ reply.user.name }}</span>
+                        <span class="text-black font-semibold text-lg text-left">{{ reply.user.name }}</span>
                         <span class="ml-3 text-gray-500">{{ dateFormat(reply.updated_at) }}</span>
                         <button v-if="$page.props.user && $page.props.user.id == reply.user.id" @click="onClickUpdate" class="ml-8 text-gray-500 hover:text-black">수정</button>
                         <button v-if="$page.props.user && $page.props.user.id == reply.user.id" @Click="$emit('onDeleteReply', reply.id)" class="ml-1 text-gray-500 hover:text-black">삭제</button>
