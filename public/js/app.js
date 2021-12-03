@@ -20599,8 +20599,8 @@ var regionGeoJson = [{
 
         console.log();
         var styleOptions = {
-          fillColor: '#0000ff',
-          fillOpacity: regionData['newDefCnt'] / 500,
+          fillColor: '#ff0000',
+          fillOpacity: regionData['newDefCnt'] / 5000,
           strokeColor: '#000000',
           strokeWeight: 0,
           strokeOpacity: 0
@@ -20628,7 +20628,6 @@ var regionGeoJson = [{
         }).text(regionText);
 
         _this2.map.data.overrideStyle(feature, {
-          fillOpacity: 0.05,
           strokeWeight: 1,
           strokeOpacity: 0.5
         });

@@ -841,8 +841,8 @@ export default {
 				})
 				console.log();
                 const styleOptions = {
-                    fillColor: '#0000ff',
-                    fillOpacity: regionData['newDefCnt'] / 500,
+                    fillColor: '#ff0000',
+                    fillOpacity: regionData['newDefCnt'] / 5000,
                     strokeColor: '#000000',
                     strokeWeight: 0,
                     strokeOpacity: 0,
@@ -872,7 +872,6 @@ export default {
                 }).text(regionText);
 
                 this.map.data.overrideStyle(feature, {
-                    fillOpacity: 0.05,
                     strokeWeight: 1,
                     strokeOpacity: 0.5,
                 });
