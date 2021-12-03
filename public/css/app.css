@@ -7783,9 +7783,6 @@ select {
 .border-l {
 	border-left-width: 1px;
 }
-.border-solid {
-	border-style: solid;
-}
 .border-dotted {
 	border-style: dotted;
 }

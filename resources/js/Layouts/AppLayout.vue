@@ -74,8 +74,9 @@
                 </div>
             </nav>
             <div class="my-5 flex justify-center">
-                <span class="text-6xl font-bold text-center mr-2">TRAVEL</span>
-                <span class="text-6xl font-bold text-center text-green-500">LIVE</span>
+                <img src="/storage/images/MainLogo.png" style="width" />
+                <!-- <span class="text-6xl font-bold text-center mr-2">TRAVEL</span>
+                <span class="text-6xl font-bold text-center text-green-500">LIVE</span> -->
             </div>
             <nav class="bg-white px-8 pt-2 shadow-md">
                 <div class="-mb-px flex justify-around">
