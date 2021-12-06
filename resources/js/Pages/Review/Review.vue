@@ -48,7 +48,7 @@
                     </button>
                 </div>
 
-                <!-- 장소로 검색할때 -->
+                <!-- 리뷰 더보기 눌렀을때 -->
                 <div v-else>  
                     <div class="flex my-3 justify-center">
                         <div class="text-2xl font-semibold text-green-600">{{ search }}</div>

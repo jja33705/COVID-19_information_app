@@ -73,8 +73,8 @@
                     </div>
                 </div>
             </nav>
-            <div class="my-5 flex justify-center">
-                <img src="/storage/images/MainLogo.png" style="width" />
+            <div class="flex justify-center">
+                <img src="/storage/images/MainLogo.png" />
                 <!-- <span class="text-6xl font-bold text-center mr-2">TRAVEL</span>
                 <span class="text-6xl font-bold text-center text-green-500">LIVE</span> -->
             </div>
