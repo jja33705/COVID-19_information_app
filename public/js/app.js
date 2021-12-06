@@ -22318,23 +22318,23 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     },
     getStdDay: function getStdDay() {
       //기준시간
-      return this.totalData[0].stdDay;
+      return this.totalData[this.totalData.length - 1].stdDay;
     },
     getNewDefCnt: function getNewDefCnt() {
       //신규확진자
-      return this.totalData[0].localOccCnt + this.totalData[0].overFlowCnt;
+      return this.totalData[this.totalData.length - 1].localOccCnt + this.totalData[0].overFlowCnt;
     },
     getDefCnt: function getDefCnt() {
       //확진자
-      return this.totalData[0].defCnt;
+      return this.totalData[this.totalData.length - 1].defCnt;
     },
     getDeathCnt: function getDeathCnt() {
       //사망자
-      return this.totalData[0].deathCnt;
+      return this.totalData[this.totalData.length - 1].deathCnt;
     },
     getIsolClearCnt: function getIsolClearCnt() {
       //격리해제 환자
-      return this.totalData[0].isolClearCnt;
+      return this.totalData[this.totalData.length - 1].isolClearCnt;
     }
   }
 });

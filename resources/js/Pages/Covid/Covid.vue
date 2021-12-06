@@ -140,19 +140,19 @@ export default ({
             return this.localData.slice(((this.localDataPage-1) * 5), ((this.localDataPage-1) * 5) + 5);
         },
         getStdDay() { //기준시간
-            return this.totalData[0].stdDay;
+            return this.totalData[this.totalData.length-1].stdDay;
         },
         getNewDefCnt() { //신규확진자
-            return this.totalData[0].localOccCnt + this.totalData[0].overFlowCnt;
+            return this.totalData[this.totalData.length-1].localOccCnt + this.totalData[0].overFlowCnt;
         },
         getDefCnt() { //확진자
-            return this.totalData[0].defCnt;
+            return this.totalData[this.totalData.length-1].defCnt;
         },
         getDeathCnt() { //사망자
-            return this.totalData[0].deathCnt;
+            return this.totalData[this.totalData.length-1].deathCnt;
         },
         getIsolClearCnt() { //격리해제 환자
-            return this.totalData[0].isolClearCnt;
+            return this.totalData[this.totalData.length-1].isolClearCnt;
         },
     },
 });
