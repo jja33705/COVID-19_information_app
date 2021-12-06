@@ -28,17 +28,16 @@ class ReviewController extends Controller
         $searchWay = $request->searchWay;
         $search = $request->search;
         if ($searchWay == 'keyword') {
-            return Review::where('title', 'like', '%' . $search . '%')->orderByDesc('viewCount')->paginate(9)->withQueryString();
+            return Review::where('title', 'like', '%' . $search . '%')->latest()->paginate(9)->withQueryString();
         } else if ($searchWay == 'hashtag') {
-            return Hashtag::where('contents', $search)->first()->reviews()->orderByDesc('viewCount')->paginate(9)->withQueryString();
+            return Hashtag::where('contents', $search)->first()->reviews()->latest()->paginate(9)->withQueryString();
         } else if ($searchWay == 'place') {
-            return Review::where('place', $search)->orderByDesc('viewCount')->paginate(9)->withQueryString();
+            return Review::where('place', $search)->latest()->paginate(9)->withQueryString();
         }
     }
 
     public function show($id)
     {
-        session(['previous-url' => url()->previous()]);
         $review = Review::find($id);
         $review->viewCount += 1;
         $review->save();
@@ -103,7 +102,6 @@ class ReviewController extends Controller
 
     public function update(Request $request, $id)
     {
-        // dd($request);
         FacadesRequest::validate([
             'title' => ['required', 'max:30'],
             'contents' => ['required', 'max:300'],
@@ -161,6 +159,6 @@ class ReviewController extends Controller
             Storage::disk('public')->delete('/images/' . $review->image);
         }
         $review->delete();
-        return redirect(session('previous-url'));
+        return redirect('/review?searchWay=keyword');
     }
 }

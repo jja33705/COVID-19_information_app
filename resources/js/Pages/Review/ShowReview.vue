@@ -29,7 +29,7 @@
                         <div class="text-red-500" v-if="errors.contents">{{ errors.contents }}</div>
                         <button type="submit" class="font-bold py-2 px-4 w-full bg-green-400 text-lg text-white shadow-md rounded-lg ">댓글 작성 </button>
                     </form>
-                    <Comment v-for="comment in comments" :key="comment.id" :comment="comment" @on-delete-comment="onDeleteComment" @on-update-comment="onUpdateComment" @on-submit-reply="onSubmitReply" />
+                    <Comment v-for="comment in comments" :key="comment.id" :comment="comment" :errors="errors" @on-delete-comment="onDeleteComment" @on-update-comment="onUpdateComment" @on-submit-reply="onSubmitReply" />
                     <div class="text-red-500" v-if="errors.updateContents">{{ errors.updateContents }}</div>
                 </div>
             </div>
@@ -81,6 +81,7 @@ export default {
                 contents: contents,
             }, {
                 preserveScroll: true,
+                errorBag: `comment_${parentId}`,
             });
         },
         onDeleteComment(id) {
@@ -89,7 +90,10 @@ export default {
             }
         },
         onUpdateComment(id, updateContents) {
-            this.$inertia.patch(`/comment/${id}`, { updateContents: updateContents }, { preserveScroll: true });
+            this.$inertia.patch(`/comment/${id}`, { updateContents: updateContents }, { 
+                preserveScroll: true,
+                errorBag: `comment_${id}`,
+            });
         },
     },
 }

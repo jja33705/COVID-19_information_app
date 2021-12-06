@@ -19507,7 +19507,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['comment'],
+  props: ['comment', 'errors'],
   components: {
     Reply: _Components_Reply_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
@@ -20753,7 +20753,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dayjs__WEBPACK_IMPORTED_MODULE_0__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['reply'],
+  props: ['reply', 'errors'],
   data: function data() {
     return {
       updating: false,
@@ -22001,7 +22001,8 @@ __webpack_require__.r(__webpack_exports__);
         password: '',
         password_confirmation: '',
         terms: false
-      })
+      }),
+      googleOAuthImage: "/storage/images/btn_google_signin_dark_normal_web.png"
     };
   },
   methods: {
@@ -22013,6 +22014,18 @@ __webpack_require__.r(__webpack_exports__);
           return _this.form.reset('password', 'password_confirmation');
         }
       });
+    },
+    onMouseDownGoogleOAuthImage: function onMouseDownGoogleOAuthImage() {
+      this.googleOAuthImage = "/storage/images/btn_google_signin_dark_pressed_web.png";
+    },
+    onMouseUpGoogleOAuthImage: function onMouseUpGoogleOAuthImage() {
+      this.googleOAuthImage = "/storage/images/btn_google_signin_dark_normal_web.png";
+    },
+    onMouseOverGoogleOAuthImage: function onMouseOverGoogleOAuthImage() {
+      this.googleOAuthImage = "/storage/images/btn_google_signin_dark_focus_web.png";
+    },
+    onMouseOutGoogleOAuthImage: function onMouseOutGoogleOAuthImage() {
+      this.googleOAuthImage = "/storage/images/btn_google_signin_dark_normal_web.png";
     }
   }
 }));
@@ -22887,7 +22900,8 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       hashtagInput: '',
-      previewImageSrc: ''
+      previewImageSrc: '',
+      hashtagsError: ''
     };
   },
   methods: {
@@ -22896,12 +22910,19 @@ __webpack_require__.r(__webpack_exports__);
       var hashtag = this.hashtagInput.replace(/#/gi, '').trim();
       console.log(hashtag);
 
-      if (this.form.hashtags.includes(hashtag) || !hashtag) {
+      if (this.form.hashtags.includes(hashtag)) {
+        this.hashtagsError = '이미 추가한 해시태그입니다.';
+        return;
+      }
+
+      if (!hashtag) {
+        this.hashtagsError = '한글자 이상 입력해 주세요.';
         return;
       }
 
       this.form.hashtags.push(hashtag);
       this.hashtagInput = '';
+      this.hashtagsError = '';
     },
     onClickDeleteHahtag: function onClickDeleteHahtag(hashtag) {
       //해쉬태그 삭제
@@ -23188,7 +23209,8 @@ __webpack_require__.r(__webpack_exports__);
         parentId: parentId,
         contents: contents
       }, {
-        preserveScroll: true
+        preserveScroll: true,
+        errorBag: "comment_".concat(parentId)
       });
     },
     onDeleteComment: function onDeleteComment(id) {
@@ -23202,7 +23224,8 @@ __webpack_require__.r(__webpack_exports__);
       this.$inertia.patch("/comment/".concat(id), {
         updateContents: updateContents
       }, {
-        preserveScroll: true
+        preserveScroll: true,
+        errorBag: "comment_".concat(id)
       });
     }
   }
@@ -23804,15 +23827,23 @@ var _hoisted_5 = {
   },
   "class": "text-gray-600 text-lg text-left"
 };
+var _hoisted_6 = {
+  key: 0,
+  "class": "text-red-500"
+};
+var _hoisted_7 = {
+  key: 1,
+  "class": "text-red-500"
+};
 
-var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   type: "submit",
   "class": "font-bold py-2 px-4 w-1/2 bg-green-400 text-lg text-white shadow-md rounded-lg"
 }, "수정", -1
 /* HOISTED */
 );
 
-var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   type: "submit",
   "class": "font-bold py-2 px-4 w-1/2 bg-green-400 text-lg text-white shadow-md rounded-lg"
 }, "답글 작성", -1
@@ -23822,7 +23853,7 @@ var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Reply = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Reply");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [!$data.updating ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.comment.user.name), 1
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [!$data.updating ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.comment.user.name), 1
   /* TEXT */
   ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.dateFormat($props.comment.updated_at)), 1
   /* TEXT */
@@ -23846,8 +23877,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "ml-1 text-gray-500 hover:text-black"
   }, "삭제")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.comment.contents), 1
   /* TEXT */
-  )])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 수정이랑 답글 폼 부분 "), $data.updating ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("form", {
-    key: 1,
+  ), $props.errors["comment_".concat($props.comment.id)] ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.errors["comment_".concat($props.comment.id)].updateContents), 1
+  /* TEXT */
+  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $props.errors["comment_".concat($props.comment.id)] ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.errors["comment_".concat($props.comment.id)].contents), 1
+  /* TEXT */
+  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 수정이랑 답글 폼 부분 "), $data.updating ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("form", {
+    key: 2,
     onSubmit: _cache[5] || (_cache[5] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
       return $options.onUpdateComment && $options.onUpdateComment.apply($options, arguments);
     }, ["prevent"]))
@@ -23860,7 +23895,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     rows: "2"
   }, null, 512
   /* NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.updateContents]]), _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.updateContents]]), _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     onClick: _cache[4] || (_cache[4] = function ($event) {
       return $data.updating = false;
     }),
@@ -23868,7 +23903,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, "취소")], 32
   /* HYDRATE_EVENTS */
   )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $data.replying ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("form", {
-    key: 2,
+    key: 3,
     onSubmit: _cache[8] || (_cache[8] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
       return $options.onSubmitReply && $options.onSubmitReply.apply($options, arguments);
     }, ["prevent"]))
@@ -23881,7 +23916,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     rows: "2"
   }, null, 512
   /* NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.replyContents]]), _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.replyContents]]), _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     onClick: _cache[7] || (_cache[7] = function ($event) {
       return $data.replying = false;
     }),
@@ -23892,11 +23927,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Reply, {
       key: reply.id,
       reply: reply,
+      errors: $props.errors,
       onOnUpdateReply: $options.onUpdateReply,
       onOnDeleteReply: $options.onDeleteReply
     }, null, 8
     /* PROPS */
-    , ["reply", "onOnUpdateReply", "onOnDeleteReply"]);
+    , ["reply", "errors", "onOnUpdateReply", "onOnDeleteReply"]);
   }), 128
   /* KEYED_FRAGMENT */
   ))]);
@@ -24024,8 +24060,12 @@ var _hoisted_7 = {
   },
   "class": "text-gray-600 text-lg text-left"
 };
+var _hoisted_8 = {
+  key: 0,
+  "class": "text-red-500"
+};
 
-var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   type: "submit",
   "class": "font-bold py-2 px-4 w-1/2 bg-green-400 text-lg text-white shadow-md rounded-lg"
 }, "수정", -1
@@ -24051,7 +24091,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "ml-1 text-gray-500 hover:text-black"
   }, "삭제")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.reply.contents), 1
   /* TEXT */
-  )])])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 수정이랑 답글 폼 부분 "), $data.updating ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("form", {
+  ), $props.errors["comment_".concat($props.reply.id)] ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.errors["comment_".concat($props.reply.id)].updateContents), 1
+  /* TEXT */
+  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 수정이랑 답글 폼 부분 "), $data.updating ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("form", {
     key: 1,
     onSubmit: _cache[4] || (_cache[4] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
       return $options.onUpdateReply && $options.onUpdateReply.apply($options, arguments);
@@ -24065,7 +24107,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     rows: "2"
   }, null, 512
   /* NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.updateContents]]), _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.updateContents]]), _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     onClick: _cache[3] || (_cache[3] = function ($event) {
       return $data.updating = false;
     }),
@@ -25361,26 +25403,28 @@ var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNo
 
 var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Register ");
 
-var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_18 = {
   "class": "flex justify-center"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+};
+
+var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
   src: "/storage/images/MainLogo.png"
-}), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <span class=\"text-6xl font-bold text-center mr-2\">TRAVEL</span>\r\n                <span class=\"text-6xl font-bold text-center text-green-500\">LIVE</span> ")], -1
+}, null, -1
 /* HOISTED */
 );
 
-var _hoisted_19 = {
+var _hoisted_20 = {
   "class": "bg-white px-8 pt-2 shadow-md"
 };
-var _hoisted_20 = {
+var _hoisted_21 = {
   "class": "-mb-px flex justify-around"
 };
 
-var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 코로나 정보 ");
+var _hoisted_22 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 코로나 정보 ");
 
-var _hoisted_22 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 여행지 검색 ");
+var _hoisted_23 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 여행지 검색 ");
 
-var _hoisted_23 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 후기 ");
+var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 후기 ");
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Head = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Head");
@@ -25478,14 +25522,23 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   })], 64
   /* STABLE_FRAGMENT */
-  ))])])])]), _hoisted_18, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("nav", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_20, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
+  ))])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
+    href: '/'
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [_hoisted_19];
+    }),
+    _: 1
+    /* STABLE */
+
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <span class=\"text-6xl font-bold text-center mr-2\">TRAVEL</span>\r\n                <span class=\"text-6xl font-bold text-center text-green-500\">LIVE</span> ")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("nav", _hoisted_20, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Link, {
     "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["text-gray-600 tracking-wide font-semibold py-3 mr-8 text-xl hover:text-gray-800", {
       'border-b-4': _ctx.$page.url === '/'
     }]),
     href: '/'
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_21];
+      return [_hoisted_22];
     }),
     _: 1
     /* STABLE */
@@ -25499,7 +25552,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     href: '/travel?searchWay=category'
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_22];
+      return [_hoisted_23];
     }),
     _: 1
     /* STABLE */
@@ -25513,7 +25566,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     href: '/review?searchWay=keyword'
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_23];
+      return [_hoisted_24];
     }),
     _: 1
     /* STABLE */
@@ -26400,6 +26453,10 @@ var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNo
 
 var _hoisted_13 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Register ");
 
+var _hoisted_14 = {
+  "class": "flex items-center justify-end mt-4"
+};
+var _hoisted_15 = ["src"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Head = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Head");
 
@@ -26429,7 +26486,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_validation_errors, {
         "class": "mb-4"
       }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", {
-        onSubmit: _cache[5] || (_cache[5] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
+        onSubmit: _cache[9] || (_cache[9] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
           return _ctx.submit && _ctx.submit.apply(_ctx, arguments);
         }, ["prevent"]))
       }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_label, {
@@ -26548,7 +26605,28 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
       }, 8
       /* PROPS */
-      , ["class", "disabled"])])], 32
+      , ["class", "disabled"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+        onMousedown: _cache[5] || (_cache[5] = function () {
+          return _ctx.onMouseDownGoogleOAuthImage && _ctx.onMouseDownGoogleOAuthImage.apply(_ctx, arguments);
+        }),
+        onMouseup: _cache[6] || (_cache[6] = function () {
+          return _ctx.onMouseUpGoogleOAuthImage && _ctx.onMouseUpGoogleOAuthImage.apply(_ctx, arguments);
+        }),
+        onMouseover: _cache[7] || (_cache[7] = function () {
+          return _ctx.onMouseOverGoogleOAuthImage && _ctx.onMouseOverGoogleOAuthImage.apply(_ctx, arguments);
+        }),
+        onMouseout: _cache[8] || (_cache[8] = function () {
+          return _ctx.onMouseOutGoogleOAuthImage && _ctx.onMouseOutGoogleOAuthImage.apply(_ctx, arguments);
+        }),
+        href: "/auth/google"
+      }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+        src: _ctx.googleOAuthImage,
+        alt: "구글 로그인"
+      }, null, 8
+      /* PROPS */
+      , _hoisted_15)], 32
+      /* HYDRATE_EVENTS */
+      )])], 32
       /* HYDRATE_EVENTS */
       )];
     }),
@@ -28333,11 +28411,15 @@ var _hoisted_22 = {
   "class": "my-4 flex"
 };
 var _hoisted_23 = {
+  key: 0,
+  "class": "text-red-500"
+};
+var _hoisted_24 = {
   "class": "ml-2 mr-1 font-bold leading-relaxed truncate max-w-xs px-1"
 };
-var _hoisted_24 = ["onClick"];
+var _hoisted_25 = ["onClick"];
 
-var _hoisted_25 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
+var _hoisted_26 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
   "class": "w-6 h-6 fill-current mx-auto",
   xmlns: "http://www.w3.org/2000/svg",
   viewBox: "0 0 24 24"
@@ -28348,9 +28430,9 @@ var _hoisted_25 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 /* HOISTED */
 );
 
-var _hoisted_26 = [_hoisted_25];
+var _hoisted_27 = [_hoisted_26];
 
-var _hoisted_27 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_28 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "flex items-center justify-center"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "m-3"
@@ -28450,23 +28532,25 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           return $options.onClickAddHashtag && $options.onClickAddHashtag.apply($options, arguments);
         }),
         type: "button"
-      }, "해시태그 추가")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" selections "), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.form.hashtags, function (hashtag) {
+      }, "해시태그 추가")]), $data.hashtagsError ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.hashtagsError), 1
+      /* TEXT */
+      )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" selections "), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.form.hashtags, function (hashtag) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
           "class": "bg-gray-200 inline-flex items-center text-sm rounded mt-2 mr-1 overflow-hidden",
           key: hashtag
-        }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_23, "#" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(hashtag), 1
+        }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_24, "#" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(hashtag), 1
         /* TEXT */
         ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
           "class": "w-6 h-8 inline-block align-middle text-gray-500 bg-gray-300 focus:outline-none",
           onClick: function onClick($event) {
             return $options.onClickDeleteHahtag(hashtag);
           }
-        }, _hoisted_26, 8
+        }, _hoisted_27, 8
         /* PROPS */
-        , _hoisted_24)]);
+        , _hoisted_25)]);
       }), 128
       /* KEYED_FRAGMENT */
-      ))])]), _hoisted_27], 32
+      ))])]), _hoisted_28], 32
       /* HYDRATE_EVENTS */
       )])])])])])])];
     }),
@@ -29011,12 +29095,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Comment, {
           key: comment.id,
           comment: comment,
+          errors: $props.errors,
           onOnDeleteComment: $options.onDeleteComment,
           onOnUpdateComment: $options.onUpdateComment,
           onOnSubmitReply: $options.onSubmitReply
         }, null, 8
         /* PROPS */
-        , ["comment", "onOnDeleteComment", "onOnUpdateComment", "onOnSubmitReply"]);
+        , ["comment", "errors", "onOnDeleteComment", "onOnUpdateComment", "onOnSubmitReply"]);
       }), 128
       /* KEYED_FRAGMENT */
       )), $props.errors.updateContents ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_16, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.errors.updateContents), 1

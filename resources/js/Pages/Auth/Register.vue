@@ -50,6 +50,11 @@
                     Register
                 </jet-button>
             </div>
+            <div class="flex items-center justify-end mt-4">
+                <a @mousedown="onMouseDownGoogleOAuthImage" @mouseup="onMouseUpGoogleOAuthImage" @mouseover="onMouseOverGoogleOAuthImage" @mouseout="onMouseOutGoogleOAuthImage" href="/auth/google">
+                    <img :src="googleOAuthImage" alt="구글 로그인" >
+                </a>
+            </div>
         </form>
     </jet-authentication-card>
 </template>
@@ -86,7 +91,8 @@
                     password: '',
                     password_confirmation: '',
                     terms: false,
-                })
+                }),
+                googleOAuthImage: "/storage/images/btn_google_signin_dark_normal_web.png",
             }
         },
 
@@ -95,6 +101,18 @@
                 this.form.post(this.route('register'), {
                     onFinish: () => this.form.reset('password', 'password_confirmation'),
                 })
+            },
+            onMouseDownGoogleOAuthImage() {
+                this.googleOAuthImage = "/storage/images/btn_google_signin_dark_pressed_web.png";
+            },
+            onMouseUpGoogleOAuthImage() {
+                this.googleOAuthImage = "/storage/images/btn_google_signin_dark_normal_web.png";
+            },
+            onMouseOverGoogleOAuthImage() {
+                this.googleOAuthImage = "/storage/images/btn_google_signin_dark_focus_web.png";
+            },
+            onMouseOutGoogleOAuthImage() {
+                this.googleOAuthImage = "/storage/images/btn_google_signin_dark_normal_web.png";
             }
         }
     })

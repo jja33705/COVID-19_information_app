@@ -53,21 +53,3 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::delete('/comment/{id}', [CommentController::class, 'destroy'])->name('comment.destroy'); //댓글 삭제
     Route::patch('/comment/{id}', [CommentController::class, 'update'])->name('comment.update'); //댓글 수정
 });
-
-// Route::get('/email/verify', function () {
-//     return Inertia::render('Auth/VerifyEmail', [
-//         'message' => Session::get('message'),
-//     ]);
-// })->middleware('auth:sanctum')->name('verification.notice'); //이메일인증 알려줌
-
-// Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-//     $request->fulfill();
-
-//     return Redirect::route('covid.index');
-// })->middleware(['auth:sanctum', 'signed'])->name('verification.verify'); //이메일인증 확인
-
-// Route::post('/email/verification-notification', function (Request $request) {
-//     $request->user()->sendEmailVerificationNotification();
-
-//     return back()->with('message', 'Verification link sent!');
-// })->middleware(['auth:sanctum', 'throttle:6,1'])->name('verification.send');

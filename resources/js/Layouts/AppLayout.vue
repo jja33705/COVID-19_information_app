@@ -74,7 +74,10 @@
                 </div>
             </nav>
             <div class="flex justify-center">
-                <img src="/storage/images/MainLogo.png" />
+                <Link :href="'/'">
+                    <img src="/storage/images/MainLogo.png" />
+                </Link>
+                
                 <!-- <span class="text-6xl font-bold text-center mr-2">TRAVEL</span>
                 <span class="text-6xl font-bold text-center text-green-500">LIVE</span> -->
             </div>

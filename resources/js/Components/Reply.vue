@@ -13,6 +13,7 @@
                         <button v-if="$page.props.user && $page.props.user.id == reply.user.id" @Click="$emit('onDeleteReply', reply.id)" class="ml-1 text-gray-500 hover:text-black">삭제</button>
                     </div>
                     <p style="width: 90%" class="text-gray-600 text-lg text-left">{{ reply.contents }}</p>
+                    <div class="text-red-500" v-if="errors[`comment_${reply.id}`]">{{ errors[`comment_${reply.id}`].updateContents }}</div>
                 </div>
             </div>
         </div>
@@ -29,7 +30,7 @@
 <script>
 import dayjs from 'dayjs';
 export default {
-    props: ['reply'],
+    props: ['reply', 'errors'],
     data() {
         return {
             updating: false,

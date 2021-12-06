@@ -39,6 +39,7 @@
                                                 <input class="rounded-l-lg p-4 border-t mr-0 border-b border-l text-gray-800 border-gray-200 bg-white" placeholder="#없이 입력" v-model="hashtagInput" @keyup.enter="onClickAddHashtag"/>
                                                 <button class="px-8 rounded-r-lg bg-gray-200  text-gray-800 font-bold p-4" @click="onClickAddHashtag" type="button">해시태그 추가</button>
                                             </div>
+                                            <div class="text-red-500" v-if="hashtagsError">{{ hashtagsError }}</div>
                                             <!-- selections -->
                                             <div class="bg-gray-200 inline-flex items-center text-sm rounded mt-2 mr-1 overflow-hidden" v-for="hashtag in form.hashtags" :key="hashtag">
                                                 <span class="ml-2 mr-1 font-bold leading-relaxed truncate max-w-xs px-1">#{{ hashtag }}</span>
@@ -89,17 +90,24 @@ export default {
         return {
             hashtagInput: '',
             previewImageSrc: '',
+            hashtagsError: '',
         }
     },
     methods: {
         onClickAddHashtag() { //해쉬태그 추가
             let hashtag = this.hashtagInput.replace(/#/gi, '').trim();
             console.log(hashtag);
-            if (this.form.hashtags.includes(hashtag) || !hashtag) {
+            if (this.form.hashtags.includes(hashtag)) {
+                this.hashtagsError = '이미 추가한 해시태그입니다.'
+                return;
+            }
+            if (!hashtag) {
+                this.hashtagsError = '한글자 이상 입력해 주세요.'
                 return;
             }
             this.form.hashtags.push(hashtag);
             this.hashtagInput = '';
+            this.hashtagsError = '';
         },
 
         onClickDeleteHahtag(hashtag) { //해쉬태그 삭제
