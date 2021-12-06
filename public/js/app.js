@@ -20588,16 +20588,12 @@ var regionGeoJson = [{
       var tooltip = jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div style="position:absolute;z-index:1000;padding:5px 10px;background-color:#fff;border:solid 2px #000;font-size:14px;pointer-events:none;display:none;"></div>');
       tooltip.appendTo(this.map.getPanes().floatPane);
       this.map.data.setStyle(function (feature) {
-        console.log(feature);
-        console.log(feature.getProperty('CTP_KOR_NM'));
-
         var regionData = _this2.localCovidData.find(function (e) {
           if (feature.getProperty('CTP_KOR_NM') === e.gubun) {
             return true;
           }
         });
 
-        console.log();
         var styleOptions = {
           fillColor: '#ff0000',
           fillOpacity: regionData['newDefCnt'] / 5000,
@@ -20691,7 +20687,6 @@ var regionGeoJson = [{
     travelSpots: function travelSpots(newTravelSpots, _travelSpots) {
       var _this4 = this;
 
-      console.log('마커 그리기 불림', this.markers, newTravelSpots, _travelSpots);
       this.markers = [];
       newTravelSpots.map(function (v) {
         //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시
@@ -22261,9 +22256,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     totalData: Array
   },
   mounted: function mounted() {
-    console.log(this.localData);
-    console.log(this.totalData); // 최근 신규 확진자 차트를 그린다.
-
+    // 최근 신규 확진자 차트를 그린다.
     var ctx = 'newDefCntChart';
     var newDefCntChartData = [];
     var newDefCntChartLabels = [];
@@ -22908,7 +22901,6 @@ __webpack_require__.r(__webpack_exports__);
     onClickAddHashtag: function onClickAddHashtag() {
       //해쉬태그 추가
       var hashtag = this.hashtagInput.replace(/#/gi, '').trim();
-      console.log(hashtag);
 
       if (this.form.hashtags.includes(hashtag)) {
         this.hashtagsError = '이미 추가한 해시태그입니다.';
@@ -22934,7 +22926,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     inputImage: function inputImage(e) {
       if (e.target.files[0]) {
-        console.log(e.target.files[0]);
         this.form.image = e.target.files[0];
         this.previewImageSrc = URL.createObjectURL(e.target.files[0]);
       } else {
@@ -22982,7 +22973,6 @@ __webpack_require__.r(__webpack_exports__);
     onClickAddHashtag: function onClickAddHashtag() {
       //해쉬태그 추가
       var hashtag = this.hashtagInput.replace(/#/gi, '').trim();
-      console.log(hashtag);
 
       if (this.form.hashtags.includes(hashtag) || !hashtag) {
         return;
@@ -22997,7 +22987,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     inputImage: function inputImage(e) {
       if (e.target.files[0]) {
-        console.log(e.target.files[0]);
         this.form.image = e.target.files[0];
         this.previewImageSrc = URL.createObjectURL(e.target.files[0]);
       } else {
@@ -23085,8 +23074,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     getReviews: function getReviews() {
       var _this = this;
 
-      console.log('데이터 불러옴');
-
       if (!this.timer) {
         this.timer = setTimeout(function () {
           //0.5초정도 로딩 표시후 불러옴. 스크롤 이벤트가 연속적으로 발생하므로 쓰로틀링처리 해줌.
@@ -23099,8 +23086,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           }
 
           axios.get(_this.reviews.next_page_url).then(function (res) {
-            console.log(res);
-
             if (res.data.data.length !== 0) {
               res.data.data = [].concat(_toConsumableArray(_this.reviews.data), _toConsumableArray(res.data.data));
               _this.reviews = res.data;
@@ -23139,7 +23124,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     }
   },
   mounted: function mounted() {
-    console.log('마운트 됨');
     this.getReviews();
   }
 });
@@ -23395,7 +23379,6 @@ var AREA_CODE = {
         return;
       } else {
         axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/areas?areaCode=".concat(this.selectedAreaCode)).then(function (res) {
-          console.log(res);
           _this.sigungus = res.data.response.body.items.item;
         })["catch"](function (err) {
           console.log(err);
@@ -23415,7 +23398,6 @@ var AREA_CODE = {
         return;
       } else {
         axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys?cat1=".concat(this.selectedLargeCategoryCode)).then(function (res) {
-          console.log(res);
           _this2.mediumCategorys = res.data.response.body.items.item;
         })["catch"](function (err) {
           console.log(err);
@@ -23432,7 +23414,6 @@ var AREA_CODE = {
         return;
       } else {
         axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys?cat1=".concat(this.selectedLargeCategoryCode, "&cat2=").concat(this.selectedMediumCategoryCode)).then(function (res) {
-          console.log(res);
           _this3.smallCategorys = res.data.response.body.items.item;
         })["catch"](function (err) {
           console.log(err);
@@ -23504,7 +23485,6 @@ var AREA_CODE = {
       return queryString;
     },
     onClickTravelSpot: function onClickTravelSpot(id) {
-      console.log('불림', id);
       var travelSpot = this.travelSpots.find(function (travelSpot) {
         return travelSpot.contentid === id;
       });
@@ -23529,69 +23509,66 @@ var AREA_CODE = {
 
               case 4:
                 areaResponse = _context.sent;
-                console.log(areaResponse);
                 _this4.areas = areaResponse.data.response.body.items.item;
 
                 if (!_this4.areaCode) {
-                  _context.next = 13;
+                  _context.next = 12;
                   break;
                 }
 
-                _context.next = 10;
+                _context.next = 9;
                 return axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/areas?areaCode=".concat(_this4.selectedAreaCode));
 
-              case 10:
+              case 9:
                 sigunguResponse = _context.sent;
                 _this4.sigungus = sigunguResponse.data.response.body.items.item;
                 _this4.selectedSigunguCode = _this4.sigunguCode === null ? '' : _this4.sigunguCode;
 
-              case 13:
-                _context.next = 15;
+              case 12:
+                _context.next = 14;
                 return axios.get('https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys');
 
-              case 15:
+              case 14:
                 largeCategoryResponse = _context.sent;
-                console.log(largeCategoryResponse);
                 _this4.largeCategorys = largeCategoryResponse.data.response.body.items.item;
 
                 if (!_this4.cat1) {
-                  _context.next = 30;
+                  _context.next = 28;
                   break;
                 }
 
-                _context.next = 21;
+                _context.next = 19;
                 return axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys?cat1=".concat(_this4.cat1));
 
-              case 21:
+              case 19:
                 mediumCategoryResponse = _context.sent;
                 _this4.mediumCategorys = mediumCategoryResponse.data.response.body.items.item;
                 _this4.selectedMediumCategoryCode = _this4.cat2 === null ? '' : _this4.cat2;
 
                 if (!_this4.cat2) {
-                  _context.next = 30;
+                  _context.next = 28;
                   break;
                 }
 
-                _context.next = 27;
+                _context.next = 25;
                 return axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys?cat1=".concat(_this4.cat1, "&cat2=").concat(_this4.cat2));
 
-              case 27:
+              case 25:
                 smallCategoryResponse = _context.sent;
                 _this4.smallCategorys = smallCategoryResponse.data.response.body.items.item;
                 _this4.selectedSmallCategoryCode = _this4.cat3 === null ? '' : _this4.cat3;
 
-              case 30:
+              case 28:
                 _context.t0 = _this4.searchWay;
-                _context.next = _context.t0 === 'near' ? 33 : _context.t0 === 'keyword' ? 40 : _context.t0 === 'category' ? 47 : 54;
+                _context.next = _context.t0 === 'near' ? 31 : _context.t0 === 'keyword' ? 37 : _context.t0 === 'category' ? 43 : 49;
                 break;
 
-              case 33:
-                _context.next = 35;
+              case 31:
+                _context.next = 33;
                 return axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/nearTravelSpots?lng=".concat(_this4.lng, "&lat=").concat(_this4.lat, "&page=").concat(_this4.page));
 
-              case 35:
+              case 33:
                 nearResponse = _context.sent;
-                console.log(nearResponse);
                 _this4.totalCount = nearResponse.data.response.body.totalCount;
 
                 if (_this4.totalCount > 0) {
@@ -23602,15 +23579,14 @@ var AREA_CODE = {
                   }
                 }
 
-                return _context.abrupt("break", 55);
+                return _context.abrupt("break", 50);
 
-              case 40:
-                _context.next = 42;
+              case 37:
+                _context.next = 39;
                 return axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/keywordTravelSpots?page=".concat(_this4.page).concat(_this4.addPresentValueToQueryString()));
 
-              case 42:
+              case 39:
                 keywordResponse = _context.sent;
-                console.log(keywordResponse);
                 _this4.totalCount = keywordResponse.data.response.body.totalCount;
 
                 if (_this4.totalCount > 0) {
@@ -23621,15 +23597,14 @@ var AREA_CODE = {
                   }
                 }
 
-                return _context.abrupt("break", 55);
+                return _context.abrupt("break", 50);
 
-              case 47:
-                _context.next = 49;
+              case 43:
+                _context.next = 45;
                 return axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categoryTravelSpots?page=".concat(_this4.page).concat(_this4.addPresentValueToQueryString()));
 
-              case 49:
+              case 45:
                 _largeCategoryResponse = _context.sent;
-                console.log(_largeCategoryResponse);
                 _this4.totalCount = _largeCategoryResponse.data.response.body.totalCount;
 
                 if (_this4.totalCount > 0) {
@@ -23640,28 +23615,28 @@ var AREA_CODE = {
                   }
                 }
 
-                return _context.abrupt("break", 55);
+                return _context.abrupt("break", 50);
 
-              case 54:
-                return _context.abrupt("break", 55);
+              case 49:
+                return _context.abrupt("break", 50);
 
-              case 55:
+              case 50:
                 _this4.loading = false;
-                _context.next = 62;
+                _context.next = 57;
                 break;
 
-              case 58:
-                _context.prev = 58;
+              case 53:
+                _context.prev = 53;
                 _context.t1 = _context["catch"](1);
                 console.log(_context.t1);
                 _this4.loading = false;
 
-              case 62:
+              case 57:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, null, [[1, 58]]);
+        }, _callee, null, [[1, 53]]);
       }))();
     }
   },
@@ -23739,11 +23714,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   mounted: function mounted() {
     var _this = this;
 
-    console.log('마운트 됨'); //이미지 불러오기
-
+    //이미지 불러오기
     axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/images?id=".concat(this.contentId)).then(function (res) {
-      console.log(res);
-
       if (res.data.response.body.totalCount > 1) {
         if (res.data.response.body.items.item.length > 1) {
           _this.images = res.data.response.body.items.item;
@@ -23756,7 +23728,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     }); //상세정보 불러오기
 
     axios.get("https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/travelSpot?id=".concat(this.contentId)).then(function (res) {
-      console.log(res);
       _this.travelSpot = res.data.response.body.items.item;
     })["catch"](function (err) {
       console.log(err);

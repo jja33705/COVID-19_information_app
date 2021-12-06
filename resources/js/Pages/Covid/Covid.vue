@@ -81,9 +81,6 @@ export default ({
         totalData: Array,
     },
     mounted() {
-        console.log(this.localData);
-        console.log(this.totalData);
-
         // 최근 신규 확진자 차트를 그린다.
         const ctx = 'newDefCntChart';
         const newDefCntChartData = [];

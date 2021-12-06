@@ -96,7 +96,6 @@ export default {
     methods: {
         onClickAddHashtag() { //해쉬태그 추가
             let hashtag = this.hashtagInput.replace(/#/gi, '').trim();
-            console.log(hashtag);
             if (this.form.hashtags.includes(hashtag)) {
                 this.hashtagsError = '이미 추가한 해시태그입니다.'
                 return;
@@ -119,7 +118,6 @@ export default {
         },
         inputImage(e) {
             if (e.target.files[0]) {
-                console.log(e.target.files[0]);
                 this.form.image = e.target.files[0];
                 this.previewImageSrc = URL.createObjectURL(e.target.files[0]);
             } else {

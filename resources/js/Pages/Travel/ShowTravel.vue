@@ -92,11 +92,9 @@ export default {
         },
     },
     mounted() {
-        console.log('마운트 됨');
         //이미지 불러오기
         axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/images?id=${this.contentId}`)
         .then((res) => {
-            console.log(res);
             if (res.data.response.body.totalCount > 1) {
                 if (res.data.response.body.items.item.length > 1) {
                     this.images = res.data.response.body.items.item;
@@ -112,7 +110,6 @@ export default {
         //상세정보 불러오기
         axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/travelSpot?id=${this.contentId}`)
         .then((res) => {
-            console.log(res);
             this.travelSpot = res.data.response.body.items.item;
         })
         .catch((err) => {

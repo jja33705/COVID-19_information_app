@@ -98,7 +98,6 @@ export default {
     },
     methods: {
         getReviews() {
-            console.log('데이터 불러옴');
             if (!this.timer) {
                 this.timer = setTimeout(() => { //0.5초정도 로딩 표시후 불러옴. 스크롤 이벤트가 연속적으로 발생하므로 쓰로틀링처리 해줌.
                     this.timer = null;
@@ -109,7 +108,6 @@ export default {
                     }
                     axios.get(this.reviews.next_page_url)
                     .then((res) => {
-                        console.log(res);
                         if (res.data.data.length !== 0) {
                             res.data.data = [...this.reviews.data, ...res.data.data];
                             this.reviews = res.data;
@@ -146,7 +144,6 @@ export default {
         }
     },
     mounted() {
-        console.log('마운트 됨');
         this.getReviews();
     }
 }

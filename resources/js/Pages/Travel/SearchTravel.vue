@@ -390,7 +390,6 @@ export default {
             } else {
                 axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/areas?areaCode=${this.selectedAreaCode}`)
                 .then((res) => {
-                    console.log(res);
                     this.sigungus = res.data.response.body.items.item;
                 })
                 .catch((err) => {
@@ -409,7 +408,6 @@ export default {
             } else {
                 axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys?cat1=${this.selectedLargeCategoryCode}`)
                 .then((res) => {
-                    console.log(res);
                     this.mediumCategorys = res.data.response.body.items.item;
                 })
                 .catch((err) => {
@@ -425,7 +423,6 @@ export default {
             } else {
                 axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys?cat1=${this.selectedLargeCategoryCode}&cat2=${this.selectedMediumCategoryCode}`)
                 .then((res) => {
-                    console.log(res);
                     this.smallCategorys = res.data.response.body.items.item;
                 })
                 .catch((err) => {
@@ -482,7 +479,6 @@ export default {
         },
 
         onClickTravelSpot(id) {
-            console.log('불림', id);
             const travelSpot = this.travelSpots.find((travelSpot) => {
                 return travelSpot.contentid === id;
             });
@@ -495,7 +491,6 @@ export default {
             try {
                 //지역분류 불러오기
                 const areaResponse = await axios.get('https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/areas')
-                console.log(areaResponse);
                 this.areas = areaResponse.data.response.body.items.item;
 
                 if (this.areaCode) { //지역코드가 선택돼 있으면 시군구코드도 불러옴
@@ -506,7 +501,6 @@ export default {
 
                 //카테고리분류 불러오기
                 const largeCategoryResponse = await axios.get('https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categorys');
-                console.log(largeCategoryResponse);
                 this.largeCategorys = largeCategoryResponse.data.response.body.items.item;
 
                 if (this.cat1) { //대분류 있으면 중분류도 불러옴
@@ -525,7 +519,6 @@ export default {
                 switch(this.searchWay) {  //검색방법에 따라 분기처리
                     case 'near': //주변 관광지 데이터터
                         const nearResponse = await axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/nearTravelSpots?lng=${this.lng}&lat=${this.lat}&page=${this.page}`);
-                        console.log(nearResponse);
                         this.totalCount = nearResponse.data.response.body.totalCount;
                         if (this.totalCount > 0) {
                             if (nearResponse.data.response.body.items.item.length > 1) {
@@ -537,7 +530,6 @@ export default {
                         break;
                     case 'keyword': //키워드로 검색
                         const keywordResponse = await axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/keywordTravelSpots?page=${this.page}${this.addPresentValueToQueryString()}`);
-                        console.log(keywordResponse);
                         this.totalCount = keywordResponse.data.response.body.totalCount;
                         if (this.totalCount > 0) {
                             if (keywordResponse.data.response.body.items.item.length > 1) {
@@ -548,8 +540,7 @@ export default {
                         }
                         break;
                     case 'category': //카테고리만 선택하고 검색어 없이 검색할떄
-                        const largeCategoryResponse = await axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categoryTravelSpots?page=${this.page}${this.addPresentValueToQueryString()}`)
-                        console.log(largeCategoryResponse);
+                        const largeCategoryResponse = await axios.get(`https://9wmf8sj38i.execute-api.ap-northeast-2.amazonaws.com/stage1/categoryTravelSpots?page=${this.page}${this.addPresentValueToQueryString()}`);
                         this.totalCount = largeCategoryResponse.data.response.body.totalCount;
                         if (this.totalCount > 0) {
                             if (largeCategoryResponse.data.response.body.items.item.length > 1) {

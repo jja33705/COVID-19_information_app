@@ -832,14 +832,11 @@ export default {
             tooltip.appendTo(this.map.getPanes().floatPane);
 
             this.map.data.setStyle((feature) => {
-				console.log(feature);
-				console.log(feature.getProperty('CTP_KOR_NM'));
 				const regionData = this.localCovidData.find((e) => {
 					if (feature.getProperty('CTP_KOR_NM') === e.gubun) {
                         return true;
                     }
 				})
-				console.log();
                 const styleOptions = {
                     fillColor: '#ff0000',
                     fillOpacity: regionData['newDefCnt'] / 5000,
@@ -934,7 +931,6 @@ export default {
         //     }
         // },
         travelSpots: function (newTravelSpots, travelSpots) {
-            console.log('마커 그리기 불림', this.markers, newTravelSpots, travelSpots);
 			this.markers = [];
             newTravelSpots.map((v) => { //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시
 
