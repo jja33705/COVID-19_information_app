@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
 use App\Models\Hashtag;
+use App\Models\Image;
 use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -17,7 +17,7 @@ class ReviewController extends Controller
 {
     public function index(Request $request)
     {
-        return Inertia::render('Review/Review', [
+        return Inertia::render('Review/SearchReview', [
             'searchWay' => $request->searchWay,
             'search' => $request->search,
         ]);
@@ -38,12 +38,12 @@ class ReviewController extends Controller
 
     public function show($id)
     {
-        $review = Review::find($id);
+        $review = Review::with('hashtags')->find($id);
         $review->viewCount += 1;
         $review->save();
         return Inertia::render('Review/ShowReview', [
             'review' => $review,
-            'comments' => Comment::where('review_id', $review->id)->whereNull('parent_id')->orderBy('created_at', 'asc')->with('replies')->get(),
+            'comments' => $review->comments()->whereNull('parent_id')->orderBy('created_at', 'asc')->with('replies')->get(),
         ]);
     }
 
@@ -60,15 +60,8 @@ class ReviewController extends Controller
         FacadesRequest::validate([
             'title' => ['required', 'max:30'],
             'contents' => ['required', 'max:300'],
-            'image' => ['nullable', 'image'],
+            'images.*' => ['image'], //배열안의 값들에 대해 검사
         ]);
-
-        $hashtags = array();
-        foreach ($request->hashtags as $key => $hashtag) {
-            $hashtags[$key] = Hashtag::firstOrCreate([
-                'contents' => $hashtag
-            ]);
-        }
 
         $review = new Review;
         $review->user_id = auth()->user()->id;
@@ -76,17 +69,26 @@ class ReviewController extends Controller
         $review->place = $request->place;
         $review->contents = $request->contents;
         $review->contentId = $id;
-
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $name = time() . '.' . $image->getClientOriginalExtension();
-            Storage::disk('public')->put('images/' . $name, file_get_contents($image));
-            $review->image = $name;
-        }
         $review->save();
 
-        foreach ($hashtags as $hashtag) {
-            $review->hashtags()->toggle([$hashtag->id]);
+        if ($request->hasFile('images')) {
+            foreach ($request->images as $imageFile) {
+                $image = new Image();
+                $name = uniqid() . '.' . $imageFile->getClientOriginalExtension();
+                Storage::disk('public')->put('images/' . $name, file_get_contents($imageFile));
+                $image->filename = $name;
+                $image->review_id = $review->id;
+                $image->save();
+            }
+        }
+
+        if ($request->hashtags) {
+            foreach ($request->hashtags as $hashtag) {
+                $hashtag = Hashtag::firstOrCreate([
+                    'contents' => $hashtag
+                ]);
+                $review->hashtags()->toggle([$hashtag->id]);
+            }
         }
         return Redirect::route('review.show', [
             'id' => $review->id
@@ -96,7 +98,7 @@ class ReviewController extends Controller
     public function edit($id)
     {
         return Inertia::render('Review/EditReview', [
-            'review' => Review::find($id),
+            'review' => Review::with('hashtags')->find($id),
         ]);
     }
 
@@ -105,7 +107,7 @@ class ReviewController extends Controller
         FacadesRequest::validate([
             'title' => ['required', 'max:30'],
             'contents' => ['required', 'max:300'],
-            'image' => ['nullable'],
+            'images.*' => ['image'], //배열안의 값들에 대해 검사
         ]);
 
         $review = Review::find($id);
@@ -113,21 +115,29 @@ class ReviewController extends Controller
             abort(403);
         }
 
-        if ($request->hasFile('image')) { //image 새로 선택했을때
-            $image = $request->file('image');
-            $name = time() . '.' . $image->getClientOriginalExtension();
-            Storage::disk('public')->put('images/' . $name, file_get_contents($image));
-            Storage::disk('public')->delete('/images/' . $review->image); //원래파일 삭제
-            $review->image = $name;
+        if ($request->deleteImageIds) { //원래 있는데 삭제해야 할 이미지 삭제
+            foreach ($request->deleteImageIds as $deleteImageId) {
+                $image = Image::find($deleteImageId);
+                Storage::disk('public')->delete('/images/' . $image->filename);
+                $image->delete();
+            }
         }
 
-        if (!$request->image) { //image파일이름(문자열로 오면) 오지 않으면 선택취소한거.
-            Storage::disk('public')->delete('/images/' . $review->image);
-            $review->image = null;
+        if ($request->hasFile('images')) { //새로 등록해야 할 이미지 등록
+            foreach ($request->images as $imageFile) {
+                $image = new Image();
+                $name = uniqid() . '.' . $imageFile->getClientOriginalExtension();
+                Storage::disk('public')->put('images/' . $name, file_get_contents($imageFile));
+                $image->filename = $name;
+                $image->review_id = $review->id;
+                $image->save();
+            }
         }
 
         $review->title = $request->title;
         $review->contents = $request->contents;
+
+        $review->save();
 
         //해쉬태그 삭제하고 다시 만듬
         foreach ($review->hashtags as $hashtag) {
@@ -141,8 +151,6 @@ class ReviewController extends Controller
             $review->hashtags()->toggle($newHashtags->id);
         }
 
-        $review->save();
-
         return Redirect::route('review.show', [
             'id' => $review->id,
         ]);
@@ -155,8 +163,10 @@ class ReviewController extends Controller
         if ($request->user()->cannot('delete', $review)) {
             abort(403);
         }
-        if ($review->image) {
-            Storage::disk('public')->delete('/images/' . $review->image);
+        if ($review->images) {
+            foreach ($review->images as $image) {
+                Storage::disk('public')->delete('/images/' . $image->filename);
+            }
         }
         $review->delete();
         return redirect('/review?searchWay=keyword');

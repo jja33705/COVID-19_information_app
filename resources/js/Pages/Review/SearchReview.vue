@@ -77,6 +77,12 @@ import InfiniteScroll from 'infinite-loading-vue3';
 import { Link } from "@inertiajs/inertia-vue3";
 export default {
     props: ['searchWay', 'search'],
+    components: {
+        AppLayout,
+        ReviewCard,
+        InfiniteScroll,
+        Link,
+    },
     data() {
         return {
             reviews: {
@@ -89,12 +95,6 @@ export default {
             noResult: false,
             message: '',
         };
-    },
-    components: {
-        AppLayout,
-        ReviewCard,
-        InfiniteScroll,
-        Link,
     },
     methods: {
         getReviews() {

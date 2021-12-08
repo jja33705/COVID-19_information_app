@@ -3,15 +3,7 @@
         <div class="py-8">
             <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
                 <div class="flex justify-center text-4xl my-7 font-semibold">{{ travelSpot.title }}</div>
-                <section class="mx-auto max-w-2xl my-7" v-if="images.length > 0">
-                    <div class="shadow-2xl relative">
-                        <div>
-                            <img class="w-full object-cover" :src="images[imageIndex].originimgurl"/>
-                        </div>
-                        <a v-if="imageIndex > 0" class="absolute left-0 inset-y-0 flex items-center px-4 text-white hover:text-gray-800 cursor-pointer text-3xl font-extrabold" @click="onClickLeftImage">❮</a>
-                        <a v-if="imageIndex < images.length - 1" class="absolute right-0 inset-y-0 flex items-center px-4 text-white hover:text-gray-800 cursor-pointer text-3xl font-extrabold" @click="onClickRightImage">❯</a>
-                    </div>
-                </section>
+                <travel-image-list :images="images" />
                 <div class="text-2xl font-semibold mt-8">지역 신규 확진자</div>
                 <hr />
                 <canvas id="areaNewDefCntChart" class="w-full"></canvas>
@@ -62,6 +54,7 @@ import { Link } from "@inertiajs/inertia-vue3";
 import NaverMap from '@/Components/NaverMap';
 import ReviewCard from '@/Components/ReviewCard.vue';
 import Chart from 'chart.js/auto';
+import TravelImageList from '@/Components/TravelImageList.vue';
 export default {
     props: ['contentId', 'localCovidData', 'reviews', 'reviewCount', 'areaCovidData', 'gubun'],
     components: {
@@ -69,27 +62,13 @@ export default {
         Link,
         NaverMap,
         ReviewCard,
+        TravelImageList,
     },
     data() {
         return {
-            imageIndex: 0,
             travelSpot: {},
             images: [],
         }
-    },
-    methods: {
-        onClickLeftImage() {
-            if (this.imageIndex < 1) {
-                return;
-            }
-            this.imageIndex -= 1;
-        },
-        onClickRightImage() {
-            if (this.imageIndex > this.images.length - 2) {
-                return;
-            }
-            this.imageIndex += 1;
-        },
     },
     mounted() {
         //이미지 불러오기

@@ -12,9 +12,12 @@
                     <div>게시일: {{ dateFormat(review.updated_at) }}</div>
                     <div>조회수: {{ review.viewCount }}</div>
                 </div>
-                <div class="mb-3 text-gray-500">위치: <Link class="font-bold" :href="`/travel/${review.contentId}`">{{ review.place }}</Link></div>
-                <img v-if="review.image" class="mb-4" :src="`/storage/images/${review.image}`" >
-                <div class="mb-6 text-lg">{{ review.contents }}</div>
+                <div class="mb-6 text-gray-500">
+                    <span>위치: </span>
+                    <span class="underline font-bold"><Link class="font-bold" :href="`/travel/${review.contentId}`">{{ review.place }}</Link></span>
+                </div>
+                <review-image-list :images="review.images"/>
+                <div class="my-6 text-lg">{{ review.contents }}</div>
                 <div class="mb-3 flex -m-1 flex-wrap">
                     <hashtag v-for="hashtag in review.hashtags" :key="hashtag.id" :hashtag="hashtag" />
                 </div>
@@ -44,6 +47,7 @@ import Comment from '@/Components/Comment.vue';
 import Hashtag from '@/Components/Hashtag.vue';
 import dayjs from 'dayjs';
 import { Link, useForm } from "@inertiajs/inertia-vue3";
+import ReviewImageList from '@/Components/ReviewImageList.vue';
 export default {
     props: ['review', 'comments', 'errors'],
     components: {
@@ -51,12 +55,12 @@ export default {
         Link,
         Comment,
         Hashtag,
+        ReviewImageList,
     },
     setup() {
         const form = useForm({
             contents: '',
         });
-
         return { form };
     },
     methods: {

@@ -18,7 +18,7 @@ class Review extends Model
         'contentId',
     ];
 
-    protected $with = ['hashtags', 'user'];
+    protected $with = ['user', 'images'];
 
     public function hashtags()
     {
@@ -33,5 +33,10 @@ class Review extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(Image::class);
     }
 }

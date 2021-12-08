@@ -7,7 +7,7 @@
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                             <div class="p-6 bg-white border-b border-gray-200">
-                                <form @submit.prevent="form.post(`/review/${this.review.id}`)" @keydown.enter.prevent>
+                                <form @submit.prevent="onSubmitForm" @keydown.enter.prevent>
                                     <div class="mb-4">
                                         <label class="text-xl text-gray-600">제목</label>
                                         <br>
@@ -22,15 +22,21 @@
                                         <div class="text-red-500" v-if="errors.contents">{{ errors.contents }}</div>
                                     </div>
                                     
+                                    <!-- 사진 업로드 -->
                                     <div class="mb-4">
-                                        <button @click.prevent="$refs.image.click()" class="bg-blue-500 rounded-lg font-bold text-white text-center px-4 py-3 transition duration-300 ease-in-out hover:bg-blue-600 mr-6">
+                                        <button @click.prevent="$refs.image.click()" class="bg-blue-500 rounded-lg font-bold text-white text-center px-4 py-3 transition duration-300 ease-in-out hover:bg-blue-600 mr-6 ">
                                             이미지 업로드
                                         </button>
                                         <br>
-                                        <input class="hidden" ref="image" type="file" @input="inputImage" />
-                                        <div class="text-red-500" v-if="errors.image">{{ errors.image }}</div>
-                                        <img v-if="form.image" :src="previewImageSrc" alt="preview">
-                                        <button v-if="form.image" @click.prevent="onClickDeleteImage" class="py-3 px-6 text-white rounded-lg bg-red-500 shadow-lg block md:inline-block">선택취소</button>
+                                        <input type="file" class="hidden" ref="image" @input="inputImage" />
+                                        <div v-if="previewImagesSrc.length" class="flex flex-wrap  bg-gray-100 pt-3 pl-3">
+                                            <span class="image-area mb-3 mr-3" v-for="(previewImageSrc, index) in previewImagesSrc" :key="previewImageSrc">
+                                                <img class="h-40" :src="previewImageSrc" alt="preview">
+                                                <button type="button" @click="onClickDeleteImage(index)" class="remove-image" href="#" style="display: inline;">&#215;</button>
+                                            </span>
+                                        </div>
+                                        <div v-if="previewImagesSrc.length" class="text-gray-500">{{ previewImagesSrc.length }}개 선택됨</div>
+                                        <div class="text-red-500" v-if="hasImageError">이미지파일만 업로드 가능합니다.</div>
                                     </div>
 
                                     <div class="my-6">
@@ -39,10 +45,11 @@
                                                 <input class="rounded-l-lg p-4 border-t mr-0 border-b border-l text-gray-800 border-gray-200 bg-white" placeholder="#없이 입력" v-model="hashtagInput" @keyup.enter="onClickAddHashtag"/>
                                                 <button class="px-8 rounded-r-lg bg-gray-200  text-gray-800 font-bold p-4" @click="onClickAddHashtag" type="button">해시태그 추가</button>
                                             </div>
+                                            <div class="text-red-500" v-if="hashtagsError">{{ hashtagsError }}</div>
                                             <!-- selections -->
-                                            <div class="bg-gray-200 inline-flex items-center text-sm rounded mt-2 mr-1 overflow-hidden" v-for="hashtag in form.hashtags" :key="hashtag">
+                                            <div class="bg-gray-200 inline-flex items-center text-sm rounded mt-2 mr-1 overflow-hidden" v-for="(hashtag, index) in form.hashtags" :key="hashtag">
                                                 <span class="ml-2 mr-1 font-bold leading-relaxed truncate max-w-xs px-1">#{{ hashtag }}</span>
-                                                <button class="w-6 h-8 inline-block align-middle text-gray-500 bg-gray-300 focus:outline-none" @click="onClickDeleteHahtag(hashtag)">
+                                                <button class="w-6 h-8 inline-block align-middle text-gray-500 bg-gray-300 focus:outline-none" @click="onClickDeleteHahtag(index)">
                                                     <svg class="w-6 h-6 fill-current mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M15.78 14.36a1 1 0 0 1-1.42 1.42l-2.82-2.83-2.83 2.83a1 1 0 1 1-1.42-1.42l2.83-2.82L7.3 8.7a1 1 0 0 1 1.42-1.42l2.83 2.83 2.82-2.83a1 1 0 0 1 1.42 1.42l-2.83 2.83 2.83 2.82z"/></svg>
                                                 </button>
                                             </div>
@@ -82,35 +89,81 @@ export default {
                 title: null,
                 contents: null,
                 hashtags: [],
-                image: null,
+                images: [],
+                deleteImageIds: [],
             }),
-            previewImageSrc: '',
+            hashtagsError: '',
+            previewImagesSrc: [],
+            hasImageError: false,
         };
     },
     methods: {
         onClickAddHashtag() { //해쉬태그 추가
             let hashtag = this.hashtagInput.replace(/#/gi, '').trim();
-            if (this.form.hashtags.includes(hashtag) || !hashtag) {
+            if (this.form.hashtags.includes(hashtag)) {
+                this.hashtagsError = '이미 추가한 해시태그입니다.'
+                return;
+            }
+            if (!hashtag) {
+                this.hashtagsError = '한글자 이상 입력해 주세요.'
                 return;
             }
             this.form.hashtags.push(hashtag);
             this.hashtagInput = '';
+            this.hashtagsError = '';
         },
-        onClickDeleteHahtag(hashtag) { //해쉬태그 삭제
-            this.form.hashtags.splice(this.form.hashtags.indexOf(hashtag), 1);
+        onClickDeleteHahtag(index) { //해쉬태그 삭제
+            this.form.hashtags.splice(index, 1);
         },
         inputImage(e) {
             if (e.target.files[0]) {
-                this.form.image = e.target.files[0];
-                this.previewImageSrc = URL.createObjectURL(e.target.files[0]);
-            } else {
-                this.form.image = null;
-                this.previewImageSrc = '';
+                this.form.images.push(e.target.files[0]);
+                this.previewImagesSrc.push(URL.createObjectURL(e.target.files[0]));
             }
+            e.target.value = null; //같은 파일 또 선택되도록 null 할당해줌
         },
-        onClickDeleteImage() {
-            this.form.image = null,
-            this.previewImageSrc = '';
+        checkHasImageError() {
+            //이미지가 아닌 것을 올려서 난 에러가 있는지 확인
+            this.hasImageError =  false;
+            Object.keys(this.errors).forEach((key) => {
+                if (key.startsWith('images')) {
+                    this.hasImageError =  true;
+                    return;
+                }
+            });  
+        },
+        onClickDeleteImage(index) { //이미지 삭제
+            this.form.images.forEach((image) => {
+                console.log(image.id);
+            });
+            if (this.form.images[index].id) {
+                this.form.deleteImageIds.push(this.form.images[index].id);
+            }
+            this.previewImagesSrc.splice(index, 1);
+            this.form.images.splice(index, 1);
+        },
+        checkHasImageError() {
+            //이미지가 아닌 것을 올려서 난 에러가 있는지 확인
+            this.hasImageError =  false;
+            Object.keys(this.errors).forEach((key) => {
+                if (key.startsWith('images')) {
+                    this.hasImageError =  true;
+                    return;
+                }
+            });
+        },
+        onSubmitForm() {
+            const temp = this.form.images;
+            this.form.images = this.form.images.filter((image) => { //새로 업로드해야 하는 이미지만 남겨줌.
+                return !image.id
+            });
+            this.form.post(`/review/${this.review.id}`, {
+                preserveScroll: true,
+                onError: () => {
+                    this.form.images = temp; //에러났으면 다시 복구시켜줘야함...
+                    this.checkHasImageError()
+                },
+            });
         }
     },
     mounted() {
@@ -119,10 +172,47 @@ export default {
         this.review.hashtags.map((v) => {
             this.form.hashtags.push(v.contents);
         });
-        if (this.review.image) {
-            this.form.image = this.review.image;
-            this.previewImageSrc = `http://localhost:8000/storage/images/${this.review.image}`;
+        if (this.review.images) {
+            this.review.images.forEach((image) => {
+                this.form.images.push(image);
+                this.previewImagesSrc.push(`/storage/images/${image.filename}`);
+            });
         }
     },
 }
 </script>
+
+<style scoped>
+.image-area {
+    position: relative;
+    background: #333;
+}
+.remove-image {
+    display: none;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    border-radius: 10em;
+    padding: 2px 6px 3px;
+    text-decoration: none;
+    font: 700 21px/20px sans-serif;
+    background: #555;
+    border: 3px solid #fff;
+    color: #FFF;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5), inset 0 2px 4px rgba(0,0,0,0.3);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    -webkit-transition: background 0.5s;
+    transition: background 0.5s;
+    }
+    .remove-image:hover {
+    background: #E54E4E;
+    padding: 3px 7px 5px;
+    top: -11px;
+    right: -11px;
+    }
+    .remove-image:active {
+    background: #E54E4E;
+    top: -10px;
+    right: -11px;
+    }
+</style>
