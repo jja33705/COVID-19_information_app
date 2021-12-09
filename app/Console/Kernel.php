@@ -25,8 +25,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->job(new GetCovidData)->hourly();
-        $schedule->job(new GetCovidData)->everyMinute();
+        $schedule->job(new GetCovidData)->hourly();
+        // $schedule->job(new GetCovidData)->everyMinute();
     }
 
     /**
