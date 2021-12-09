@@ -23367,6 +23367,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(dayjs__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @inertiajs/inertia-vue3 */ "./node_modules/@inertiajs/inertia-vue3/dist/index.js");
 /* harmony import */ var _Components_ReviewImageList_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/Components/ReviewImageList.vue */ "./resources/js/Components/ReviewImageList.vue");
+/* harmony import */ var _Jetstream_ConfirmationModal__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/Jetstream/ConfirmationModal */ "./resources/js/Jetstream/ConfirmationModal.vue");
+/* harmony import */ var _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/Jetstream/DangerButton */ "./resources/js/Jetstream/DangerButton.vue");
+/* harmony import */ var _Jetstream_SecondaryButton__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @/Jetstream/SecondaryButton */ "./resources/js/Jetstream/SecondaryButton.vue");
+
+
+
 
 
 
@@ -23380,7 +23386,10 @@ __webpack_require__.r(__webpack_exports__);
     Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_4__.Link,
     Comment: _Components_Comment_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     Hashtag: _Components_Hashtag_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
-    ReviewImageList: _Components_ReviewImageList_vue__WEBPACK_IMPORTED_MODULE_5__["default"]
+    ReviewImageList: _Components_ReviewImageList_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
+    JetConfirmationModal: _Jetstream_ConfirmationModal__WEBPACK_IMPORTED_MODULE_6__["default"],
+    JetDangerButton: _Jetstream_DangerButton__WEBPACK_IMPORTED_MODULE_7__["default"],
+    JetSecondaryButton: _Jetstream_SecondaryButton__WEBPACK_IMPORTED_MODULE_8__["default"]
   },
   setup: function setup() {
     var form = (0,_inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_4__.useForm)({
@@ -23390,11 +23399,14 @@ __webpack_require__.r(__webpack_exports__);
       form: form
     };
   },
+  data: function data() {
+    return {
+      confirmingReviewDeletion: false
+    };
+  },
   methods: {
     onClickDelete: function onClickDelete() {
-      if (confirm('정말로 삭제하시겠습니까?')) {
-        this.$inertia["delete"]("/review/".concat(this.review.id));
-      }
+      this.$inertia["delete"]("/review/".concat(this.review.id));
     },
     onClickUpdate: function onClickUpdate() {
       this.$inertia.get("/review/edit/".concat(this.review.id));
@@ -24150,7 +24162,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* CLASS */
   ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
     "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)($props.isRed ? 'text-red-600' : 'text-blue-600')
-  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.number > 0 ? $data.number : $data.number * -1), 3
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.number), 3
   /* TEXT, CLASS */
   )], 2
   /* CLASS */
@@ -27509,7 +27521,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_7, "누적 확진자: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getDefCnt), 1
       /* TEXT */
       ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_covid_data_change, {
-        data: $options.getDefCntChange,
+        data: $options.getDefCntChange >= 0 ? $options.getDefCntChange : $options.getDefCntChange * -1,
         isRed: $options.getDefCntChange > 0,
         isUp: $options.getDefCntChange > 0
       }, null, 8
@@ -27517,7 +27529,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       , ["data", "isRed", "isUp"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_9, "신규 확진자: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getNewDefCnt), 1
       /* TEXT */
       ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_covid_data_change, {
-        data: $options.getNewDefCntChange,
+        data: $options.getNewDefCntChange >= 0 ? $options.getNewDefCntChange : $options.getNewDefCntChange * -1,
         isRed: $options.getNewDefCntChange > 0,
         isUp: $options.getNewDefCntChange > 0
       }, null, 8
@@ -27525,7 +27537,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       , ["data", "isRed", "isUp"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_11, "사망자: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getDeathCnt), 1
       /* TEXT */
       ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_covid_data_change, {
-        data: $options.getDeathCntChange,
+        data: $options.getDeathCntChange >= 0 ? $options.getDeathCntChange : $options.getDeathCntChange * -1,
         isRed: $options.getDeathCntChange > 0,
         isUp: $options.getDeathCntChange > 0
       }, null, 8
@@ -27533,7 +27545,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       , ["data", "isRed", "isUp"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_13, "격리해제: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getIsolClearCnt), 1
       /* TEXT */
       ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_covid_data_change, {
-        data: $options.getIsolClearCntChange,
+        data: $options.getIsolClearCntChange >= 0 ? $options.getIsolClearCntChange : $options.getIsolClearCntChange * -1,
         isRed: $options.getIsolClearCntChange < 0,
         isUp: $options.getIsolClearCntChange > 0
       }, null, 8
@@ -29513,6 +29525,15 @@ var _hoisted_18 = {
   key: 1,
   "class": "text-red-500"
 };
+
+var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 후기 삭제 ");
+
+var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 정말로 해당 후기를 삭제하시겠습니까? ");
+
+var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 취소 ");
+
+var _hoisted_22 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 삭제 ");
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Link");
 
@@ -29521,6 +29542,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_hashtag = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("hashtag");
 
   var _component_Comment = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Comment");
+
+  var _component_jet_secondary_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("jet-secondary-button");
+
+  var _component_jet_danger_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("jet-danger-button");
+
+  var _component_jet_confirmation_modal = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("jet-confirmation-modal");
 
   var _component_app_layout = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("app-layout");
 
@@ -29535,8 +29562,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       }, "수정")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.$page.props.user && _ctx.$page.props.user.id == $props.review.user.id ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
         key: 1,
         "class": "ml-2 text-gray-500 hover:text-black",
-        onClick: _cache[1] || (_cache[1] = function () {
-          return $options.onClickDelete && $options.onClickDelete.apply($options, arguments);
+        onClick: _cache[1] || (_cache[1] = function ($event) {
+          return $data.confirmingReviewDeletion = true;
         })
       }, "삭제")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h1", _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.review.title), 1
       /* TEXT */
@@ -29611,7 +29638,50 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       /* KEYED_FRAGMENT */
       )), $props.errors.updateContents ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_18, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.errors.updateContents), 1
       /* TEXT */
-      )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])])];
+      )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 후기 삭제 모달 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_confirmation_modal, {
+        show: $data.confirmingReviewDeletion,
+        onClose: _cache[5] || (_cache[5] = function ($event) {
+          return $data.confirmingReviewDeletion = false;
+        })
+      }, {
+        title: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [_hoisted_19];
+        }),
+        content: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [_hoisted_20];
+        }),
+        footer: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_secondary_button, {
+            onClick: _cache[4] || (_cache[4] = function ($event) {
+              return $data.confirmingReviewDeletion = false;
+            })
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [_hoisted_21];
+            }),
+            _: 1
+            /* STABLE */
+
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_danger_button, {
+            "class": "ml-2",
+            onClick: $options.onClickDelete
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [_hoisted_22];
+            }),
+            _: 1
+            /* STABLE */
+
+          }, 8
+          /* PROPS */
+          , ["onClick"])];
+        }),
+        _: 1
+        /* STABLE */
+
+      }, 8
+      /* PROPS */
+      , ["show"])];
     }),
     _: 1
     /* STABLE */

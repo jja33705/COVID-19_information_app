@@ -1,7 +1,7 @@
 <template>
     <span class="ml-1 self-center rounded-full px-2 font-bold text-sm leading-loose cursor-pointer" :class="isRed ? 'bg-red-100' : 'bg-blue-100'">
         <i :class="[isRed ? 'text-red-600' : 'text-blue-600', isUp ? 'fas fa-arrow-up' : 'fas fa-arrow-down']"></i>
-        <span :class="isRed ? 'text-red-600' : 'text-blue-600'">{{ number > 0 ? number : number * -1 }}</span>
+        <span :class="isRed ? 'text-red-600' : 'text-blue-600'">{{ number }}</span>
     </span>
 </template>
 

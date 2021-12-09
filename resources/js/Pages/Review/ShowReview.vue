@@ -4,7 +4,7 @@
             <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
                 <div class="flex justify-end">
                     <button class="text-gray-500 hover:text-black" v-if="$page.props.user && $page.props.user.id == review.user.id" @click="onClickUpdate">수정</button>
-                    <button class="ml-2 text-gray-500 hover:text-black" v-if="$page.props.user && $page.props.user.id == review.user.id" @click="onClickDelete">삭제</button>
+                    <button class="ml-2 text-gray-500 hover:text-black" v-if="$page.props.user && $page.props.user.id == review.user.id" @click="confirmingReviewDeletion = true">삭제</button>
                 </div>
                 <h1 class="font-semibold mb-4 text-3xl">{{ review.title }}</h1>
                 <div class="mb-1 text-gray-500">작성자: {{ review.user.name }}</div>
@@ -39,6 +39,27 @@
             </div>
         </div>
 
+        <!-- 후기 삭제 모달 -->
+        <jet-confirmation-modal :show="confirmingReviewDeletion" @close="confirmingReviewDeletion = false">
+            <template #title>
+                후기 삭제
+            </template>
+
+            <template #content>
+                정말로 해당 후기를 삭제하시겠습니까?
+            </template>
+
+            <template #footer>
+                <jet-secondary-button @click.native="confirmingReviewDeletion = false">
+                    취소
+                </jet-secondary-button>
+
+                <jet-danger-button class="ml-2" @click.native="onClickDelete">
+                    삭제
+                </jet-danger-button>
+            </template>
+        </jet-confirmation-modal>
+
     </app-layout>
 </template>
 
@@ -49,6 +70,9 @@ import Hashtag from '@/Components/Hashtag.vue';
 import dayjs from 'dayjs';
 import { Link, useForm } from "@inertiajs/inertia-vue3";
 import ReviewImageList from '@/Components/ReviewImageList.vue';
+import JetConfirmationModal from '@/Jetstream/ConfirmationModal';
+import JetDangerButton from '@/Jetstream/DangerButton';
+import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 export default {
     props: ['review', 'comments', 'errors'],
     components: {
@@ -57,6 +81,9 @@ export default {
         Comment,
         Hashtag,
         ReviewImageList,
+        JetConfirmationModal,
+        JetDangerButton,
+        JetSecondaryButton
     },
     setup() {
         const form = useForm({
@@ -64,11 +91,14 @@ export default {
         });
         return { form };
     },
+    data() {
+        return {
+            confirmingReviewDeletion: false,
+        };
+    },
     methods: {
         onClickDelete() {
-            if (confirm('정말로 삭제하시겠습니까?')) {
-                this.$inertia.delete(`/review/${this.review.id}`);
-            }
+            this.$inertia.delete(`/review/${this.review.id}`);
         },
         onClickUpdate() {
             this.$inertia.get(`/review/edit/${this.review.id}`);

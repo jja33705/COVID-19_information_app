@@ -13,19 +13,19 @@
                     </div>
                     <div class="flex">
                         <span class="py-2 text-xl ml-5 font-medium">누적 확진자: {{ getDefCnt }}</span>
-                        <covid-data-change :data="getDefCntChange" :isRed="getDefCntChange > 0" :isUp="getDefCntChange > 0" />
+                        <covid-data-change :data="getDefCntChange >= 0 ? getDefCntChange : getDefCntChange * -1" :isRed="getDefCntChange > 0" :isUp="getDefCntChange > 0" />
                     </div>
                     <div class="flex">
                         <span class="py-2 text-xl ml-5 font-medium">신규 확진자: {{ getNewDefCnt }}</span>
-                        <covid-data-change :data="getNewDefCntChange" :isRed="getNewDefCntChange > 0" :isUp="getNewDefCntChange > 0" />
+                        <covid-data-change :data="getNewDefCntChange >= 0 ? getNewDefCntChange : getNewDefCntChange * -1" :isRed="getNewDefCntChange > 0" :isUp="getNewDefCntChange > 0" />
                     </div>
                     <div class="flex">
                         <span class="py-2 text-xl ml-5 font-medium">사망자: {{ getDeathCnt }}</span>
-                        <covid-data-change :data="getDeathCntChange" :isRed="getDeathCntChange > 0" :isUp="getDeathCntChange > 0" />
+                        <covid-data-change :data="getDeathCntChange >= 0 ? getDeathCntChange : getDeathCntChange * -1" :isRed="getDeathCntChange > 0" :isUp="getDeathCntChange > 0" />
                     </div>
                     <div class="flex">
                         <span class="py-2 text-xl ml-5 font-medium">격리해제: {{ getIsolClearCnt }}</span>
-                        <covid-data-change :data="getIsolClearCntChange" :isRed="getIsolClearCntChange < 0" :isUp="getIsolClearCntChange > 0" />
+                        <covid-data-change :data="getIsolClearCntChange >= 0 ? getIsolClearCntChange : getIsolClearCntChange * -1" :isRed="getIsolClearCntChange < 0" :isUp="getIsolClearCntChange > 0" />
                     </div>
                 </div>
             </div>
