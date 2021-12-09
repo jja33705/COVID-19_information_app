@@ -5,15 +5,15 @@
         </div>
         <div class="px-3 py-4">
             <h3 class="text-sm text-gray-500 pb-2">
-                <span class="bg-indigo-600 py-1 px-2 text-white rounded-lg">
+                <span class="py-1 px-2 text-white rounded-lg" :class="colorClass">
                     <span class="inset-0"></span>
                     지역 신규 확진자 수: {{ newDefCnt }}명
                 </span>
             </h3>
-            <h3 class="tracking-widest text-indigo-500 text-xs font-medium title-font">
+            <h3 class="tracking-widest text-gray-600 text-xs font-medium title-font">
                 {{ travelSpot.addr1 }}
             </h3>
-            <button class="text-base font-semibold text-gray-900 group-hover:text-indigo-600">
+            <button class="text-base font-semibold text-gray-800 group-hover:text-black">
                 {{ travelSpot.title }}
             </button>
         </div>
@@ -28,5 +28,16 @@ export default {
         Link,
     },
     props: ['travelSpot', 'newDefCnt'],
+    computed: {
+        colorClass() {
+            if (this.newDefCnt >= 1000) {
+                return 'bg-red-600';
+            }
+            if (this.newDefCnt >= 100) {
+                return 'bg-indigo-600';
+            }
+                return 'bg-green-600';
+        }
+    }
 };
 </script>

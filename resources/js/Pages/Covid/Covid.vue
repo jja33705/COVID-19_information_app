@@ -6,19 +6,31 @@
             <div class="container mx-auto pr-4">
                 <div class="max-w-sm bg-white mx-auto rounded-sm overflow-hidden shadow-lg hover:shadow-2xl transition duration-500 transform hover:scale-100 cursor-pointer">
                     <div class="h-16 bg-red-400 flex items-center justify-between">
-                        <p class="mr-0 text-white text-lg pl-5">확진자 정보</p>
+                        <p class="mr-0 text-white text-lg pl-5">확진자 수</p>
                     </div>
                     <div class="flex justify-between px-5 pt-6 mb-2 text-sm text-gray-600">
                         {{ getStdDay }}일 기준
                     </div>
-                    <p class="py-2 text-xl ml-5 font-medium">확진자 수: {{ getDefCnt }}</p>
-                    <p class="py-2 text-xl ml-5 font-medium">신규 확진자: {{ getNewDefCnt }}</p>
-                    <p class="py-2 text-xl ml-5 font-medium">사망자 수: {{ getDeathCnt }}</p>
-                    <p class="py-2 text-xl ml-5 font-medium">격리해제 수: {{ getIsolClearCnt }}</p>
+                    <div class="flex">
+                        <span class="py-2 text-xl ml-5 font-medium">누적 확진자: {{ getDefCnt }}</span>
+                        <covid-data-change :data="getDefCntChange" :isRed="getDefCntChange > 0" :isUp="getDefCntChange > 0" />
+                    </div>
+                    <div class="flex">
+                        <span class="py-2 text-xl ml-5 font-medium">신규 확진자: {{ getNewDefCnt }}</span>
+                        <covid-data-change :data="getNewDefCntChange" :isRed="getNewDefCntChange > 0" :isUp="getNewDefCntChange > 0" />
+                    </div>
+                    <div class="flex">
+                        <span class="py-2 text-xl ml-5 font-medium">사망자: {{ getDeathCnt }}</span>
+                        <covid-data-change :data="getDeathCntChange" :isRed="getDeathCntChange > 0" :isUp="getDeathCntChange > 0" />
+                    </div>
+                    <div class="flex">
+                        <span class="py-2 text-xl ml-5 font-medium">격리해제: {{ getIsolClearCnt }}</span>
+                        <covid-data-change :data="getIsolClearCntChange" :isRed="getIsolClearCntChange < 0" :isUp="getIsolClearCntChange > 0" />
+                    </div>
                 </div>
             </div>
 
-            <!-- 신규 확진자 추세 차트트 -->
+            <!-- 신규 확진자 추세 차트 -->
             <div class="container mx-auto pr-4">
                 <div class="max-w-sm bg-white mx-auto rounded-sm overflow-hidden shadow-lg hover:shadow-2xl transition duration-500 transform hover:scale-100 cursor-pointer">
                     <div class="h-16 bg-blue-500 flex items-center justify-between">
@@ -44,7 +56,7 @@
                             <tr v-for="data in getPaginatedLocalData" :key="data.id" class="hover:bg-grey-lighter">
                                 <td class="py-2 px-6 border-b border-grey-light font-medium">{{ data.gubun }}</td>
                                 <td class="py-2 px-6 text-center border-b border-grey-light font-medium">
-                                    {{ data.localOccCnt + data.overFlowCnt }}
+                                    {{ data.newDefCnt }}
                                 </td>
                             </tr>
                         </tbody>
@@ -69,12 +81,14 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Head, Link } from "@inertiajs/inertia-vue3";
 import Chart from 'chart.js/auto';
+import CovidDataChange from '@/Components/CovidDataChange'
 
 export default ({
     components: {
         AppLayout,
         Head,
         Link,
+        CovidDataChange,
     },
     props: {
         localData: Array,
@@ -85,8 +99,8 @@ export default ({
         const ctx = 'newDefCntChart';
         const newDefCntChartData = [];
         const newDefCntChartLabels = [];
-        [...this.totalData].map((value) => {
-            newDefCntChartData.push(value.localOccCnt + value.overFlowCnt);
+        this.totalData.forEach((value) => {
+            newDefCntChartData.push(value.newDefCnt);
             newDefCntChartLabels.push(value.stdDay.slice(-5));
         });
         new Chart(ctx, {
@@ -140,16 +154,28 @@ export default ({
             return this.totalData[this.totalData.length-1].stdDay;
         },
         getNewDefCnt() { //신규확진자
-            return this.totalData[this.totalData.length-1].localOccCnt + this.totalData[0].overFlowCnt;
+            return this.totalData[this.totalData.length-1].newDefCnt;
         },
-        getDefCnt() { //확진자
+        getNewDefCntChange() { //신규확진자 변화
+            return this.totalData[this.totalData.length-1].newDefCnt - this.totalData[this.totalData.length-2].newDefCnt;
+        },
+        getDefCnt() { // 누적 확진자 변화
             return this.totalData[this.totalData.length-1].defCnt;
+        },
+        getDefCntChange() { // 누적 확진자 변화
+            return this.totalData[this.totalData.length-1].defCnt - this.totalData[this.totalData.length-2].defCnt;
         },
         getDeathCnt() { //사망자
             return this.totalData[this.totalData.length-1].deathCnt;
         },
+        getDeathCntChange() { //사망자 변화
+            return this.totalData[this.totalData.length-1].deathCnt - this.totalData[this.totalData.length-2].deathCnt;
+        },
         getIsolClearCnt() { //격리해제 환자
             return this.totalData[this.totalData.length-1].isolClearCnt;
+        },
+        getIsolClearCntChange() { //격리해제 환자 변화
+            return this.totalData[this.totalData.length-1].isolClearCnt - this.totalData[this.totalData.length-2].isolClearCnt;
         },
     },
 });

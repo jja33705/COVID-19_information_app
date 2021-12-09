@@ -24,8 +24,9 @@
                 <hr>
                 <!-- 댓글 -->
                 <div class="flex my-4">
-                    <div class="text-xl font-semibold">댓글</div>
-                </div>
+                        <div class="text-2xl font-semibold">댓글</div>
+                        <div class="text-2xl text-green-700 font-bold mx-2">{{ commentsCount }}</div>
+                    </div>
                 <div>
                     <form @submit.prevent="onSubmitComment" v-if="$page.props.user">
                         <textarea v-model="form.contents" class="w-full shadow-inner p-4 border-0 rounded-lg focus:shadow-outline text-lg" placeholder="댓글을 입력하세요" cols="6" rows="3"></textarea>
@@ -100,5 +101,14 @@ export default {
             });
         },
     },
+    computed: {
+        commentsCount() {
+            let sum = 0
+            this.comments.forEach((comment) => {
+                sum += 1 + comment.replies.length;
+            });
+            return sum;
+        }
+    }
 }
 </script>

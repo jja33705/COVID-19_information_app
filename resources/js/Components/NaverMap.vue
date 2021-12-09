@@ -1,6 +1,12 @@
 <template>
     <div class="mt-3">
-        <i>*지도위에 마우스를 올리면 해당 지역의 신규 확진자 수를 볼 수 있습니다.</i>
+		<div class="flex mb-1">
+			<i class="mr-5 pt-1">*지도위에 마우스를 올리면 해당 지역의 신규 확진자 수를 볼 수 있습니다.</i>
+			<span class="mr-2 pt-1">*지도 색 </span>
+			<span class="bg-red-200 rounded-full p-1 text-red-600 mr-2">1000명 이상</span>
+			<span class="bg-indigo-200 rounded-full p-1 text-indigo-600 mr-2">100명 이상</span>
+			<span class="bg-green-200 rounded-full p-1 text-green-600 mr-2">100명 미만</span>
+		</div>
         <div id="map" style="width: 100%; height: 600px"></div>
     </div>
 </template>
@@ -836,10 +842,19 @@ export default {
 					if (feature.getProperty('CTP_KOR_NM') === e.gubun) {
                         return true;
                     }
-				})
+				});
+				let fillColor = '';
+				if (regionData['newDefCnt'] >= 1000) {
+					fillColor = '#ff0000';
+				} else if (regionData['newDefCnt'] >= 100) {
+					fillColor = '#0000ff';
+				} else {
+					fillColor = '#00ff00';
+				}
                 const styleOptions = {
-                    fillColor: '#ff0000',
-                    fillOpacity: regionData['newDefCnt'] / 5000,
+                    fillColor: fillColor,
+                    // fillOpacity: regionData['newDefCnt'] / 10000,
+					fillOpacity: 0.08,
                     strokeColor: '#000000',
                     strokeWeight: 0,
                     strokeOpacity: 0,
@@ -894,7 +909,7 @@ export default {
 
         naver.maps.Event.once(this.map, 'init_stylemap', (e) => {            
             // 내 위치 가져오기 버튼 생성
-            const getLocationBtnHtml = '<button><span style="font-size: 3em;"><i class="fas fa-compass"></i></span></button>';
+            const getLocationBtnHtml = '<button class="m-3"><span style="font-size: 1.5em;"><i class="fas fa-street-view">내 위치</i></span></button>';
             const customControl = new naver.maps.CustomControl(getLocationBtnHtml, {
                 position: naver.maps.Position.TOP_RIGHT
             });
@@ -916,21 +931,7 @@ export default {
         
     },
     watch: {
-        // selectedTravelSpot: function (newSelectedTravelSpot) { //선택된 여행지가 바뀌면 그곳을 줌하고 정보창을 펼쳐준다.
-        //     for (let i = 0; i < this.travelSpots.length; i++) {
-        //         if (newSelectedTravelSpot.contentid === this.travelSpots[i].contentid) {
-        //             const spot = new naver.maps.LatLng(
-        //                 this.travelSpots[i].mapy,
-        //                 this.travelSpots[i].mapx
-        //             );
-        //             this.map.setCenter(spot);
-        //             this.map.setOptions("zoom", 15);
-        //             this.infoWindows[i].open(this.map, this.markers[i]);
-        //             break;
-        //         }
-        //     }
-        // },
-        travelSpots: function (newTravelSpots, travelSpots) {
+        travelSpots: function (newTravelSpots) {
 			this.markers = [];
             newTravelSpots.map((v) => { //현재 가지고 있는 데이터들로 지도에 마커와 인포창 표시
 
@@ -944,6 +945,7 @@ export default {
                         '</div>',
                     '</div>'
                 ].join('');
+
                 const htmlMarker = new naver.maps.Marker({
                     position: new naver.maps.LatLng(v.mapy, v.mapx),
                     map: this.map,
@@ -953,6 +955,7 @@ export default {
                         anchor: new naver.maps.Point(11, 30)
                     }
                 });
+	
                 this.markers.push(htmlMarker);
                 const elHtmlMarker = htmlMarker.getElement();
                 $(elHtmlMarker).find('.infowindow').show();
@@ -961,18 +964,18 @@ export default {
                     $(elHtmlMarker).find('.infowindow').toggle();
                 });
             });
-            const htmlMarker = {
-                content: '<div style="cursor:pointer;width:40px;height:40px;line-height:42px;font-size:20px;color:black;text-align:center;font-weight:bold;background:url(/storage/images/Map-marker-02.png);background-size:contain;line-height:0.1;vertical-align:top"></div>',
+            const htmlMarker = { //클러스트링한 마커
+                content: '<div style="cursor:pointer;width:40px;height:40px;line-height:0px;font-size:19px;color:black;text-align:center;font-weight:bold;background:url(/storage/images/Map-marker-02.png);background-size:contain;"></div>',
 	            size: N.Size(40, 40),
 	            anchor: N.Point(20, 20),
             };
             new MarkerClustering({
                 minClusterSize: 2,
-                maxZoom: 12,
+                maxZoom: 16,
                 map: this.map,
                 markers: this.markers,
                 disableClickZoom: false,
-                gridSize: 120,
+                gridSize: 90,
                 icons: [htmlMarker],
                 indexGenerator: [10, 100, 200, 500, 1000],
                 stylingFunction: function(clusterMarker, count) {

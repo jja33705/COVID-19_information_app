@@ -19552,6 +19552,43 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/CovidDataChange.vue?vue&type=script&lang=js":
+/*!*********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/CovidDataChange.vue?vue&type=script&lang=js ***!
+  \*********************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: ['data', 'isRed', 'isUp'],
+  data: function data() {
+    return {
+      number: 0,
+      increment: Math.ceil(this.data / 200)
+    };
+  },
+  methods: {
+    incrementNumber: function incrementNumber() {
+      if (this.number < this.data) {
+        this.number += this.increment;
+        setTimeout(this.incrementNumber, 1);
+      } else {
+        this.number = this.data;
+      }
+    }
+  },
+  mounted: function mounted() {
+    //숫자 올라가는 애니메이션
+    this.incrementNumber();
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/Hashtag.vue?vue&type=script&lang=js":
 /*!*************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/Hashtag.vue?vue&type=script&lang=js ***!
@@ -20594,9 +20631,20 @@ var regionGeoJson = [{
           }
         });
 
+        var fillColor = '';
+
+        if (regionData['newDefCnt'] >= 1000) {
+          fillColor = '#ff0000';
+        } else if (regionData['newDefCnt'] >= 100) {
+          fillColor = '#0000ff';
+        } else {
+          fillColor = '#00ff00';
+        }
+
         var styleOptions = {
-          fillColor: '#ff0000',
-          fillOpacity: regionData['newDefCnt'] / 5000,
+          fillColor: fillColor,
+          // fillOpacity: regionData['newDefCnt'] / 10000,
+          fillOpacity: 0.08,
           strokeColor: '#000000',
           strokeWeight: 0,
           strokeOpacity: 0
@@ -20653,7 +20701,7 @@ var regionGeoJson = [{
 
     naver.maps.Event.once(this.map, 'init_stylemap', function (e) {
       // 내 위치 가져오기 버튼 생성
-      var getLocationBtnHtml = '<button><span style="font-size: 3em;"><i class="fas fa-compass"></i></span></button>';
+      var getLocationBtnHtml = '<button class="m-3"><span style="font-size: 1.5em;"><i class="fas fa-street-view">내 위치</i></span></button>';
       var customControl = new naver.maps.CustomControl(getLocationBtnHtml, {
         position: naver.maps.Position.TOP_RIGHT
       });
@@ -20670,21 +20718,7 @@ var regionGeoJson = [{
     });
   },
   watch: {
-    // selectedTravelSpot: function (newSelectedTravelSpot) { //선택된 여행지가 바뀌면 그곳을 줌하고 정보창을 펼쳐준다.
-    //     for (let i = 0; i < this.travelSpots.length; i++) {
-    //         if (newSelectedTravelSpot.contentid === this.travelSpots[i].contentid) {
-    //             const spot = new naver.maps.LatLng(
-    //                 this.travelSpots[i].mapy,
-    //                 this.travelSpots[i].mapx
-    //             );
-    //             this.map.setCenter(spot);
-    //             this.map.setOptions("zoom", 15);
-    //             this.infoWindows[i].open(this.map, this.markers[i]);
-    //             break;
-    //         }
-    //     }
-    // },
-    travelSpots: function travelSpots(newTravelSpots, _travelSpots) {
+    travelSpots: function travelSpots(newTravelSpots) {
       var _this4 = this;
 
       this.markers = [];
@@ -20710,17 +20744,18 @@ var regionGeoJson = [{
         });
       });
       var htmlMarker = {
-        content: '<div style="cursor:pointer;width:40px;height:40px;line-height:42px;font-size:20px;color:black;text-align:center;font-weight:bold;background:url(/storage/images/Map-marker-02.png);background-size:contain;line-height:0.1;vertical-align:top"></div>',
+        //클러스트링한 마커
+        content: '<div style="cursor:pointer;width:40px;height:40px;line-height:0px;font-size:19px;color:black;text-align:center;font-weight:bold;background:url(/storage/images/Map-marker-02.png);background-size:contain;"></div>',
         size: N.Size(40, 40),
         anchor: N.Point(20, 20)
       };
       new MarkerClustering({
         minClusterSize: 2,
-        maxZoom: 12,
+        maxZoom: 16,
         map: this.map,
         markers: this.markers,
         disableClickZoom: false,
-        gridSize: 120,
+        gridSize: 90,
         icons: [htmlMarker],
         indexGenerator: [10, 100, 200, 500, 1000],
         stylingFunction: function stylingFunction(clusterMarker, count) {
@@ -20895,7 +20930,20 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_0__.Link
   },
-  props: ['travelSpot', 'newDefCnt']
+  props: ['travelSpot', 'newDefCnt'],
+  computed: {
+    colorClass: function colorClass() {
+      if (this.newDefCnt >= 1000) {
+        return 'bg-red-600';
+      }
+
+      if (this.newDefCnt >= 100) {
+        return 'bg-indigo-600';
+      }
+
+      return 'bg-green-600';
+    }
+  }
 });
 
 /***/ }),
@@ -22309,17 +22357,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Layouts_AppLayout_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Layouts/AppLayout.vue */ "./resources/js/Layouts/AppLayout.vue");
 /* harmony import */ var _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @inertiajs/inertia-vue3 */ "./node_modules/@inertiajs/inertia-vue3/dist/index.js");
 /* harmony import */ var chart_js_auto__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! chart.js/auto */ "./node_modules/chart.js/auto/auto.esm.js");
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+/* harmony import */ var _Components_CovidDataChange__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Components/CovidDataChange */ "./resources/js/Components/CovidDataChange.vue");
 
 
 
@@ -22328,7 +22366,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   components: {
     AppLayout: _Layouts_AppLayout_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     Head: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__.Head,
-    Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__.Link
+    Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__.Link,
+    CovidDataChange: _Components_CovidDataChange__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
   props: {
     localData: Array,
@@ -22339,12 +22378,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     var ctx = 'newDefCntChart';
     var newDefCntChartData = [];
     var newDefCntChartLabels = [];
-
-    _toConsumableArray(this.totalData).map(function (value) {
-      newDefCntChartData.push(value.localOccCnt + value.overFlowCnt);
+    this.totalData.forEach(function (value) {
+      newDefCntChartData.push(value.newDefCnt);
       newDefCntChartLabels.push(value.stdDay.slice(-5));
     });
-
     new chart_js_auto__WEBPACK_IMPORTED_MODULE_2__["default"](ctx, {
       type: 'bar',
       data: {
@@ -22394,19 +22431,35 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     },
     getNewDefCnt: function getNewDefCnt() {
       //신규확진자
-      return this.totalData[this.totalData.length - 1].localOccCnt + this.totalData[0].overFlowCnt;
+      return this.totalData[this.totalData.length - 1].newDefCnt;
+    },
+    getNewDefCntChange: function getNewDefCntChange() {
+      //신규확진자 변화
+      return this.totalData[this.totalData.length - 1].newDefCnt - this.totalData[this.totalData.length - 2].newDefCnt;
     },
     getDefCnt: function getDefCnt() {
-      //확진자
+      // 누적 확진자 변화
       return this.totalData[this.totalData.length - 1].defCnt;
+    },
+    getDefCntChange: function getDefCntChange() {
+      // 누적 확진자 변화
+      return this.totalData[this.totalData.length - 1].defCnt - this.totalData[this.totalData.length - 2].defCnt;
     },
     getDeathCnt: function getDeathCnt() {
       //사망자
       return this.totalData[this.totalData.length - 1].deathCnt;
     },
+    getDeathCntChange: function getDeathCntChange() {
+      //사망자 변화
+      return this.totalData[this.totalData.length - 1].deathCnt - this.totalData[this.totalData.length - 2].deathCnt;
+    },
     getIsolClearCnt: function getIsolClearCnt() {
       //격리해제 환자
       return this.totalData[this.totalData.length - 1].isolClearCnt;
+    },
+    getIsolClearCntChange: function getIsolClearCntChange() {
+      //격리해제 환자 변화
+      return this.totalData[this.totalData.length - 1].isolClearCnt - this.totalData[this.totalData.length - 2].isolClearCnt;
     }
   }
 });
@@ -23381,6 +23434,15 @@ __webpack_require__.r(__webpack_exports__);
         errorBag: "comment_".concat(id)
       });
     }
+  },
+  computed: {
+    commentsCount: function commentsCount() {
+      var sum = 0;
+      this.comments.forEach(function (comment) {
+        sum += 1 + comment.replies.length;
+      });
+      return sum;
+    }
   }
 });
 
@@ -24066,6 +24128,37 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/CovidDataChange.vue?vue&type=template&id=684e8f04":
+/*!*************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/CovidDataChange.vue?vue&type=template&id=684e8f04 ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", {
+    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["ml-1 self-center rounded-full px-2 font-bold text-sm leading-loose cursor-pointer", $props.isRed ? 'bg-red-100' : 'bg-blue-100'])
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
+    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)([$props.isRed ? 'text-red-600' : 'text-blue-600', $props.isUp ? 'fas fa-arrow-up' : 'fas fa-arrow-down'])
+  }, null, 2
+  /* CLASS */
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)($props.isRed ? 'text-red-600' : 'text-blue-600')
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.number > 0 ? $data.number : $data.number * -1), 3
+  /* TEXT, CLASS */
+  )], 2
+  /* CLASS */
+  );
+}
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/Hashtag.vue?vue&type=template&id=f532695e":
 /*!*****************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/Hashtag.vue?vue&type=template&id=f532695e ***!
@@ -24123,21 +24216,9 @@ var _hoisted_1 = {
   "class": "mt-3"
 };
 
-var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", null, "*지도위에 마우스를 올리면 해당 지역의 신규 확진자 수를 볼 수 있습니다.", -1
-/* HOISTED */
-);
+var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"flex mb-1\"><i class=\"mr-5 pt-1\">*지도위에 마우스를 올리면 해당 지역의 신규 확진자 수를 볼 수 있습니다.</i><span class=\"mr-2 pt-1\">*지도 색 </span><span class=\"bg-red-200 rounded-full p-1 text-red-600 mr-2\">1000명 이상</span><span class=\"bg-indigo-200 rounded-full p-1 text-indigo-600 mr-2\">100명 이상</span><span class=\"bg-green-200 rounded-full p-1 text-green-600 mr-2\">100명 미만</span></div><div id=\"map\" style=\"width:100%;height:600px;\"></div>", 2);
 
-var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  id: "map",
-  style: {
-    "width": "100%",
-    "height": "600px"
-  }
-}, null, -1
-/* HOISTED */
-);
-
-var _hoisted_4 = [_hoisted_2, _hoisted_3];
+var _hoisted_4 = [_hoisted_2];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, _hoisted_4);
 }
@@ -24502,21 +24583,18 @@ var _hoisted_3 = {
 var _hoisted_4 = {
   "class": "text-sm text-gray-500 pb-2"
 };
-var _hoisted_5 = {
-  "class": "bg-indigo-600 py-1 px-2 text-white rounded-lg"
-};
 
-var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
   "class": "inset-0"
 }, null, -1
 /* HOISTED */
 );
 
-var _hoisted_7 = {
-  "class": "tracking-widest text-indigo-500 text-xs font-medium title-font"
+var _hoisted_6 = {
+  "class": "tracking-widest text-gray-600 text-xs font-medium title-font"
 };
-var _hoisted_8 = {
-  "class": "text-base font-semibold text-gray-900 group-hover:text-indigo-600"
+var _hoisted_7 = {
+  "class": "text-base font-semibold text-gray-800 group-hover:text-black"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("article", {
@@ -24530,11 +24608,15 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "w-full h-full object-center object-cover"
   }, null, 8
   /* PROPS */
-  , _hoisted_2)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 지역 신규 확진자 수: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.newDefCnt) + "명 ", 1
+  , _hoisted_2)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["py-1 px-2 text-white rounded-lg", $options.colorClass])
+  }, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 지역 신규 확진자 수: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.newDefCnt) + "명 ", 1
   /* TEXT */
-  )])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.travelSpot.addr1), 1
+  )], 2
+  /* CLASS */
+  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.travelSpot.addr1), 1
   /* TEXT */
-  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.travelSpot.title), 1
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.travelSpot.title), 1
   /* TEXT */
   )])]);
 }
@@ -25706,11 +25788,11 @@ var _hoisted_21 = {
   "class": "-mb-px flex justify-around"
 };
 
-var _hoisted_22 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 코로나 정보 ");
+var _hoisted_22 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 코로나19 ");
 
-var _hoisted_23 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 여행지 검색 ");
+var _hoisted_23 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 여행지도 ");
 
-var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 후기 ");
+var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" 여행후기 ");
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_Head = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Head");
@@ -27328,7 +27410,7 @@ var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
   "class": "h-16 bg-red-400 flex items-center justify-between"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
   "class": "mr-0 text-white text-lg pl-5"
-}, "확진자 정보")], -1
+}, "확진자 수")], -1
 /* HOISTED */
 );
 
@@ -27336,19 +27418,31 @@ var _hoisted_5 = {
   "class": "flex justify-between px-5 pt-6 mb-2 text-sm text-gray-600"
 };
 var _hoisted_6 = {
-  "class": "py-2 text-xl ml-5 font-medium"
+  "class": "flex"
 };
 var _hoisted_7 = {
   "class": "py-2 text-xl ml-5 font-medium"
 };
 var _hoisted_8 = {
-  "class": "py-2 text-xl ml-5 font-medium"
+  "class": "flex"
 };
 var _hoisted_9 = {
   "class": "py-2 text-xl ml-5 font-medium"
 };
+var _hoisted_10 = {
+  "class": "flex"
+};
+var _hoisted_11 = {
+  "class": "py-2 text-xl ml-5 font-medium"
+};
+var _hoisted_12 = {
+  "class": "flex"
+};
+var _hoisted_13 = {
+  "class": "py-2 text-xl ml-5 font-medium"
+};
 
-var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "container mx-auto pr-4"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "max-w-sm bg-white mx-auto rounded-sm overflow-hidden shadow-lg hover:shadow-2xl transition duration-500 transform hover:scale-100 cursor-pointer"
@@ -27366,17 +27460,17 @@ var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 /* HOISTED */
 );
 
-var _hoisted_11 = {
+var _hoisted_15 = {
   "class": "container mx-auto pr-4"
 };
-var _hoisted_12 = {
+var _hoisted_16 = {
   "class": "max-w-sm bg-white mx-auto rounded-sm overflow-hidden shadow-lg hover:shadow-2xl transition duration-500 transform hover:scale-100 cursor-pointer"
 };
-var _hoisted_13 = {
+var _hoisted_17 = {
   "class": "text-left w-full border-collapse"
 };
 
-var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
+var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
   "class": "py-4 px-6 bg-purple-400 font-bold uppercase text-sm text-white border-b border-grey-light"
 }, "지역"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
   "class": "py-4 px-6 text-center bg-purple-400 font-bold uppercase text-sm text-white border-b border-grey-light"
@@ -27384,23 +27478,25 @@ var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 /* HOISTED */
 );
 
-var _hoisted_15 = {
+var _hoisted_19 = {
   "class": "py-2 px-6 border-b border-grey-light font-medium"
 };
-var _hoisted_16 = {
+var _hoisted_20 = {
   "class": "py-2 px-6 text-center border-b border-grey-light font-medium"
 };
-var _hoisted_17 = {
+var _hoisted_21 = {
   "class": "px-5 py-4 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between"
 };
-var _hoisted_18 = {
+var _hoisted_22 = {
   "class": "text-xs xs:text-sm text-gray-900"
 };
-var _hoisted_19 = {
+var _hoisted_23 = {
   "class": "inline-flex mt-2 xs:mt-0"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _this = this;
+
+  var _component_covid_data_change = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("covid-data-change");
 
   var _component_app_layout = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("app-layout");
 
@@ -27410,28 +27506,52 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 확진자 정보 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [_hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getStdDay) + "일 기준 ", 1
       /* TEXT */
-      ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_6, "확진자 수: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getDefCnt), 1
+      ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_7, "누적 확진자: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getDefCnt), 1
       /* TEXT */
-      ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_7, "신규 확진자: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getNewDefCnt), 1
+      ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_covid_data_change, {
+        data: $options.getDefCntChange,
+        isRed: $options.getDefCntChange > 0,
+        isUp: $options.getDefCntChange > 0
+      }, null, 8
+      /* PROPS */
+      , ["data", "isRed", "isUp"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_9, "신규 확진자: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getNewDefCnt), 1
       /* TEXT */
-      ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_8, "사망자 수: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getDeathCnt), 1
+      ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_covid_data_change, {
+        data: $options.getNewDefCntChange,
+        isRed: $options.getNewDefCntChange > 0,
+        isUp: $options.getNewDefCntChange > 0
+      }, null, 8
+      /* PROPS */
+      , ["data", "isRed", "isUp"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_11, "사망자: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getDeathCnt), 1
       /* TEXT */
-      ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", _hoisted_9, "격리해제 수: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getIsolClearCnt), 1
+      ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_covid_data_change, {
+        data: $options.getDeathCntChange,
+        isRed: $options.getDeathCntChange > 0,
+        isUp: $options.getDeathCntChange > 0
+      }, null, 8
+      /* PROPS */
+      , ["data", "isRed", "isUp"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_13, "격리해제: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getIsolClearCnt), 1
       /* TEXT */
-      )])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 신규 확진자 추세 차트트 "), _hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 지역별 정보 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_13, [_hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.getPaginatedLocalData, function (data) {
+      ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_covid_data_change, {
+        data: $options.getIsolClearCntChange,
+        isRed: $options.getIsolClearCntChange < 0,
+        isUp: $options.getIsolClearCntChange > 0
+      }, null, 8
+      /* PROPS */
+      , ["data", "isRed", "isUp"])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 신규 확진자 추세 차트 "), _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 지역별 정보 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_17, [_hoisted_18, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.getPaginatedLocalData, function (data) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
           key: data.id,
           "class": "hover:bg-grey-lighter"
-        }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(data.gubun), 1
+        }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_19, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(data.gubun), 1
         /* TEXT */
-        ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_16, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(data.localOccCnt + data.overFlowCnt), 1
+        ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(data.newDefCnt), 1
         /* TEXT */
         )]);
       }), 128
       /* KEYED_FRAGMENT */
-      ))])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 지역별 정보 페이지네이션 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_18, " Showing " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(($data.localDataPage - 1) * 5 + 1) + " to " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_this.localDataPage - 1) * 5 + 5 < $props.localData.length ? (_this.localDataPage - 1) * 5 + 5 : $props.localData.length) + " of " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.localData.length) + " Entries ", 1
+      ))])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 지역별 정보 페이지네이션 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_22, " Showing " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(($data.localDataPage - 1) * 5 + 1) + " to " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_this.localDataPage - 1) * 5 + 5 < $props.localData.length ? (_this.localDataPage - 1) * 5 + 5 : $props.localData.length) + " of " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.localData.length) + " Entries ", 1
       /* TEXT */
-      ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+      ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
         onClick: _cache[0] || (_cache[0] = function () {
           return $options.onClickPrev && $options.onClickPrev.apply($options, arguments);
         }),
@@ -29364,27 +29484,32 @@ var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 /* HOISTED */
 );
 
-var _hoisted_13 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_13 = {
   "class": "flex my-4"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "text-xl font-semibold"
-}, "댓글")], -1
+};
+
+var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "text-2xl font-semibold"
+}, "댓글", -1
 /* HOISTED */
 );
 
-var _hoisted_14 = {
+var _hoisted_15 = {
+  "class": "text-2xl text-green-700 font-bold mx-2"
+};
+var _hoisted_16 = {
   key: 0,
   "class": "text-red-500"
 };
 
-var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   type: "submit",
   "class": "font-bold py-2 px-4 w-full bg-green-400 text-lg text-white shadow-md rounded-lg"
 }, "댓글 작성 ", -1
 /* HOISTED */
 );
 
-var _hoisted_16 = {
+var _hoisted_18 = {
   key: 1,
   "class": "text-red-500"
 };
@@ -29450,7 +29575,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         , ["hashtag"]);
       }), 128
       /* KEYED_FRAGMENT */
-      ))]), _hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 댓글 "), _hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_ctx.$page.props.user ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("form", {
+      ))]), _hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 댓글 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [_hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.commentsCount), 1
+      /* TEXT */
+      )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_ctx.$page.props.user ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("form", {
         key: 0,
         onSubmit: _cache[3] || (_cache[3] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
           return $options.onSubmitComment && $options.onSubmitComment.apply($options, arguments);
@@ -29465,9 +29592,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         rows: "3"
       }, null, 512
       /* NEED_PATCH */
-      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.contents]]), $props.errors.contents ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.errors.contents), 1
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.contents]]), $props.errors.contents ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_16, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.errors.contents), 1
       /* TEXT */
-      )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _hoisted_15], 32
+      )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _hoisted_17], 32
       /* HYDRATE_EVENTS */
       )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.comments, function (comment) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_Comment, {
@@ -29482,7 +29609,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         , ["comment", "errors", "onOnDeleteComment", "onOnUpdateComment", "onOnSubmitReply"]);
       }), 128
       /* KEYED_FRAGMENT */
-      )), $props.errors.updateContents ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_16, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.errors.updateContents), 1
+      )), $props.errors.updateContents ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_18, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.errors.updateContents), 1
       /* TEXT */
       )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])])];
     }),
@@ -83242,6 +83369,34 @@ if (false) {}
 
 /***/ }),
 
+/***/ "./resources/js/Components/CovidDataChange.vue":
+/*!*****************************************************!*\
+  !*** ./resources/js/Components/CovidDataChange.vue ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _CovidDataChange_vue_vue_type_template_id_684e8f04__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CovidDataChange.vue?vue&type=template&id=684e8f04 */ "./resources/js/Components/CovidDataChange.vue?vue&type=template&id=684e8f04");
+/* harmony import */ var _CovidDataChange_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CovidDataChange.vue?vue&type=script&lang=js */ "./resources/js/Components/CovidDataChange.vue?vue&type=script&lang=js");
+/* harmony import */ var C_Users_jja33_Desktop_Laravel_COVID_19_tavel_app_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+
+;
+const __exports__ = /*#__PURE__*/(0,C_Users_jja33_Desktop_Laravel_COVID_19_tavel_app_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_CovidDataChange_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_CovidDataChange_vue_vue_type_template_id_684e8f04__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/js/Components/CovidDataChange.vue"]])
+/* hot reload */
+if (false) {}
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__exports__);
+
+/***/ }),
+
 /***/ "./resources/js/Components/Hashtag.vue":
 /*!*********************************************!*\
   !*** ./resources/js/Components/Hashtag.vue ***!
@@ -84909,6 +85064,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/Components/CovidDataChange.vue?vue&type=script&lang=js":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/Components/CovidDataChange.vue?vue&type=script&lang=js ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_CovidDataChange_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_CovidDataChange_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./CovidDataChange.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/CovidDataChange.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
 /***/ "./resources/js/Components/Hashtag.vue?vue&type=script&lang=js":
 /*!*********************************************************************!*\
   !*** ./resources/js/Components/Hashtag.vue?vue&type=script&lang=js ***!
@@ -85785,6 +85956,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Comment_vue_vue_type_template_id_f7b10738__WEBPACK_IMPORTED_MODULE_0__.render)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Comment_vue_vue_type_template_id_f7b10738__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Comment.vue?vue&type=template&id=f7b10738 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/Comment.vue?vue&type=template&id=f7b10738");
+
+
+/***/ }),
+
+/***/ "./resources/js/Components/CovidDataChange.vue?vue&type=template&id=684e8f04":
+/*!***********************************************************************************!*\
+  !*** ./resources/js/Components/CovidDataChange.vue?vue&type=template&id=684e8f04 ***!
+  \***********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_CovidDataChange_vue_vue_type_template_id_684e8f04__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_CovidDataChange_vue_vue_type_template_id_684e8f04__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./CovidDataChange.vue?vue&type=template&id=684e8f04 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/CovidDataChange.vue?vue&type=template&id=684e8f04");
 
 
 /***/ }),
