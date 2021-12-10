@@ -23298,13 +23298,15 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           //0.5초정도 로딩 표시후 불러옴. 스크롤 이벤트가 연속적으로 발생하므로 쓰로틀링처리 해줌.
           _this.timer = null;
 
-          if (_this.reviews.next_page_url === null) {
+          if (!_this.reviews.next_page_url) {
             _this.noResult = true;
             _this.message = 'No more result';
             return;
           }
 
           axios.get(_this.reviews.next_page_url).then(function (res) {
+            console.log(res);
+
             if (res.data.data.length !== 0) {
               res.data.data = [].concat(_toConsumableArray(_this.reviews.data), _toConsumableArray(res.data.data));
               _this.reviews = res.data;
@@ -23340,6 +23342,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       } else {
         this.searchHashtag = false;
       }
+    },
+    onClickShowMyReview: function onClickShowMyReview() {
+      this.$inertia.get("/review?searchWay=myReview", {
+        preserveScroll: false
+      });
     }
   },
   mounted: function mounted() {
@@ -29330,7 +29337,7 @@ var _hoisted_2 = {
   "class": "max-w-5xl mx-auto sm:px-6 lg:px-8"
 };
 var _hoisted_3 = {
-  key: 0,
+  key: 1,
   "class": "pt-2 mb-5 relative mx-auto text-gray-600"
 };
 
@@ -29383,30 +29390,37 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     title: "Review"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" input "), $props.searchWay !== 'place' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_ctx.$page.props.user ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
+        key: 0,
+        onClick: _cache[0] || (_cache[0] = function () {
+          return $options.onClickShowMyReview && $options.onClickShowMyReview.apply($options, arguments);
+        }),
+        "class": "px-4 py-2 rounded-md font-semibold text-sm font-medium border-0 focus:outline-none focus:ring transition text-black-600 bg-blue-50 hover:text-black-800 hover:bg-purple-100 active:bg-purple-200 focus:ring-purple-300",
+        type: "button"
+      }, " 내 후기 보기 ")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" input "), $props.searchWay !== 'place' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
         "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-base focus:outline-none w-full", $data.searchHashtag ? 'font-bold text-xl text-black' : '']),
-        onInput: _cache[0] || (_cache[0] = function () {
+        onInput: _cache[1] || (_cache[1] = function () {
           return $options.onInputSearchInput && $options.onInputSearchInput.apply($options, arguments);
         }),
         type: "search",
         name: "search",
         placeholder: "Search",
-        "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
+        "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
           return $data.searchInput = $event;
         }),
         required: "",
-        onKeyup: _cache[2] || (_cache[2] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withKeys)(function () {
+        onKeyup: _cache[3] || (_cache[3] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withKeys)(function () {
           return $options.searchReview && $options.searchReview.apply($options, arguments);
         }, ["enter"]))
       }, null, 34
       /* CLASS, HYDRATE_EVENTS */
       ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.searchInput]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
         "class": "absolute right-0 top-0 mt-5 mr-4",
-        onClick: _cache[3] || (_cache[3] = function () {
+        onClick: _cache[4] || (_cache[4] = function () {
           return $options.searchReview && $options.searchReview.apply($options, arguments);
         })
       }, _hoisted_5)])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
-        key: 1
+        key: 2
       }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" 리뷰 더보기 눌렀을때 "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.search), 1
       /* TEXT */
       ), _hoisted_8])])], 2112

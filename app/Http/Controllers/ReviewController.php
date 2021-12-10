@@ -33,6 +33,8 @@ class ReviewController extends Controller
             return Hashtag::where('contents', $search)->first()->reviews()->latest()->paginate(9)->withQueryString();
         } else if ($searchWay == 'place') {
             return Review::where('place', $search)->latest()->paginate(9)->withQueryString();
+        } else if ($searchWay == 'myReview') {
+            return Review::where('user_id', auth()->user()->id)->latest()->paginate(9)->withQueryString();
         }
     }
 

@@ -1,7 +1,32 @@
 <template>
     <app-layout title="Review">
         <div class="py-8">
+
             <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+
+                <button
+                    @click="onClickShowMyReview"
+                    class="
+                        px-4
+                        py-2
+                        rounded-md
+                        font-semibold
+                        text-sm
+                        font-medium
+                        border-0
+                        focus:outline-none focus:ring
+                        transition
+                        text-black-600
+                        bg-blue-50
+                        hover:text-black-800 hover:bg-purple-100
+                        active:bg-purple-200
+                        focus:ring-purple-300
+                    "
+                    type="button"
+                    v-if="$page.props.user"
+                >
+                    내 후기 보기
+                </button>
 
                 <!-- input -->
                 <div class="pt-2 mb-5 relative mx-auto text-gray-600" v-if="searchWay !== 'place'">
@@ -101,13 +126,14 @@ export default {
             if (!this.timer) {
                 this.timer = setTimeout(() => { //0.5초정도 로딩 표시후 불러옴. 스크롤 이벤트가 연속적으로 발생하므로 쓰로틀링처리 해줌.
                     this.timer = null;
-                    if (this.reviews.next_page_url === null) {
+                    if (!this.reviews.next_page_url) {
                         this.noResult = true;
                         this.message = 'No more result';
                         return;
                     }
                     axios.get(this.reviews.next_page_url)
                     .then((res) => {
+                        console.log(res);
                         if (res.data.data.length !== 0) {
                             res.data.data = [...this.reviews.data, ...res.data.data];
                             this.reviews = res.data;
@@ -141,6 +167,11 @@ export default {
             } else {
                 this.searchHashtag = false;
             }
+        },
+        onClickShowMyReview() {
+            this.$inertia.get(
+                `/review?searchWay=myReview`, { preserveScroll: false }
+            );
         }
     },
     mounted() {
