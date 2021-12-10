@@ -4,32 +4,34 @@
 
             <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
 
-                <button
-                    @click="onClickShowMyReview"
-                    class="
-                        px-4
-                        py-2
-                        rounded-md
-                        font-semibold
-                        text-sm
-                        font-medium
-                        border-0
-                        focus:outline-none focus:ring
-                        transition
-                        text-black-600
-                        bg-blue-50
-                        hover:text-black-800 hover:bg-purple-100
-                        active:bg-purple-200
-                        focus:ring-purple-300
-                    "
-                    type="button"
-                    v-if="$page.props.user"
-                >
-                    내 후기 보기
-                </button>
-
                 <!-- input -->
                 <div class="pt-2 mb-5 relative mx-auto text-gray-600" v-if="searchWay !== 'place'">
+
+                    <button
+                        @click="onClickShowMyReview"
+                        class="
+                            px-4
+                            py-2
+                            rounded-md
+                            font-semibold
+                            text-sm
+                            font-medium
+                            border-0
+                            focus:outline-none focus:ring
+                            transition
+                            text-black-600
+                            bg-blue-50
+                            hover:text-black-800 hover:bg-purple-100
+                            active:bg-purple-200
+                            focus:ring-purple-300
+                            mb-3
+                        "
+                        type="button"
+                        v-if="$page.props.user"
+                    >
+                        내 후기 보기
+                    </button>
+
                     <input
                         class="
                             border-2 border-gray-300
