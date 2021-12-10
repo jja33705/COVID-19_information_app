@@ -20751,11 +20751,11 @@ var regionGeoJson = [{
       };
       new MarkerClustering({
         minClusterSize: 2,
-        maxZoom: 16,
+        maxZoom: 12,
         map: this.map,
         markers: this.markers,
         disableClickZoom: false,
-        gridSize: 90,
+        gridSize: 80,
         icons: [htmlMarker],
         indexGenerator: [10, 100, 200, 500, 1000],
         stylingFunction: function stylingFunction(clusterMarker, count) {
