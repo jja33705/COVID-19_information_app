@@ -20,7 +20,7 @@ class CreateCovidsTable extends Migration
             $table->integer('overFlowCnt'); //해외유입 수
             $table->string('gubun'); //구분
             $table->integer('defCnt'); //확진자 수
-            $table->integer('isolClearCnt'); //격리해제 수
+            // $table->integer('isolClearCnt'); //격리해제 수
             $table->integer('deathCnt'); //사망자 수
             $table->timestamps();
         });

@@ -24,8 +24,8 @@
                         <covid-data-change :data="getDeathCntChange >= 0 ? getDeathCntChange : getDeathCntChange * -1" :isRed="getDeathCntChange > 0" :isUp="getDeathCntChange > 0" />
                     </div>
                     <div class="flex">
-                        <span class="py-2 text-xl ml-5 font-medium">격리해제: {{ getIsolClearCnt }}</span>
-                        <covid-data-change :data="getIsolClearCntChange >= 0 ? getIsolClearCntChange : getIsolClearCntChange * -1" :isRed="getIsolClearCntChange < 0" :isUp="getIsolClearCntChange > 0" />
+                        <span class="py-2 text-xl ml-5 font-medium">격리해제: <b>(일시 제공 중단)</b></span>
+                        <!-- <covid-data-change :data="getIsolClearCntChange >= 0 ? getIsolClearCntChange : getIsolClearCntChange * -1" :isRed="getIsolClearCntChange < 0" :isUp="getIsolClearCntChange > 0" /> -->
                     </div>
                 </div>
             </div>

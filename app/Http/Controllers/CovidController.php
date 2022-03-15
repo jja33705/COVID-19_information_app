@@ -12,7 +12,7 @@ class CovidController extends Controller
     {
         return Inertia::render('Covid/Covid', [
             'localData' => Covid::selectRaw('gubun, localOccCnt + overFlowCnt as newDefCnt')->where([['stdDay', Covid::max('stdDay')], ['gubun', 'not like', '합계']])->orderByRaw('newDefCnt DESC')->get(),
-            'totalData' => Covid::selectRaw('stdDay, defCnt, deathCnt, isolClearCnt, localOccCnt + overFlowCnt as newDefCnt')->where('gubun', '합계')->orderBy('stdDay', 'asc')->get(),
+            'totalData' => Covid::selectRaw('stdDay, defCnt, deathCnt, localOccCnt + overFlowCnt as newDefCnt')->where('gubun', '합계')->orderBy('stdDay', 'asc')->get(),
         ]);
     }
 }
